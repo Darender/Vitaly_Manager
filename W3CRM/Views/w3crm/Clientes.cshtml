@@ -1,0 +1,503 @@
+﻿@{
+	ViewData["Title"] = "Clientes";
+}
+<!--**********************************
+	Content body start
+***********************************-->
+<div class="content-body">
+    <div class="page-titles">
+        <ol class="breadcrumb">
+            <li><h5 class="bc-title">Clientes</h5></li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Index", "w3crm")">
+                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2.125 6.375L8.5 1.41667L14.875 6.375V14.1667C14.875 14.5424 14.7257 14.9027 14.4601 15.1684C14.1944 15.4341 13.8341 15.5833 13.4583 15.5833H3.54167C3.16594 15.5833 2.80561 15.4341 2.53993 15.1684C2.27426 14.9027 2.125 14.5424 2.125 14.1667V6.375Z" stroke="#2C2C2C" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M6.375 15.5833V8.5H10.625V15.5833" stroke="#2C2C2C" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Inicio
+                </a>
+            </li>
+            <li class="breadcrumb-item active"><a href="javascript:void(0)">Clientes</a></li>
+        </ol>
+        <a class="text-primary fs-13" data-bs-toggle="offcanvas" href="#offcanvasExample1" role="button" aria-controls="offcanvasExample1">+ Add Task</a>
+    </div>
+    <div class="container-fluid">
+
+        <!-- row -->
+        <div class="row">
+            <div class="row">
+            <div class="col-xl-4 col-lg-4 col-sm-12">
+                <div class="widget-stat card">
+                    <div class="card-body p-4">
+                        <div class="media ai-icon">
+                                <span class="me-3 bgl-primary text-primary" style="display: flex; align-items: center;">
+                                    <!-- <i class="ti-user"></i> -->
+                                    <svg id="icon-customers" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M8.79222 13.9396C12.1738 13.9396 15.0641 14.452 15.0641 16.4989C15.0641 18.5458 12.1931 19.0729 8.79222 19.0729C5.40972 19.0729 2.52039 18.5651 2.52039 16.5172C2.52039 14.4694 5.39047 13.9396 8.79222 13.9396Z" stroke="#0d99ff" stroke-linecap="round" stroke-linejoin="round" />
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M8.79223 11.0182C6.57206 11.0182 4.77173 9.21874 4.77173 6.99857C4.77173 4.7784 6.57206 2.97898 8.79223 2.97898C11.0115 2.97898 12.8118 4.7784 12.8118 6.99857C12.8201 9.21049 11.0326 11.0099 8.82064 11.0182H8.79223Z" stroke="#0d99ff" stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M15.1095 9.9748C16.5771 9.76855 17.7073 8.50905 17.7101 6.98464C17.7101 5.48222 16.6147 4.23555 15.1782 3.99997" stroke="#0d99ff" stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M17.0458 13.5045C18.4675 13.7163 19.4603 14.2149 19.4603 15.2416C19.4603 15.9483 18.9928 16.4067 18.2374 16.6936" stroke="#0d99ff" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                </span>
+
+                            <div class="media-body">
+                                <p class="mb-1">Clientes totales</p>
+                                    <h4 class="mb-0" id="CantidadUsuarios">@Model.Listaclientes.Count</h4>
+                                    <span class="badge badge-primary" id="Porcentaje30DiasUsuarios">+@Model.ultimos30dias%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+                <div class="col-xl-4 col-lg-4 col-sm-12">
+                    <div class="widget-stat card">
+                        <div class="card-body p-4">
+                            <div class="media ai-icon">
+                                <span class="me-3 bgl-success text-success">
+                                    <svg id="icon-customers" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                </span>
+                                <div class="media-body">
+                                    <p class="mb-1">Activos en los últimos 30 días</p>
+                                    <h4 class="mb-0" id="CantidadActivos">@Model.activosUltimos30</h4>
+                                    <span class="badge badge-success">@Model.porcentajeActivosUltimos30%</span> <!-- Cambié la clase a 'badge-success' -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-lg-4 col-sm-12">
+                    <div class="widget-stat card">
+                        <div class="card-body p-4">
+                            <div class="media ai-icon">
+                                <span class="me-3 bgl-primary text-primary">
+                                    <!-- <i class="ti-user"></i> -->
+                                    <svg id="icon-customers" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                </span>
+                                <div class="media-body">
+                                    <p class="mb-1">Ultimo cliente agregado</p>
+                                    <h4 class="mb-0" id="CantidadActivos">@Model.Listaclientes[Model.Listaclientes.Count - 1].Nombres @Model.Listaclientes[Model.Listaclientes.Count - 1].Apellidos</h4>
+                                    <span class="badge badge-primary">@Model.Listaclientes[Model.Listaclientes.Count - 1].Ingreso.ToString("yyyy-MM-dd")</span>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Agregar nuevo cliente</h4>
+                    </div>
+                    <div class="card-body">
+							<div class="form-validation">
+                                <form class="needs-validation" action="/W3Crm/Clientes" method="post" novalidate id="formulario">
+                                   <div class="mb-3 row">
+                                        <input type="hidden" id="validacion00_ID" name="id" value="">
+
+                                        <label class="col-lg-2 col-form-label" for="validacion01_Nombres">
+                                                Nombre(s)
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="col-lg-10">
+                                            <input type="text" class="form-control" id="validacion01_Nombres" placeholder="El nombre del cliente..." name="nombre" required>
+                                            <div class="invalid-feedback" id="invalidFeedback01">
+                                                    El nombre no puede estar vacio ni contener numeros o caractes especiales.
+                                                </div>
+                                            </div>
+                                   </div>
+                                   <div class="mb-3 row">
+                                        <label class="col-lg-2 col-form-label" for="validacion02_Apellidos">
+                                                Apellidos
+                                             </label>
+                                            <div class="col-lg-10">
+                                            <input type="text" class="form-control" id="validacion02_Apellidos" placeholder="El apellido del cliente..." name="apellido">
+                                            <div class="invalid-feedback" id="invalidFeedback02">
+                                                El apellido no puede contener numeros o caractes especiales.
+                                            </div>
+                                            </div>
+                                   </div>
+                                   <div class="mb-3 row">
+                                        <label class="col-lg-2 col-form-label" for="validacion03_Telefonos">
+                                                Telefono
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="col-lg-10">
+                                            <input type="text" class="form-control" id="validacion03_Telefonos" placeholder="686-999-0000" name="telefono" required>
+                                            <div class="invalid-feedback" id="invalidFeedback03">
+                                                    Porfavor inserte el telefono del nuevo usuario.
+                                                </div>
+                                            </div>
+                                        </div>
+                                   <div class="mb-3 row">
+                                        <label class="col-lg-2 col-form-label" for="validacion04_Edades">
+                                                Edad
+                                            </label>
+                                            <div class="col-lg-10">
+                                            <input type="text" class="form-control" id="validacion04_Edades" placeholder="21" name="edad">
+                                            <div class="invalid-feedback" id="invalidFeedback04">
+                                                La edad no puede tener letras o caracteres esperciales.
+                                            </div>
+                                        </div>
+                                        </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-2 col-form-label" for="validacion04_Genero">
+                                            Genero
+                                        </label>
+                                        <div class="col-lg-10">
+                                            <select class="wide form-control" id="validacion05_Genero" name="genero">
+                                                <option selected disabled value="" id="validacion05_Genero_Default">Porfavor seleccione</option>
+                                                <option value="Hombre" id="validacion05_Genero_Hombre">Hombre</option>
+                                                <option value="Mujer" id="validacion05_Genero_Mujer">Mujer</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-12 row">
+                                        <div class="col-lg-12">
+                                            <button type="submit" class="btn btn-primary py-2 w-100" id="boton_subir">Agregar</button>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header  border-0 pb-0">
+                            <h4 class="card-title">Notifications</h4>
+                        </div>
+                        <div class="card-body p-0">
+                            <div id="DZ_W_Todo1" class="widget-media dz-scroll height370 my-4 px-4">
+                                <ul class="timeline">
+                                    <li>
+                                        <div class="timeline-panel">
+                                            <div class="media me-2">
+                                                <img alt="image" width="50" src="~/w3crm/images/avatar/1.jpg">
+                                            </div>
+                                            <div class="media-body">
+                                                <h5 class="mb-1">Dr sultads Send you Photo</h5>
+                                                <small class="d-block">29 July 2020 - 02:26 PM</small>
+                                            </div>
+                                            <div class="dropdown">
+                                                <button type="button" class="btn btn-primary light sharp" data-bs-toggle="dropdown">
+                                                    <svg width="18px" height="18px" viewBox="0 0 24 24" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect x="0" y="0" width="24" height="24" /><circle fill="#000000" cx="5" cy="12" r="2" /><circle fill="#000000" cx="12" cy="12" r="2" /><circle fill="#000000" cx="19" cy="12" r="2" /></g></svg>
+                                                </button>
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <a class="dropdown-item" href="#">Edit</a>
+                                                    <a class="dropdown-item" href="#">Delete</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="timeline-panel">
+                                            <div class="media me-2 media-info">
+                                                KG
+                                            </div>
+                                            <div class="media-body">
+                                                <h5 class="mb-1">Resport created successfully</h5>
+                                                <small class="d-block">29 July 2020 - 02:26 PM</small>
+                                            </div>
+                                            <div class="dropdown">
+                                                <button type="button" class="btn btn-info light sharp" data-bs-toggle="dropdown">
+                                                    <svg width="18px" height="18px" viewBox="0 0 24 24" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect x="0" y="0" width="24" height="24" /><circle fill="#000000" cx="5" cy="12" r="2" /><circle fill="#000000" cx="12" cy="12" r="2" /><circle fill="#000000" cx="19" cy="12" r="2" /></g></svg>
+                                                </button>
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <a class="dropdown-item" href="#">Edit</a>
+                                                    <a class="dropdown-item" href="#">Delete</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="timeline-panel">
+                                            <div class="media me-2 media-success">
+                                                <i class="fa fa-home"></i>
+                                            </div>
+                                            <div class="media-body">
+                                                <h5 class="mb-1">Reminder : Treatment Time!</h5>
+                                                <small class="d-block">29 July 2020 - 02:26 PM</small>
+                                            </div>
+                                            <div class="dropdown">
+                                                <button type="button" class="btn btn-success light sharp" data-bs-toggle="dropdown">
+                                                    <svg width="18px" height="18px" viewBox="0 0 24 24" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect x="0" y="0" width="24" height="24" /><circle fill="#000000" cx="5" cy="12" r="2" /><circle fill="#000000" cx="12" cy="12" r="2" /><circle fill="#000000" cx="19" cy="12" r="2" /></g></svg>
+                                                </button>
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <a class="dropdown-item" href="#">Edit</a>
+                                                    <a class="dropdown-item" href="#">Delete</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="timeline-panel">
+                                            <div class="media me-2">
+                                                <img alt="image" width="50" src="~/w3crm/images/avatar/1.jpg">
+                                            </div>
+                                            <div class="media-body">
+                                                <h5 class="mb-1">Dr sultads Send you Photo</h5>
+                                                <small class="d-block">29 July 2020 - 02:26 PM</small>
+                                            </div>
+                                            <div class="dropdown">
+                                                <button type="button" class="btn btn-primary light sharp" data-bs-toggle="dropdown">
+                                                    <svg width="18px" height="18px" viewBox="0 0 24 24" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect x="0" y="0" width="24" height="24" /><circle fill="#000000" cx="5" cy="12" r="2" /><circle fill="#000000" cx="12" cy="12" r="2" /><circle fill="#000000" cx="19" cy="12" r="2" /></g></svg>
+                                                </button>
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <a class="dropdown-item" href="#">Edit</a>
+                                                    <a class="dropdown-item" href="#">Delete</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="timeline-panel">
+                                            <div class="media me-2 media-danger">
+                                                KG
+                                            </div>
+                                            <div class="media-body">
+                                                <h5 class="mb-1">Resport created successfully</h5>
+                                                <small class="d-block">29 July 2020 - 02:26 PM</small>
+                                            </div>
+                                            <div class="dropdown">
+                                                <button type="button" class="btn btn-danger light sharp" data-bs-toggle="dropdown">
+                                                    <svg width="18px" height="18px" viewBox="0 0 24 24" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect x="0" y="0" width="24" height="24" /><circle fill="#000000" cx="5" cy="12" r="2" /><circle fill="#000000" cx="12" cy="12" r="2" /><circle fill="#000000" cx="19" cy="12" r="2" /></g></svg>
+                                                </button>
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <a class="dropdown-item" href="#">Edit</a>
+                                                    <a class="dropdown-item" href="#">Delete</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="timeline-panel">
+                                            <div class="media me-2 media-primary">
+                                                <i class="fa fa-home"></i>
+                                            </div>
+                                            <div class="media-body">
+                                                <h5 class="mb-1">Reminder : Treatment Time!</h5>
+                                                <small class="d-block">29 July 2020 - 02:26 PM</small>
+                                            </div>
+                                            <div class="dropdown">
+                                                <button type="button" class="btn btn-primary light sharp" data-bs-toggle="dropdown">
+                                                    <svg width="18px" height="18px" viewBox="0 0 24 24" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect x="0" y="0" width="24" height="24" /><circle fill="#000000" cx="5" cy="12" r="2" /><circle fill="#000000" cx="12" cy="12" r="2" /><circle fill="#000000" cx="19" cy="12" r="2" /></g></svg>
+                                                </button>
+                                                <div class="dropdown-menu dropdown-menu-end">
+                                                    <a class="dropdown-item" href="#">Edit</a>
+                                                    <a class="dropdown-item" href="#">Delete</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+        </div>
+        
+        <!-- Database -->
+        <div class="tab-content" id="myTabContent-2">
+            <div class="tab-pane fade show active" id="withoutSpace" role="tabpanel" aria-labelledby="home-tab-2">
+                <div class="card-body pt-0">
+		            <div class="table-responsive">
+						<table id="example3" class="display table" style="min-width: 845px">
+				            <thead>
+					            <tr>
+						            <th>Nombre(s)</th>
+						            <th>Apellidos</th>
+						            <th>Telefono</th>
+						            <th>Edad</th>
+						            <th>Genero</th>
+						            <th>Ultima consulta</th>
+						            <th>Fecha de ingreso</th>
+						            <th>Accion</th>
+					            </tr>
+				            </thead>
+				            <tbody>
+                                @foreach (var Cliente in Model.Listaclientes)
+                                {
+                                    <tr id="@Cliente.ID">
+                                        <td>@Cliente.Nombres</td>
+                                        <td>@Cliente.Apellidos</td>
+                                        <td><a href="javascript:void(0);"><strong>@Cliente.Telefono</strong></a></td>
+                                        <td>@Cliente.Edad</td>
+                                        <td>@Cliente.Genero</td>
+                                        @if (Cliente.Ultima_Conusulta != null && Cliente.Ultima_Conusulta != DateTime.Parse("1900-01-01 00:00:00.000"))
+                                        {
+                                            <td>@Cliente.Ultima_Conusulta</td>
+
+                                        } else
+                                        {
+                                            <td></td>
+                                        }
+                                        <td>@Cliente.Ingreso.ToShortDateString()</td>
+                                        <td>
+                                            <div class="d-flex">
+                                                <a href="#" class="btn btn-primary shadow btn-xs sharp me-1" onclick="modificarClientes('@Cliente.ID')"><i class="fas fa-pencil-alt"></i></a>
+                                                <a href="#" class="btn btn-danger shadow btn-xs sharp" onclick="eliminarCliente('@Cliente.ID')"><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+				            </tbody>
+			            </table>
+		            </div>
+                </div>
+            </div
+        </div>
+    </div>
+</div>
+<!--**********************************
+	Content body end
+***********************************-->
+@section w3crm_style
+	{
+	<link href="~/w3crm/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+}
+
+@section w3crm_script
+	{
+	<!--**********************************
+		Scripts
+	***********************************-->
+	<script src="~/js/js_clientes.js"></script>
+
+    <!-- Required vendors -->
+    <script src="~/w3crm/vendor/global/global.min.js"></script>
+	<script src="~/w3crm/vendor/chart.js/Chart.bundle.min.js"></script>
+	<script src="~/w3crm/vendor/tagify/dist/tagify.min.js"></script>
+
+	<!-- Apex Chart -->
+	<script src="~/w3crm/vendor/apexchart/apexchart.js"></script>
+
+	<!-- Datatable -->
+	<script src="~/w3crm/vendor/datatables/js/jquery.dataTables.min.js"></script>
+	<script src="~/w3crm/js/plugins-init/datatables.init.js"></script>
+	<script src="~/w3crm/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+
+     <!-- code-highlight -->
+    <script src="~/w3crm/js/highlight.min.js"></script>
+
+    <script src="~/w3crm/js/custom.js"></script>
+    <script src="~/w3crm/js/deznav-init.js"></script>
+    <script src="~/w3crm/js/demo.js"></script>
+
+
+    <script>
+        hljs.highlightAll();
+        hljs.configure({ ignoreUnescapedHTML: true })
+
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('pre code').forEach((el) => {
+                hljs.highlightElement(el);
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            validarNombres();
+            validarApellidos();
+            validarEdades();
+        });
+
+        function validarEdades() {
+            $('#validacion04_Edades').on('keypress', function (e) {
+                var charCode = (e.which) ? e.which : e.keyCode;
+                var regex = /^[0-9\s]*$/; 
+
+                if (!regex.test(String.fromCharCode(charCode))) {
+                    return false;
+                }
+            });
+        }
+
+        function validarNombres() {
+            $('#validacion01_Nombres').on('keypress', function (e) {
+                var charCode = (e.which) ? e.which : e.keyCode;
+                var regex = /^[a-zA-Z\s]*$/;
+
+                if (!regex.test(String.fromCharCode(charCode))) {
+                    return false;
+                }
+            });
+        }
+
+        function validarApellidos() {
+            $('#validacion02_Apellidos').on('keypress', function (e) {
+                var charCode = (e.which) ? e.which : e.keyCode;
+                var regex = /^[a-zA-Z\s]*$/; 
+
+                if (!regex.test(String.fromCharCode(charCode))) {
+                    return false;
+                }
+            });
+        }
+
+        document.getElementById('validacion03_Telefonos').addEventListener('input', function (e) {
+            var value = e.target.value.replace(/[^0-9]/g, '');
+
+            if (value.length > 3) {
+                value = value.substring(0, 3) + '-' + value.substring(3);
+            }
+
+            if (value.length > 7) {
+                value = value.substring(0, 7) + '-' + value.substring(7);
+            }
+
+            if (value.length >= 13) {
+                value = value.replace(/[-+]/g, '');
+                var ultimos4 = value.substring(value.length - 4);
+                value = value.substring(0, value.length - 4);
+                var ultimos3 = value.substring(value.length - 3);
+                value = value.substring(0, value.length - 3);
+                var primeros3 = value.substring(value.length - 3);
+                value = value.substring(0, value.length - 3);
+                value = "+" + value + " " + primeros3 + "-" + ultimos3 + "-" + ultimos4;
+            }
+            e.target.value = value; // Actualiza el valor del campo de entrada
+        });
+    </script>
+
+
+    <script>
+        (function () {
+          'use strict'
+
+          // Fetch all the forms we want to apply custom Bootstrap validation styles to
+          var forms = document.querySelectorAll('.needs-validation')
+
+          // Loop over them and prevent submission
+          Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+              form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                  event.preventDefault()
+                  event.stopPropagation()
+                }
+
+                form.classList.add('was-validated')
+              }, false)
+            })
+        })()
+    </script>
+}

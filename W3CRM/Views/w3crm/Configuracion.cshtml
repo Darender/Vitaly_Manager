@@ -1,0 +1,129 @@
+﻿@{
+    ViewData["Title"] = "Configuracion";
+}
+<!--**********************************
+			Content body start
+		***********************************-->
+<div class="content-body">
+	<!-- row -->
+	<div class="page-titles">
+		<ol class="breadcrumb">
+			<li><h5 class="bc-title">Configuracion</h5></li>
+			<li class="breadcrumb-item">
+				<a href="@Url.Action("Index", "w3crm")">
+					<svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M2.125 6.375L8.5 1.41667L14.875 6.375V14.1667C14.875 14.5424 14.7257 14.9027 14.4601 15.1684C14.1944 15.4341 13.8341 15.5833 13.4583 15.5833H3.54167C3.16594 15.5833 2.80561 15.4341 2.53993 15.1684C2.27426 14.9027 2.125 14.5424 2.125 14.1667V6.375Z" stroke="#2C2C2C" stroke-linecap="round" stroke-linejoin="round" />
+						<path d="M6.375 15.5833V8.5H10.625V15.5833" stroke="#2C2C2C" stroke-linecap="round" stroke-linejoin="round" />
+					</svg>
+					Inicio
+				</a>
+			</li>
+			<li class="breadcrumb-item active"><a href="javascript:void(0)">Configuracion</a></li>
+		</ol>
+		<a class="text-primary fs-13" data-bs-toggle="offcanvas" href="#offcanvasExample1" role="button" aria-controls="offcanvasExample1">+ Add Task</a>
+	</div>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-xl-12">
+				<div class="card">
+					<div class="card-body p-0">
+						<div class="table-responsive active-projects style-1">
+							<div class="tbl-caption">
+								<h4 class="heading mb-0">Cuentas de Vitaly Manager</h4>
+								<div>
+									<a class="btn btn-primary btn-sm" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">+ Agregar usuario</a>
+								</div>
+							</div>
+
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Empleado ID</th>
+										<th>Nombre</th>
+										<th>Correo Electronico</th>
+										<th>Numero Telefonico</th>
+										<th>Genero</th>
+										<th>Fecha de Ingreso</th>
+										<th>Estado</th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var Usuario in Model.ListaUsuarios)
+									{
+										<tr id="@Usuario.Id">
+											<td><span>@Usuario.Id</span></td>
+											<td>
+												<div class="products">
+													<img src="~/imagenes/usuarios/imagen_@(Usuario.Id).jpg" class="avatar avatar-md" alt="">
+													<div>
+														<h6>@Usuario.Nombres @Usuario.Apellidos</h6>
+														<span>@Usuario.AreaDeTrabajo</span>
+													</div>
+												</div>
+											</td>
+											<td><span class="text-primary">@Usuario.Correo</span></td>
+											<td>
+												<span>@Usuario.Telefono</span>
+											</td>
+											<td>
+												<span>@Usuario.Genero</span>
+											</td>
+											<td>@Usuario.Ingreso.ToShortDateString()</td>
+											<td>
+												<span class="badge badge-success light border-0">Active</span>
+											</td>
+										</tr>
+									}
+								</tbody>
+
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<!--**********************************
+	Content body end
+***********************************-->
+@section w3crm_style
+{
+	<link href="~/w3crm/vendor/swiper/css/swiper-bundle.min.css" rel="stylesheet">
+	<link href="~/w3crm/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+	<link href="https://cdn.datatables.net/buttons/1.6.4/css/buttons.dataTables.min.css" rel="stylesheet">
+	<link href="~/w3crm/vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+
+	<!-- tagify-css -->
+	<link href="~/w3crm/vendor/tagify/dist/tagify.css" rel="stylesheet">
+}
+
+@section w3crm_script
+	{
+	<!--**********************************
+		Scripts
+	***********************************-->
+	<!-- Required vendors -->
+	<script src="~/w3crm/vendor/global/global.min.js"></script>
+	<script src="~/w3crm/vendor/chart.js/Chart.bundle.min.js"></script>
+	<script src="~/w3crm/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+	<script src="~/w3crm/vendor/apexchart/apexchart.js"></script>
+
+	<!-- Dashboard 1 -->
+
+	<script src="~/w3crm/vendor/datatables/js/jquery.dataTables.min.js"></script>
+	<script src="~/w3crm/vendor/datatables/js/dataTables.buttons.min.js"></script>
+	<script src="~/w3crm/vendor/datatables/js/buttons.html5.min.js"></script>
+	<script src="~/w3crm/vendor/datatables/js/jszip.min.js"></script>
+	<script src="~/w3crm/js/plugins-init/datatables.init.js"></script>
+
+	<!-- Apex Chart -->
+	<script src="~/w3crm/js/custom.js"></script>
+	<script src="~/w3crm/js/deznav-init.js"></script>
+	<script src="~/w3crm/js/demo.js"></script>
+
+	<!-- tagify -->
+	<script src="~/w3crm/vendor/tagify/dist/tagify.js"></script>
+}

@@ -1,0 +1,141 @@
+﻿<!--**********************************
+    Add Employee start
+***********************************-->
+<div class="offcanvas offcanvas-end customeoff" tabindex="-1" id="offcanvasExample">
+	<div class="offcanvas-header">
+		<h5 class="modal-title" id="#gridSystemModal">Agregar usuario</h5>
+		<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close">
+			<i class="fa-solid fa-xmark"></i>
+		</button>
+	</div>
+	<div class="offcanvas-body">
+		<div class="container-fluid">
+			@using (Html.BeginForm("Configuracion", "W3CRM", FormMethod.Post, new { @class = "needs-validation", id = "formulario", enctype = "multipart/form-data" }))
+			{
+				<div class="row">
+					<div class="col-xl-12 mb-3">
+						<label>Agregar foto de perfil</label>
+						<div class="dz-default dlab-message upload-img mb-3">
+							<div action="#" class="dropzone">
+								<svg width="41" height="40" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M27.1666 26.6667L20.4999 20L13.8333 26.6667" stroke="#DADADA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+									<path d="M20.5 20V35" stroke="#DADADA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+									<path d="M34.4833 30.6501C36.1088 29.7638 37.393 28.3615 38.1331 26.6644C38.8731 24.9673 39.027 23.0721 38.5703 21.2779C38.1136 19.4836 37.0724 17.8926 35.6111 16.7558C34.1497 15.619 32.3514 15.0013 30.4999 15.0001H28.3999C27.8955 13.0488 26.9552 11.2373 25.6498 9.70171C24.3445 8.16614 22.708 6.94647 20.8634 6.1344C19.0189 5.32233 17.0142 4.93899 15.0001 5.01319C12.9861 5.0874 11.015 5.61722 9.23523 6.56283C7.45541 7.50844 5.91312 8.84523 4.7243 10.4727C3.53549 12.1002 2.73108 13.9759 2.37157 15.959C2.01205 17.9421 2.10678 19.9809 2.64862 21.9222C3.19047 23.8634 4.16534 25.6565 5.49994 27.1667" stroke="#DADADA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+									<path d="M27.1666 26.6667L20.4999 20L13.8333 26.6667" stroke="#DADADA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+								</svg>
+								<div class="fallback">
+									<input name="FotoPerfil" type="file" multiple>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-xl-12 mb-3">
+						<label for="agregarUsuario_Nombre" class="form-label">Nombre(s)<span class="text-danger">*</span></label>
+						<input name="Nombres" type="text" class="form-control" id="agregarUsuario_Nombre" required placeholder="">
+					</div>
+					<div class="col-xl-12 mb-3">
+						<label for="agregarUsuario_Apellidos" class="form-label">Apellidos</label>
+						<input name="Apellidos" type="text" class="form-control" id="agregarUsuario_Apellidos" placeholder="">
+					</div>
+					<div class="col-xl-12 mb-3">
+						<label for="agregarUsuario_Correo" class="form-label">Correo electrónico<span class="text-danger">*</span></label>
+						<input name="Correo" type="email" class="form-control" id="agregarUsuario_Correo" required placeholder="">
+					</div>
+					<div class="col-xl-12 mb-3">
+						<label for="agregarUsuario_Password" class="form-label">Contraseña<span class="text-danger">*</span></label>
+						<input name="Password" type="password" class="form-control" id="agregarUsuario_Password" required placeholder="">
+					</div>
+					<div class="col-xl-12 mb-3">
+						<label for="agregarUsuario_Telefono" class="form-label">Telefono</label>
+						<input name="Telefono" type="text" class="form-control" id="agregarUsuario_Telefono" placeholder="">
+					</div>
+					<div class="col-xl-12 mb-3">
+						<label for="agregarUsuario_AreaDeTrabajo" class="form-label">Area de trabajo</label>
+						<input name="AreaDeTrabajo" type="text" class="form-control" id="agregarUsuario_AreaDeTrabajo" placeholder="">
+					</div>
+					<div class="col-xl-12 mb-3">
+						<label class="form-label">Genero<span class="text-danger">*</span></label>
+						<select name="Genero" class="default-select style-1 form-control">
+							<option data-display="Select">Porfavor seleccione</option>
+							<option value="Hombre">Hombre</option>
+							<option value="Mujer">Mujer</option>
+						</select>
+					</div>
+				</div>
+				<div>
+					<button class="btn btn-primary me-1">Submit</button>
+				</div>
+			}
+		</div>
+	</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+	$(document).ready(function () {
+		validarNombres();
+		validarApellidos();
+		validarAreaDeTrabajo();
+	});
+
+	function validarAreaDeTrabajo() {
+		$('#agregarUsuario_AreaDeTrabajo').on('keypress', function (e) {
+			var charCode = (e.which) ? e.which : e.keyCode;
+			var regex = /^[a-zA-Z\s]*$/; // Expresión regular para permitir solo letras y espacios
+
+			if (!regex.test(String.fromCharCode(charCode))) {
+				return false; // Previene la inserción del carácter
+			}
+		});
+	}
+
+	function validarNombres() {
+		$('#agregarUsuario_Nombre').on('keypress', function (e) {
+			var charCode = (e.which) ? e.which : e.keyCode;
+			var regex = /^[a-zA-Z\s]*$/; // Expresión regular para permitir solo letras y espacios
+
+			if (!regex.test(String.fromCharCode(charCode))) {
+				return false; // Previene la inserción del carácter
+			}
+		});
+	}
+
+	function validarApellidos() {
+		$('#agregarUsuario_Apellidos').on('keypress', function (e) {
+			var charCode = (e.which) ? e.which : e.keyCode;
+			var regex = /^[a-zA-Z\s]*$/; // Expresión regular para permitir solo letras y espacios
+
+			if (!regex.test(String.fromCharCode(charCode))) {
+				return false; // Previene la inserción del carácter
+			}
+		});
+	}
+
+	document.getElementById('agregarUsuario_Telefono').addEventListener('input', function (e) {
+		var value = e.target.value.replace(/[^0-9]/g, '');
+
+		if (value.length > 3) {
+			value = value.substring(0, 3) + '-' + value.substring(3);
+		}
+
+		if (value.length > 7) {
+			value = value.substring(0, 7) + '-' + value.substring(7);
+		}
+
+		if (value.length >= 13) {
+			value = value.replace(/[-+]/g, '');
+			var ultimos4 = value.substring(value.length - 4);
+			value = value.substring(0, value.length - 4);
+			var ultimos3 = value.substring(value.length - 3);
+			value = value.substring(0, value.length - 3);
+			var primeros3 = value.substring(value.length - 3);
+			value = value.substring(0, value.length - 3);
+			value = "+" + value + " " + primeros3 + "-" + ultimos3 + "-" + ultimos4;
+		}
+		e.target.value = value; // Actualiza el valor del campo de entrada
+	});
+</script>
+<!--**********************************
+    Add Employee end
+***********************************-->
