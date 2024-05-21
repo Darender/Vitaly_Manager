@@ -132,47 +132,7 @@ namespace Vitaly_Manager.Controllers
 
 					if (usuario.FotoPerfil != null)
 					{
-						/*
-						using (var memoryStream = new MemoryStream())
-						{
-							usuario.FotoPerfil.CopyTo(memoryStream);
-							byte[] fotoBytes = memoryStream.ToArray();
-
-							using (var ms = new MemoryStream(fotoBytes))
-							{
-								using (var originalImage = System.Drawing.Image.FromStream(ms))
-								{
-									int size = Math.Min(originalImage.Width, originalImage.Height);
-
-									using (var squareImage = new Bitmap(size, size))
-									{
-										using (var graphics = Graphics.FromImage(squareImage))
-										{
-											graphics.FillRectangle(Brushes.White, 0, 0, size, size);
-											graphics.DrawImage(
-												originalImage,
-												new System.Drawing.Rectangle(0, 0, size, size),
-												new System.Drawing.Rectangle(
-													(originalImage.Width - size) / 2,
-													(originalImage.Height - size) / 2,
-													size,
-													size
-												),
-												GraphicsUnit.Pixel
-											);
-										}
-
-										using (var resultStream = new MemoryStream())
-										{
-											squareImage.Save(resultStream, ImageFormat.Jpeg);
-											byte[] resultBytes = resultStream.ToArray();
-
-											command.Parameters.Add("@FotoPerfil", System.Data.SqlDbType.VarBinary, resultBytes.Length).Value = resultBytes;
-										}
-									}
-								}
-							}
-						}*/
+						
 						using (var memoryStream = new MemoryStream())
 						{
 							usuario.FotoPerfil.CopyTo(memoryStream);

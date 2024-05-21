@@ -7,6 +7,11 @@ namespace W3CRM.Controllers
 {
 	public class W3CRMController : Controller
 	{
+        public IActionResult Inventario()
+        {
+            return View();
+        }
+
         public IActionResult Login()
         {
             return View();
@@ -20,7 +25,7 @@ namespace W3CRM.Controllers
 
 			if (controlador.usuarioValido(nuevoUsuario))
 			{
-				return RedirectToAction("Index", "W3CRM");
+				return RedirectToAction("Clientes", "W3CRM");
 			}
             ModelState.AddModelError(string.Empty, "Usuario o contraseña incorrectos.");
             return View();

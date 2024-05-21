@@ -10414,15 +10414,16 @@ label {
   position: fixed; }
 
 .nav-header {
-  height: 3.125rem;
-  width: 15rem;
-  display: inline-block;
-  text-align: left;
-  position: absolute;
-  top: 0;
-  background-color: var(--nav-headbg);
-  transition: all .2s ease;
-  z-index: 5; }
+    height: 3.125rem;
+    width: 15rem;
+    display: inline-block;
+    text-align: left;
+    position: absolute;
+    top: 0;
+    background-color: #FF92A5;
+    transition: all .2s ease;
+    z-index: 5;
+}
   .nav-header .logo-compact {
     display: none; }
   .nav-header .brand-title-color {
@@ -10454,8 +10455,8 @@ label {
         padding-right: 0;
         justify-content: center; } }
   .nav-header .logo-abbr {
-    /* height:45px;
-		width:45px; */ }
+     height:45px;
+		width:45px; }
   .nav-header .logo-mini {
     display: none; }
   .nav-header .logo-color {
@@ -10599,19 +10600,21 @@ label {
     display: none; }
 
 .header {
-  height: 3.125rem;
-  z-index: 1;
-  position: relative;
-  padding: 0rem;
-  background: var(--headerbg);
-  z-index: 3;
-  padding-left: 15rem;
-  padding-top: 0rem;
-  transition: all .2s ease;
-  /* &.is-fixed{
+    height: 3.125rem;
+    z-index: 1;
+    position: relative;
+    padding: 0rem;
+    background-color: #FF92A5 !important;
+    background: var(--headerbg);
+    z-index: 3;
+    padding-left: 15rem;
+    padding-top: 0rem;
+    transition: all .2s ease;
+    /*&.is-fixed{
 		background-color: #36246514;
 		backdrop-filter: blur(6px);
-	} */ }
+	} */
+}
   .header .header-content {
     height: 100%;
     padding-left: 3.1rem;
@@ -10995,6 +10998,7 @@ svg.pulse-svg {
     margin-right: 7px; }
     .header-right .header-media img {
       width: 100%;
+      height: 100%!important;
       border-radius: 100%; }
     @media only screen and (max-width: 35.9375rem) {
       .header-right .header-media {
@@ -32591,7 +32595,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   text-align: center; }
 
 [data-nav-headerbg="color_4"] .nav-header .nav-control {
-  background-color: #202020; }
+    background-color: #fca2b1;
+}
 
 [data-nav-headerbg="color_4"] .nav-header .hamburger .line {
   background: #fff; }
