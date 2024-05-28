@@ -12,7 +12,30 @@ namespace Vitaly_Manager.Controllers
 		public static Usuario? usuarioActual;
         public List<Usuario> ListaUsuarios = new();
 
-		public bool usuarioValido(Usuario usuario)
+        [HttpPost]
+        public IActionResult AgregarUsuario([FromForm] Usuario nuevoUsuario)
+        {
+            ControladorConfiguracion controlador = new ControladorConfiguracion();
+            controlador.InsertarUsuario(nuevoUsuario);
+            return View("../W3CRM/Configuracion", controlador);
+        }
+
+
+        [HttpPost]
+        public IActionResult InicioSesion([FromForm] Usuario nuevoUsuario)
+        {
+            ControladorConfiguracion controlador = new ControladorConfiguracion();
+            controlador.UnirDatos();
+
+            if (controlador.usuarioValido(nuevoUsuario))
+            {
+                return RedirectToAction("Inventario", "W3CRM");
+            }
+            ModelState.AddModelError(string.Empty, "Usuario o contraseña incorrectos.");
+            return View("../W3CRM/Login");
+        }
+
+        public bool usuarioValido(Usuario usuario)
 		{
 			foreach(Usuario item in ListaUsuarios)
 			{

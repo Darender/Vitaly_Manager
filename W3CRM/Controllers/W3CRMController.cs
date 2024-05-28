@@ -7,27 +7,20 @@ namespace W3CRM.Controllers
 {
 	public class W3CRMController : Controller
 	{
-        public IActionResult Inventario()
+        public IActionResult Ventas()
         {
-            return View();
+			ControladorVentas controlador = new ControladorVentas();
+            return View(controlador);
         }
+
+        public IActionResult Inventario()
+		{
+			ControladorInventario controlador = new ControladorInventario();
+			return View(controlador);
+		}
 
         public IActionResult Login()
         {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Login([FromForm] Usuario nuevoUsuario)
-        {
-            ControladorConfiguracion controlador = new ControladorConfiguracion();
-			controlador.UnirDatos();
-
-			if (controlador.usuarioValido(nuevoUsuario))
-			{
-				return RedirectToAction("Clientes", "W3CRM");
-			}
-            ModelState.AddModelError(string.Empty, "Usuario o contraseña incorrectos.");
             return View();
         }
 
@@ -37,14 +30,6 @@ namespace W3CRM.Controllers
 			controlador.UnirDatos();
 			return View(controlador);
 		}
-
-        [HttpPost]
-        public IActionResult Configuracion([FromForm] Usuario nuevoUsuario)
-        { 
-			ControladorConfiguracion controlador = new ControladorConfiguracion();
-			controlador.InsertarUsuario(nuevoUsuario);
-            return View(controlador);
-        }
 
         public IActionResult Clientes()
 		{

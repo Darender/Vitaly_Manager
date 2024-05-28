@@ -7,7 +7,7 @@
 ***********************************-->
 <style>
     .bg-cover {
-        background-image: url('imagenes/fondoLogin.jpg');
+        background-image: url('/imagenes/fondoLogin.jpg') ;
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -29,7 +29,7 @@
                     <h3 class="title">Bienvenida a Vitaly Manager</h3>
                     <p>Inicie sesión en su cuenta para comenzar a usar Vitaly Manager</p>
                 </div>
-                @using (Html.BeginForm("Login", "W3CRM", FormMethod.Post, new { @class = "needs-validation"}))
+                @using (Html.BeginForm("InicioSesion", "ControladorConfiguracion", FormMethod.Post, new { @class = "needs-validation" }))
                 {
                     <div class="mb-4">
                         <label class="mb-1 text-dark">Email</label>

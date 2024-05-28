@@ -1,13 +1,23 @@
-﻿@{
-	ViewData["Title"] = "Clientes";
+﻿@using System.Globalization
+@using Vitaly_Manager.Models
+@using W3CRM.Controllers
+@{
+	ViewData["Title"] = "Inventario";
 }
 <!--**********************************
 	Content body start
 ***********************************-->
+
+<style>
+    .small-margin-bottom {
+        margin-bottom: -30px; /* Ajusta el valor según sea necesario */
+    }
+</style>
+
 <div class="content-body">
     <div class="page-titles">
         <ol class="breadcrumb">
-            <li><h5 class="bc-title">Clientes</h5></li>
+            <li><h5 class="bc-title">Inventario</h5></li>
             <li class="breadcrumb-item">
                 <a href="@Url.Action("Index", "w3crm")">
                     <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -17,7 +27,7 @@
                     Inicio
                 </a>
             </li>
-            <li class="breadcrumb-item active"><a href="javascript:void(0)">Clientes</a></li>
+            <li class="breadcrumb-item active"><a href="javascript:void(0)">Inventario</a></li>
         </ol>
         <a class="text-primary fs-13" data-bs-toggle="offcanvas" href="#offcanvasExample1" role="button" aria-controls="offcanvasExample1">+ Add Task</a>
     </div>
@@ -30,20 +40,17 @@
                 <div class="widget-stat card">
                     <div class="card-body p-4">
                         <div class="media ai-icon">
-                                <span class="me-3 bgl-primary text-primary" style="display: flex; align-items: center;">
-                                    <!-- <i class="ti-user"></i> -->
-                                    <svg id="icon-customers" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M8.79222 13.9396C12.1738 13.9396 15.0641 14.452 15.0641 16.4989C15.0641 18.5458 12.1931 19.0729 8.79222 19.0729C5.40972 19.0729 2.52039 18.5651 2.52039 16.5172C2.52039 14.4694 5.39047 13.9396 8.79222 13.9396Z" stroke="#0d99ff" stroke-linecap="round" stroke-linejoin="round" />
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M8.79223 11.0182C6.57206 11.0182 4.77173 9.21874 4.77173 6.99857C4.77173 4.7784 6.57206 2.97898 8.79223 2.97898C11.0115 2.97898 12.8118 4.7784 12.8118 6.99857C12.8201 9.21049 11.0326 11.0099 8.82064 11.0182H8.79223Z" stroke="#0d99ff" stroke-linecap="round" stroke-linejoin="round" />
-                                        <path d="M15.1095 9.9748C16.5771 9.76855 17.7073 8.50905 17.7101 6.98464C17.7101 5.48222 16.6147 4.23555 15.1782 3.99997" stroke="#0d99ff" stroke-linecap="round" stroke-linejoin="round" />
-                                        <path d="M17.0458 13.5045C18.4675 13.7163 19.4603 14.2149 19.4603 15.2416C19.4603 15.9483 18.9928 16.4067 18.2374 16.6936" stroke="#0d99ff" stroke-linecap="round" stroke-linejoin="round" />
+                                <span class="me-3 bgl-success text-success" style="display: flex; align-items: center;">
+                                    <svg id="icon-revenue" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-dollar-sign">
+                                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
                                     </svg>
                                 </span>
 
                             <div class="media-body">
-                                <p class="mb-1">Clientes totales</p>
-                                    <h4 class="mb-0" id="CantidadUsuarios">@Model.Listaclientes.Count</h4>
-                                    <span class="badge badge-primary" id="Porcentaje30DiasUsuarios">+@Model.ultimos30dias%</span>
+                                <p class="mb-1">Capital del inventario</p>
+                                    <h4 class="mb-0" id="capitalInventario">$@Model.capitalInventario()</h4>
+                                    <span class="badge badge-success" id="Porcentaje30DiasCapital">+@(Model.porcentajeUltimos30DiasCapital())%</span>
                             </div>
                         </div>
                     </div>
@@ -54,17 +61,20 @@
                     <div class="widget-stat card">
                         <div class="card-body p-4">
                             <div class="media ai-icon">
-                                <span class="me-3 bgl-success text-success">
-                                    <svg id="icon-customers" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
-                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                        <circle cx="12" cy="7" r="4"></circle>
-                                    </svg>
-                                </span>
-                                <div class="media-body">
-                                    <p class="mb-1">Activos en los últimos 30 días</p>
-                                    <h4 class="mb-0" id="CantidadActivos">@Model.activosUltimos30</h4>
-                                    <span class="badge badge-success">@Model.porcentajeActivosUltimos30%</span> <!-- Cambié la clase a 'badge-success' -->
-                                </div>
+                                <span class="me-3 bgl-warning text-warning">
+								    <svg id="icon-orders" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+									    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+									    <polyline points="14 2 14 8 20 8"></polyline>
+									    <line x1="16" y1="13" x2="8" y2="13"></line>
+									    <line x1="16" y1="17" x2="8" y2="17"></line>
+									    <polyline points="10 9 9 9 8 9"></polyline>
+								    </svg>
+							    </span>
+							    <div class="media-body">
+								    <p class="mb-1">Proximo suplimiento</p>
+								    <h4 class="mb-0" id="proximaLlegadaProducto">@Model.ObtenerProximaLlegadaProducto()</h4>
+								    <span class="badge badge-warning" id="proximaLlegadaFecha">@Model.ObtenerProximaLlegadaFecha()</span>
+							    </div>
                             </div>
                         </div>
                     </div>
@@ -74,19 +84,18 @@
                     <div class="widget-stat card">
                         <div class="card-body p-4">
                             <div class="media ai-icon">
-                                <span class="me-3 bgl-primary text-primary">
-                                    <!-- <i class="ti-user"></i> -->
-                                    <svg id="icon-customers" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
-                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                        <circle cx="12" cy="7" r="4"></circle>
+                                <span class="me-3 bgl-danger text-danger">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M4.81409 20.4368H19.1971C20.7791 20.4368 21.7721 18.7268 20.9861 17.3528L13.8001 4.78781C13.0091 3.40481 11.0151 3.40381 10.2231 4.78681L3.02509 17.3518C2.23909 18.7258 3.23109 20.4368 4.81409 20.4368Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M12.0024 13.4148V10.3148" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M11.995 16.5H12.005" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
                                 </span>
                                 <div class="media-body">
-                                    <p class="mb-1">Ultimo cliente agregado</p>
-                                    <h4 class="mb-0" id="CantidadActivos">@Model.Listaclientes[Model.Listaclientes.Count - 1].Nombres @Model.Listaclientes[Model.Listaclientes.Count - 1].Apellidos</h4>
-                                    <span class="badge badge-primary">@Model.Listaclientes[Model.Listaclientes.Count - 1].Ingreso.ToString("yyyy-MM-dd")</span>
+                                    <p class="mb-1">Proximo vencimiento</p>
+                                    <h4 class="mb-0" id="proximaVencimientoProducto" >@Model.ObtenerProximaVencimientoProducto()</h4>
+                                    <span class="badge badge-danger" id="proximaVencimientoFecha">@Model.ObtenerProximaVencimientoFecha()</span>
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -94,223 +103,127 @@
             </div>
 
             <div class="row">
-            <div class="col-lg-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Agregar nuevo cliente</h4>
-                    </div>
-                    <div class="card-body">
-							<div class="form-validation">
-                                <form class="needs-validation" action="/W3Crm/Clientes" method="post" novalidate id="formulario">
-                                   <div class="mb-3 row">
-                                        <input type="hidden" id="validacion00_ID" name="id" value="">
-
-                                        <label class="col-lg-2 col-form-label" for="validacion01_Nombres">
-                                                Nombre(s)
-                                                <span class="text-danger">*</span>
-                                            </label>
-                                            <div class="col-lg-10">
-                                            <input type="text" class="form-control" id="validacion01_Nombres" placeholder="El nombre del cliente..." name="nombre" required>
-                                            <div class="invalid-feedback" id="invalidFeedback01">
-                                                    El nombre no puede estar vacio ni contener numeros o caractes especiales.
-                                                </div>
-                                            </div>
-                                   </div>
-                                   <div class="mb-3 row">
-                                        <label class="col-lg-2 col-form-label" for="validacion02_Apellidos">
-                                                Apellidos
-                                             </label>
-                                            <div class="col-lg-10">
-                                            <input type="text" class="form-control" id="validacion02_Apellidos" placeholder="El apellido del cliente..." name="apellido">
-                                            <div class="invalid-feedback" id="invalidFeedback02">
-                                                El apellido no puede contener numeros o caractes especiales.
-                                            </div>
-                                            </div>
-                                   </div>
-                                   <div class="mb-3 row">
-                                        <label class="col-lg-2 col-form-label" for="validacion03_Telefonos">
-                                                Telefono
-                                                <span class="text-danger">*</span>
-                                            </label>
-                                            <div class="col-lg-10">
-                                            <input type="text" class="form-control" id="validacion03_Telefonos" placeholder="686-999-0000" name="telefono" required>
-                                            <div class="invalid-feedback" id="invalidFeedback03">
-                                                    Porfavor inserte el telefono del nuevo usuario.
-                                                </div>
-                                            </div>
-                                        </div>
-                                   <div class="mb-3 row">
-                                        <label class="col-lg-2 col-form-label" for="validacion04_Edades">
-                                                Edad
-                                            </label>
-                                            <div class="col-lg-10">
-                                            <input type="text" class="form-control" id="validacion04_Edades" placeholder="21" name="edad">
-                                            <div class="invalid-feedback" id="invalidFeedback04">
-                                                La edad no puede tener letras o caracteres esperciales.
-                                            </div>
-                                        </div>
-                                        </div>
-                                    <div class="mb-3 row">
-                                        <label class="col-lg-2 col-form-label" for="validacion04_Genero">
-                                            Genero
-                                        </label>
-                                        <div class="col-lg-10">
-                                            <select class="wide form-control" id="validacion05_Genero" name="genero">
-                                                <option selected disabled value="" id="validacion05_Genero_Default">Porfavor seleccione</option>
-                                                <option value="Hombre" id="validacion05_Genero_Hombre">Hombre</option>
-                                                <option value="Mujer" id="validacion05_Genero_Mujer">Mujer</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="mb-12 row">
-                                        <div class="col-lg-12">
-                                            <button type="submit" class="btn btn-primary py-2 w-100" id="boton_subir">Agregar</button>
-                                        </div>
-                                    </div>
-
-                                </form>
-                            </div>
-                    </div>
-                </div>
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Suplir inventario</h4>
             </div>
-            
-            <div class="col-lg-6">
-                    <div class="card">
-                        <div class="card-header  border-0 pb-0">
-                            <h4 class="card-title">Notifications</h4>
-                        </div>
-                        <div class="card-body p-0">
-                            <div id="DZ_W_Todo1" class="widget-media dz-scroll height370 my-4 px-4">
-                                <ul class="timeline">
-                                    <li>
-                                        <div class="timeline-panel">
-                                            <div class="media me-2">
-                                                <img alt="image" width="50" src="~/w3crm/images/avatar/1.jpg">
-                                            </div>
-                                            <div class="media-body">
-                                                <h5 class="mb-1">Dr sultads Send you Photo</h5>
-                                                <small class="d-block">29 July 2020 - 02:26 PM</small>
-                                            </div>
-                                            <div class="dropdown">
-                                                <button type="button" class="btn btn-primary light sharp" data-bs-toggle="dropdown">
-                                                    <svg width="18px" height="18px" viewBox="0 0 24 24" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect x="0" y="0" width="24" height="24" /><circle fill="#000000" cx="5" cy="12" r="2" /><circle fill="#000000" cx="12" cy="12" r="2" /><circle fill="#000000" cx="19" cy="12" r="2" /></g></svg>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-end">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Delete</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="timeline-panel">
-                                            <div class="media me-2 media-info">
-                                                KG
-                                            </div>
-                                            <div class="media-body">
-                                                <h5 class="mb-1">Resport created successfully</h5>
-                                                <small class="d-block">29 July 2020 - 02:26 PM</small>
-                                            </div>
-                                            <div class="dropdown">
-                                                <button type="button" class="btn btn-info light sharp" data-bs-toggle="dropdown">
-                                                    <svg width="18px" height="18px" viewBox="0 0 24 24" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect x="0" y="0" width="24" height="24" /><circle fill="#000000" cx="5" cy="12" r="2" /><circle fill="#000000" cx="12" cy="12" r="2" /><circle fill="#000000" cx="19" cy="12" r="2" /></g></svg>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-end">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Delete</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="timeline-panel">
-                                            <div class="media me-2 media-success">
-                                                <i class="fa fa-home"></i>
-                                            </div>
-                                            <div class="media-body">
-                                                <h5 class="mb-1">Reminder : Treatment Time!</h5>
-                                                <small class="d-block">29 July 2020 - 02:26 PM</small>
-                                            </div>
-                                            <div class="dropdown">
-                                                <button type="button" class="btn btn-success light sharp" data-bs-toggle="dropdown">
-                                                    <svg width="18px" height="18px" viewBox="0 0 24 24" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect x="0" y="0" width="24" height="24" /><circle fill="#000000" cx="5" cy="12" r="2" /><circle fill="#000000" cx="12" cy="12" r="2" /><circle fill="#000000" cx="19" cy="12" r="2" /></g></svg>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-end">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Delete</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="timeline-panel">
-                                            <div class="media me-2">
-                                                <img alt="image" width="50" src="~/w3crm/images/avatar/1.jpg">
-                                            </div>
-                                            <div class="media-body">
-                                                <h5 class="mb-1">Dr sultads Send you Photo</h5>
-                                                <small class="d-block">29 July 2020 - 02:26 PM</small>
-                                            </div>
-                                            <div class="dropdown">
-                                                <button type="button" class="btn btn-primary light sharp" data-bs-toggle="dropdown">
-                                                    <svg width="18px" height="18px" viewBox="0 0 24 24" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect x="0" y="0" width="24" height="24" /><circle fill="#000000" cx="5" cy="12" r="2" /><circle fill="#000000" cx="12" cy="12" r="2" /><circle fill="#000000" cx="19" cy="12" r="2" /></g></svg>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-end">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Delete</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="timeline-panel">
-                                            <div class="media me-2 media-danger">
-                                                KG
-                                            </div>
-                                            <div class="media-body">
-                                                <h5 class="mb-1">Resport created successfully</h5>
-                                                <small class="d-block">29 July 2020 - 02:26 PM</small>
-                                            </div>
-                                            <div class="dropdown">
-                                                <button type="button" class="btn btn-danger light sharp" data-bs-toggle="dropdown">
-                                                    <svg width="18px" height="18px" viewBox="0 0 24 24" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect x="0" y="0" width="24" height="24" /><circle fill="#000000" cx="5" cy="12" r="2" /><circle fill="#000000" cx="12" cy="12" r="2" /><circle fill="#000000" cx="19" cy="12" r="2" /></g></svg>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-end">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Delete</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="timeline-panel">
-                                            <div class="media me-2 media-primary">
-                                                <i class="fa fa-home"></i>
-                                            </div>
-                                            <div class="media-body">
-                                                <h5 class="mb-1">Reminder : Treatment Time!</h5>
-                                                <small class="d-block">29 July 2020 - 02:26 PM</small>
-                                            </div>
-                                            <div class="dropdown">
-                                                <button type="button" class="btn btn-primary light sharp" data-bs-toggle="dropdown">
-                                                    <svg width="18px" height="18px" viewBox="0 0 24 24" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect x="0" y="0" width="24" height="24" /><circle fill="#000000" cx="5" cy="12" r="2" /><circle fill="#000000" cx="12" cy="12" r="2" /><circle fill="#000000" cx="19" cy="12" r="2" /></g></svg>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-end">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Delete</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
+            <div class="card-body">
+                <div class="form-validation">
+                    <form class="needs-validation" action="/ControladorInventario/AlterarInstancias" method="post" novalidate id="formulario">
+                        <input type="hidden" id="formulario_instancia_id" name="ID" value="">
+                        <div class="mb-3 row">
+                            <label class="col-lg-3 col-form-label" for="formulario_instancia_tipo">
+                                Tipo
+                            </label>
+                            <div class="col-lg-9">
+                                <select class="wide form-control" id="formulario_instancia_tipo" name="Tipo" required onchange="cargarProductos()">
+                                    <option selected disabled value="" id="formulario_tipo_vacio1">Por favor seleccione</option>
+                                    @foreach (var tipo in Model.ListaTipos)
+                                    {
+                                        <option value="@tipo.ID">@tipo.Nombre</option>
+                                    }
+                                </select>
                             </div>
                         </div>
-                    </div>
+
+                        <div class="mb-3 row">
+                            <label class="col-lg-3 col-form-label" for="formulario_instancia_producto">
+                                Producto
+                            </label>
+                            <div class="col-lg-9">
+                                <select class="wide form-control" id="formulario_instancia_producto" name="Producto_id" required>
+                                    <option selected disabled value="" id="formulario_producto_vacio">Por favor seleccione</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label class="col-lg-3 col-form-label" for="formulario_instancia_cantidad">
+                                Cantidad
+                            </label>
+                            <div class="col-lg-9">
+                                <input type="number" step="any" class="form-control" id="formulario_instancia_cantidad" placeholder="10" name="Cantidad" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 row">
+                            <label class="col-lg-3 col-form-label" for="formulario_instancia_costo">
+                                Costo/Unidad
+                            </label>
+                            <div class="col-lg-9">
+                                 <div class="input-group">
+									<div class="input-group-text">$</div>
+                                    <input type="number" step="any" class="form-control" id="formulario_instancia_costo" placeholder="65.5" name="Costo" required>
+                                 </div>
+                            </div>
+                        </div>
+
+                       <div class="mb-3 row">
+                                <label class="col-lg-3 col-form-label" for="formulario_instancia_vencimiento">Vencimiento</label>
+                                <div class="col-lg-9">
+                                    <input name="Vencimiento" class="datepicker-default form-control" id="formulario_instancia_vencimiento">                            
+                                </div>
+                        </div>
+
+                         <div class="mb-3 row">
+                                <label class="col-lg-3 col-form-label" for="formulario_instancia_llegada">Llegada</label>
+                                <div class="col-lg-9">
+                                    <input name="Llegada" class="datepicker-default form-control" id="formulario_instancia_llegada">                            
+                                </div>
+                        </div>
+
+                        <div class="mb-12 row">
+                            <div class="col-lg-12">
+                                <button type="submit" class="btn btn-primary py-2 w-100" id="boton_subir">Agregar</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-            
             </div>
         </div>
-        
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header border-0 pb-0">
+                <h4 class="card-title">Notificaciones</h4>
+            </div>
+            <div class="card-body p-0">
+                <div id="DZ_W_Todo1" class="widget-media dz-scroll height370 my-4 px-4">
+                    <ul class="timeline">
+                        <li>
+                            <ul class="timeline" id="tablaNotificacionesInventario">
+                                @foreach (Movimiento movimiento in Model.ObtenerListaMovimientos())
+                                {
+                                   <div class="timeline-panel" id="movimiento_@movimiento.ID">
+                                       <div class="media me-2">
+                                           <img alt="image" width="50" src="~/imagenes/usuarios/imagen_@(movimiento.Usuario_id).jpg">
+                                       </div>
+                                       <div class="media-body">
+                                           <h5 class="mb-1">@movimiento.Titulo</h5>
+                                           <small class="d-block">@movimiento.Ingreso.ToString("dd MMMM yyyy - hh:mm tt", CultureInfo.InvariantCulture)</small>
+                                       </div>
+                                       <div class="dropdown">
+                                           <button type="button" class="btn btn-primary light sharp" data-bs-toggle="dropdown">
+                                               <svg width="18px" height="18px" viewBox="0 0 24 24" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect x="0" y="0" width="24" height="24" /><circle fill="#000000" cx="5" cy="12" r="2" /><circle fill="#000000" cx="12" cy="12" r="2" /><circle fill="#000000" cx="19" cy="12" r="2" /></g></svg>
+                                           </button>
+                                           <div class="dropdown-menu dropdown-menu-end">
+                                                <a class="dropdown-item" onclick="showSweetAlert('@Html.Raw(movimiento.Titulo)', '@Html.Raw(movimiento.Descripcion)')" href="#">Detalles</a>
+                                               <a class="dropdown-item" onclick="eliminarMovimiento('@Html.Raw(movimiento.ID)')" href="#">Eliminar</a>
+                                           </div>
+                                       </div>
+                                   </div>
+                                }
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+        </div>
         <!-- Database -->
         <div class="tab-content" id="myTabContent-2">
             <div class="tab-pane fade show active" id="withoutSpace" role="tabpanel" aria-labelledby="home-tab-2">
@@ -319,38 +232,36 @@
 						<table id="example3" class="display table" style="min-width: 845px">
 				            <thead>
 					            <tr>
-						            <th>Nombre(s)</th>
-						            <th>Apellidos</th>
-						            <th>Telefono</th>
-						            <th>Edad</th>
-						            <th>Genero</th>
-						            <th>Ultima consulta</th>
+						            <th>Tipo</th>
+						            <th>Nombre</th>
+						            <th>Proveedor</th>
+						            <th>Cantidad</th>
+						            <th>Costo Total</th>
+						            <th>Fecha vencimiento</th>
 						            <th>Fecha de ingreso</th>
 						            <th>Accion</th>
 					            </tr>
 				            </thead>
 				            <tbody>
-                                @foreach (var Cliente in Model.Listaclientes)
+                                @foreach (Inventario_Instancia Instancia in Model.ListaInstancias)
                                 {
-                                    <tr id="@Cliente.ID">
-                                        <td>@Cliente.Nombres</td>
-                                        <td>@Cliente.Apellidos</td>
-                                        <td><a href="javascript:void(0);"><strong>@Cliente.Telefono</strong></a></td>
-                                        <td>@Cliente.Edad</td>
-                                        <td>@Cliente.Genero</td>
-                                        @if (Cliente.Ultima_Conusulta != null && Cliente.Ultima_Conusulta != DateTime.Parse("1900-01-01 00:00:00.000"))
-                                        {
-                                            <td>@Cliente.Ultima_Conusulta</td>
+                                    <tr id="Instancia_@Instancia.ID">
+                                        <td>@Model.getTipoNombre(Instancia)</td>
+                                        <td>@Model.getProducto(Instancia).Nombre</td>
+                                        <td>@Model.getProducto(Instancia).Proveedor</td>
+                                        <td>@Instancia.Cantidad</td>
+                                        <td><a href="javascript:void(0);"><strong>$@(Instancia.Costo * Instancia.Cantidad)</strong></a></td>
+                                        <td>
+                                            @(Instancia.Vencimiento != null && Instancia.Vencimiento != DateTime.Parse("1900-01-01 00:00:00.000") 
+                                                ? Instancia.Vencimiento?.ToShortDateString() 
+                                                : string.Empty)
+                                        </td>
 
-                                        } else
-                                        {
-                                            <td></td>
-                                        }
-                                        <td>@Cliente.Ingreso.ToShortDateString()</td>
+                                        <td>@Instancia.Ingreso.ToShortDateString()</td>
                                         <td>
                                             <div class="d-flex">
-                                                <a href="#" class="btn btn-primary shadow btn-xs sharp me-1" onclick="modificarClientes('@Cliente.ID')"><i class="fas fa-pencil-alt"></i></a>
-                                                <a href="#" class="btn btn-danger shadow btn-xs sharp" onclick="eliminarCliente('@Cliente.ID')"><i class="fa fa-trash"></i></a>
+                                                <a href="#" class="btn btn-primary shadow btn-xs sharp me-1" onclick="modificarInstancia('@Instancia.ID')"><i class="fas fa-pencil-alt"></i></a>
+                                                <a href="#" class="btn btn-danger shadow btn-xs sharp" onclick="eliminarInstancia('@Instancia.ID')"><i class="fa fa-trash"></i></a>
                                             </div>
                                         </td>
                                     </tr>
@@ -361,6 +272,158 @@
                 </div>
             </div
         </div>
+    
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-header">
+                        <h4 class="card-title">Nuevo Producto</h4>
+                    </div>
+                        <div class="card-body">
+                            <div class="form-validation">
+                                <form class="needs-validation" action="/ControladorInventario/AgregarProducto" method="post" novalidate id="formulario">
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-3 col-form-label" for="formulario_instancia_tipo">Tipo</label>
+                                        <div class="col-lg-9">
+                                            <select class="wide form-control" id="formulario_instancia_tipo" name="Tipo" required>
+                                                <option selected disabled value="" id="formulario_tipo_vacio">Por favor seleccione</option>
+                                                @foreach (Tipo_inventario tipo in Model.ListaTipos)
+                                                {
+                                                    <option value="@tipo.ID">@tipo.Nombre</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <input type="hidden" id="formulario_instancia_id" name="ID" value="">
+
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-3 col-form-label" for="formulario_instancia_nombre">
+                                            Nombre <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-lg-9">
+                                            <input type="text" class="form-control" id="formulario_instancia_nombre" placeholder="El nombre del producto..." name="Nombre" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-3 col-form-label" for="formulario_instancia_proveedor">
+                                            Proveedor <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-lg-9">
+                                            <input type="text" class="form-control" id="formulario_instancia_proveedor" placeholder="El nombre del proveedor..." name="Proveedor" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-12 row">
+                                        <div class="col-lg-12">
+                                            <button type="submit" class="btn btn-primary py-2 w-100" id="boton_subir">Agregar</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="col-xl-12">
+                    <div class="widget-stat card">
+                        <div class="card-body p-4">
+                            <div class="media ai-icon">
+                                    <span class="me-3 bgl-primary text-primary" style="display: flex; align-items: center;">
+                                        <!-- <i class="ti-user"></i> -->
+                                        <svg id="icon-customers" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
+                                            <path d="M11.9951 16.6768V14.1398" stroke="#0d99ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M18.19 5.3302C19.88 5.3302 21.24 6.7002 21.24 8.3902V11.8302C18.78 13.2702 15.53 14.1402 11.99 14.1402C8.45 14.1402 5.21 13.2702 2.75 11.8302V8.3802C2.75 6.6902 4.12 5.3302 5.81 5.3302H18.19Z" stroke="#0d99ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M15.4951 5.32582V4.95982C15.4951 3.73982 14.5051 2.74982 13.2851 2.74982H10.7051C9.48512 2.74982 8.49512 3.73982 8.49512 4.95982V5.32582" stroke="#0d99ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M2.77441 15.483L2.96341 17.992C3.09141 19.683 4.50041 20.99 6.19541 20.99H17.7944C19.4894 20.99 20.8984 19.683 21.0264 17.992L21.2154 15.483" stroke="#0d99ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </span>
+
+                                <div class="media-body">
+                                    <p class="mb-1">Productos Totales</p>
+                                        <h4 class="mb-0" id="cantidadProductos">@Model.ListaProductos.Count</h4>
+                                        <span class="badge badge-primary" id="Porcentaje30DiasProdcutos">+@Model.NuevosProductos_porcentaje()%>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+            
+
+            <div class="col-xl-4">
+                <div class="card dz-card" id="bootstrap-table1">
+                    <div class="card-header flex-wrap border-0 small-margin-bottom">
+                        <div>
+                            <h4 class="card-title"><strong>Proximos Vencimientos</strong></h4>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-responsive-sm">
+	                        <thead>
+		                        <tr>
+			                        <th>Producto</th>
+                                    <th>Costo Total</th>
+                                    <th>Vencimiento</th>
+		                        </tr>
+	                        </thead>
+	                        <tbody id="tablaProximosVencimientos">
+                                @foreach (Producto_Completo instancia in Model.ObtenerInstanciasCercanasAVencimiento())
+                                            {
+                                            <tr id="Vencimiento_@instancia.Instancia_id">
+                                                <td>@instancia.Nombre_Producto</td>
+                                                <td>$@(instancia.Cantidad * instancia.Costo)</td>
+                                                <td>
+                                                    @(instancia.Vencimiento != null && instancia.Vencimiento != DateTime.Parse("1900-01-01 00:00:00.000")
+                                                    ? instancia.Vencimiento?.ToShortDateString()
+                                                    : string.Empty)
+                                                </td>
+                                            </tr>
+                                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4">
+                <div class="card dz-card" id="bootstrap-table1">
+                    <div class="card-header flex-wrap border-0 small-margin-bottom">
+                        <div>
+                            <h4 class="card-title"><strong>Proximas Llegadas</strong></h4>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-responsive-sm">
+	                        <thead>
+		                        <tr>
+			                        <th>Producto</th>
+                                    <th>Proveedor</th>
+                                    <th>Llegada</th>
+		                        </tr>
+	                        </thead>
+	                        <tbody id="tablaProximasLlegadas">
+                                @foreach (Producto_Completo instancia in Model.ObtenerInstanciasCercanasALlegar())
+                                            {
+                                            <tr id="Instancia_@("Llegada_" + instancia.Instancia_id)">
+                                                <td>@instancia.Nombre_Producto</td>
+                                                <td>@instancia.Proveedor</td>
+                                                <td>
+                                                    @(instancia.Llegada != null && instancia.Llegada != DateTime.Parse("1900-01-01 00:00:00.000")
+                                                    ? instancia.Llegada?.ToShortDateString()
+                                                    : string.Empty)
+                                                </td>
+                                            </tr>
+                                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <!--**********************************
@@ -368,7 +431,15 @@
 ***********************************-->
 @section w3crm_style
 	{
+    <link href="~/w3crm/vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
 	<link href="~/w3crm/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+
+        <!-- Daterange picker -->
+    <link href="~/w3crm/vendor/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+
+    <!-- Pick date -->
+    <link rel="stylesheet" href="~/w3crm/vendor/pickadate/themes/default.css">
+    <link rel="stylesheet" href="~/w3crm/vendor/pickadate/themes/default.date.css">
 }
 
 @section w3crm_script
@@ -376,7 +447,10 @@
 	<!--**********************************
 		Scripts
 	***********************************-->
-	<script src="~/js/js_clientes.js"></script>
+
+    <script src="~/w3crm/vendor/sweetalert2/dist/sweetalert2.min.js"></script>
+    <script src="~/w3crm/js/plugins-init/sweetalert.init.js"></script>
+    <script src="~/w3crm/js/styleSwitcher.js"></script>
 
     <!-- Required vendors -->
     <script src="~/w3crm/vendor/global/global.min.js"></script>
@@ -394,10 +468,28 @@
      <!-- code-highlight -->
     <script src="~/w3crm/js/highlight.min.js"></script>
 
+    <!-- momment js is must -->
+    <script src="~/w3crm/vendor/moment/moment.min.js"></script>
+    <script src="~/w3crm/vendor/bootstrap-daterangepicker/daterangepicker.js"></script>
+
+    <!-- pickdate -->
+    <script src="~/w3crm/vendor/pickadate/picker.js"></script>
+    <script src="~/w3crm/vendor/pickadate/picker.time.js"></script>
+    <script src="~/w3crm/vendor/pickadate/picker.date.js"></script>
+
+     <!-- Pickdate -->
+    <script src="~/w3crm/js/plugins-init/pickadate-init.js"></script>
+    <script src="~/w3crm/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+    <script src="~/w3crm/js/custom.js"></script>
+    <script src="~/w3crm/js/deznav-init.js"></script>
+    <script src="~/w3crm/js/demo.js"></script>
+    <script src="~/w3crm/js/styleSwitcher.js"></script>
+
     <script src="~/w3crm/js/custom.js"></script>
     <script src="~/w3crm/js/deznav-init.js"></script>
     <script src="~/w3crm/js/demo.js"></script>
 
+    
 
     <script>
         hljs.highlightAll();
@@ -416,23 +508,74 @@
     <script>
         $(document).ready(function () {
             validarNombres();
-            validarApellidos();
-            validarEdades();
+            validarProveedor();
         });
 
-        function validarEdades() {
-            $('#validacion04_Edades').on('keypress', function (e) {
-                var charCode = (e.which) ? e.which : e.keyCode;
-                var regex = /^[0-9\s]*$/; 
+        function recargarTablaNotificaciones() {
+        // Selecciona el elemento ul
+            var ul = document.getElementById('tablaNotificacionesInventario');
 
-                if (!regex.test(String.fromCharCode(charCode))) {
-                    return false;
-                }
+            // Elimina todo el contenido del ul
+            ul.innerHTML = "";
+
+            while (ul.firstChild) {
+                ul.removeChild(ul.firstChild);
+            }
+
+            $.get('/ControladorInventario/ObtenerListaMovimientos', function (data) {
+                // Iterar sobre los datos y construir las filas de la tabla
+                data.forEach(function (movimiento) {
+                    console.log(movimiento);
+                    // Crea un nuevo elemento li para cada movimiento
+                    var li = document.createElement('li');
+                    li.className = 'timeline-panel';
+
+                    // Crea el contenido HTML dentro del li
+                    li.innerHTML = `
+                            <div class="media me-2">
+                                <img alt="image" width="50" src="/imagenes/usuarios/imagen_${movimiento.usuario_id}.jpg">
+                            </div>
+                            <div class="media-body">
+                                <h5 class="mb-1">${movimiento.titulo}</h5>
+                                <small class="d-block">${new Date(movimiento.ingreso).toLocaleString()}</small>
+                            </div>
+                            <div class="dropdown">
+                                <button type="button" class="btn btn-primary light sharp" data-bs-toggle="dropdown">
+                                    <svg width="18px" height="18px" viewBox="0 0 24 24" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect x="0" y="0" width="24" height="24" /><circle fill="#000000" cx="5" cy="12" r="2" /><circle fill="#000000" cx="12" cy="12" r="2" /><circle fill="#000000" cx="19" cy="12" r="2" /></g></svg>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-end">
+                                    <a class="dropdown-item" onclick="showSweetAlert('${movimiento.titulo}', '${movimiento.descripcion}')" href="#">Detalles</a>
+                                    <a class="dropdown-item" href="#">Eliminar</a>
+                                </div>
+                            </div>
+                        `;
+
+                    // Agrega el li al ul
+                    ul.appendChild(li);
+                });
+            });
+        }
+
+        function eliminarMovimiento(ID) {
+            document.getElementById('movimiento_'+ID).remove();
+            $.ajax({
+                url: '/ControladorInventario/EliminarMovimiento', 
+                type: 'DELETE',
+                data: { id: ID },
+            });
+        }
+
+        function showSweetAlert(titulo, descripcion) {
+            Swal.fire({
+                title: titulo,
+                text: descripcion,
+                icon: 'info',
+                confirmButtonText: 'OK'
             });
         }
 
         function validarNombres() {
-            $('#validacion01_Nombres').on('keypress', function (e) {
+            $('#formulario_instancia_nombre').on('keypress', function (e) {
                 var charCode = (e.which) ? e.which : e.keyCode;
                 var regex = /^[a-zA-Z\s]*$/;
 
@@ -442,10 +585,10 @@
             });
         }
 
-        function validarApellidos() {
-            $('#validacion02_Apellidos').on('keypress', function (e) {
+        function validarProveedor() {
+            $('#formulario_instancia_proveedor').on('keypress', function (e) {
                 var charCode = (e.which) ? e.which : e.keyCode;
-                var regex = /^[a-zA-Z\s]*$/; 
+                var regex = /^[a-zA-Z\s]*$/;
 
                 if (!regex.test(String.fromCharCode(charCode))) {
                     return false;
@@ -453,29 +596,176 @@
             });
         }
 
-        document.getElementById('validacion03_Telefonos').addEventListener('input', function (e) {
-            var value = e.target.value.replace(/[^0-9]/g, '');
+       function cargarProductos() {
+        return new Promise((resolve, reject) => {
+            var tipoSeleccionado = document.getElementById("formulario_instancia_tipo").value;
 
-            if (value.length > 3) {
-                value = value.substring(0, 3) + '-' + value.substring(3);
-            }
+            // Realiza una petición AJAX para obtener los productos del tipo seleccionado
+            fetch('/ControladorInventario/ObtenerProductosPorTipo?tipo=' + tipoSeleccionado)
+                .then(response => response.json())
+                .then(data => {
+                    var selectProductos = document.getElementById("formulario_instancia_producto");
+                    selectProductos.innerHTML = '<option selected disabled value="" id="formulario_prodcuto_vacio">Por favor seleccione</option>';
 
-            if (value.length > 7) {
-                value = value.substring(0, 7) + '-' + value.substring(7);
-            }
+                    data.forEach(producto => {
+                        var option = document.createElement("option");
+                        option.text = producto.nombre + " - " + producto.proveedor;
+                        option.value = producto.id;
+                        selectProductos.appendChild(option);
+                    });
 
-            if (value.length >= 13) {
-                value = value.replace(/[-+]/g, '');
-                var ultimos4 = value.substring(value.length - 4);
-                value = value.substring(0, value.length - 4);
-                var ultimos3 = value.substring(value.length - 3);
-                value = value.substring(0, value.length - 3);
-                var primeros3 = value.substring(value.length - 3);
-                value = value.substring(0, value.length - 3);
-                value = "+" + value + " " + primeros3 + "-" + ultimos3 + "-" + ultimos4;
-            }
-            e.target.value = value; // Actualiza el valor del campo de entrada
+                    resolve();
+                })
+                .catch(error => {
+                    console.error('Error al obtener productos:', error);
+                    reject(error);
+                });
         });
+    }
+
+    function modificarInstancia(idInstancia) {
+    console.log(idInstancia);
+    $.ajax({
+        url: '/ControladorInventario/ObtenerInstancia', // Ajusta la URL según sea necesario
+        type: 'GET',
+        data: { id: idInstancia },
+        success: function (response) {
+            console.log(response);
+            document.getElementById('formulario_instancia_id').value = response.instancia_id;
+            document.getElementById('formulario_instancia_tipo').value = response.tipo_id;
+            cargarProductos().then(() => {
+                document.getElementById('formulario_instancia_producto').value = response.producto_id;
+            });
+            document.getElementById('formulario_instancia_cantidad').value = response.cantidad;
+            document.getElementById('formulario_instancia_costo').value = response.costo;
+            document.getElementById('formulario_instancia_vencimiento').value = response.vencimiento;
+            document.getElementById('formulario_instancia_llegada').value = response.llegada;
+
+            document.getElementById('boton_subir').textContent = "Modificar";
+            document.querySelector('.card-title').textContent = 'Modificar datos de una instancia';
+
+        },
+        error: function (error) {
+            console.error('Error al obtener los datos de la instancia:', error);
+        }
+    });
+}
+
+function eliminarInstancia(idInstancia) {
+    // Eliminar la fila
+    var fila = document.getElementById("Instancia_" + idInstancia);
+    if (fila) {
+        fila.parentNode.removeChild(fila);
+
+        // Enviar solicitud AJAX al servidor
+        $.ajax({
+            url: '/ControladorInventario/Eliminar', // Ajusta la URL según sea necesario
+            type: 'DELETE',
+            data: { id: idInstancia },
+            success: function (response) {
+                actualizarElementosHTML();
+            },
+            error: function (error) {
+                // Manejar errores
+                console.error(error);
+            }
+        });
+    }
+}
+
+function actualizarElementosHTML() {
+    // Hacer una solicitud AJAX para obtener los datos actualizados
+    $.ajax({
+        url: '/ControladorInventario/Actualizar', // Ajusta la URL según sea necesario
+        type: 'GET',
+        success: function (data) {
+            // Actualizar elementos HTML con los nuevos datos recibidos
+            $("#capitalInventario").text(data.proximaCapitalInventario);
+            $("#Porcentaje30DiasCapital").text("+"+data.proximaporcentajeUltimos30DiasCapital+"%");
+            $("#proximaVencimientoProducto").text(data.proximaVencimientoProducto);
+            $("#proximaVencimientoFecha").text(data.proximaVencimientoFecha);
+            $("#proximaLlegadaProducto").text(data.proximaLlegadaProducto);
+            $("#proximaLlegadaFecha").text(data.proximaLlegadaFecha);
+            recargarTablaVencimiento();
+            recargarTablaLlegada();
+            recargarTablaNotificaciones();
+        },
+        error: function (error) {
+            // Manejar errores
+            console.error(error);
+        }
+    });
+}
+
+function recargarTablaLlegada() {
+    // Selecciona el elemento tbody
+    var tbody = document.getElementById('tablaProximasLlegadas');
+
+    // Elimina todo el contenido del tbody
+    tbody.innerHTML = "";
+
+    while (tbody.firstChild) {
+        tbody.removeChild(tbody.firstChild);
+    }
+
+    $.get('/ControladorInventario/ObtenerInstanciasCercanasALlegar', function (data) {
+        // Iterar sobre los datos y construir las filas de la tabla
+        data.forEach(function (instancia) {
+            console.log(instancia);
+            var tr = document.createElement('tr');
+            tr.id = '"Llegada_"' + instancia.id;
+
+            var td1 = document.createElement('td');
+            td1.textContent = instancia.nombre_Producto;
+            tr.appendChild(td1);
+
+            var td2 = document.createElement('td');
+            td2.textContent = Instancia.nombre_Proveedor;
+            tr.appendChild(td2);
+
+            var td3 = document.createElement('td');
+            td3.textContent = instancia.vencimiento ? new Date(instancia.vencimiento).toLocaleDateString() : '';
+            tr.appendChild(td3);
+
+            tbody.appendChild(tr);
+        });
+    });
+}
+
+function recargarTablaVencimiento() {
+    // Selecciona el elemento tbody
+    var tbody = document.getElementById('tablaProximosVencimientos');
+
+    // Elimina todo el contenido del tbody
+    tbody.innerHTML = "";
+
+    while (tbody.firstChild) {
+        tbody.removeChild(tbody.firstChild);
+    }
+
+    $.get('/ControladorInventario/ObtenerInstanciasCercanasAVencimiento', function (data) {
+        // Iterar sobre los datos y construir las filas de la tabla
+        data.forEach(function (instancia) {
+            console.log(instancia);
+            var tr = document.createElement('tr');
+            tr.id = 'Vencimiento_' + instancia.id;
+
+            var td1 = document.createElement('td');
+            td1.textContent = instancia.nombre_Producto;
+            tr.appendChild(td1);
+
+            var td2 = document.createElement('td');
+            td2.textContent = '$' + (instancia.cantidad * instancia.costo)
+            tr.appendChild(td2);
+
+            var td3 = document.createElement('td');
+            td3.textContent = instancia.vencimiento ? new Date(instancia.vencimiento).toLocaleDateString() : '';
+            tr.appendChild(td3);
+
+            tbody.appendChild(tr);
+        });
+    });
+}
     </script>
 
 

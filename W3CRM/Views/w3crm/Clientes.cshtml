@@ -1,4 +1,8 @@
-﻿@{
+﻿@using System.Globalization
+@using Vitaly_Manager.Models
+@using Newtonsoft.Json
+
+@{
 	ViewData["Title"] = "Inventario";
 }
 <!--**********************************
@@ -83,8 +87,15 @@
                                 </span>
                                 <div class="media-body">
                                     <p class="mb-1">Ultimo cliente agregado</p>
-                                    <h4 class="mb-0" id="CantidadActivos">@Model.Listaclientes[Model.Listaclientes.Count - 1].Nombres @Model.Listaclientes[Model.Listaclientes.Count - 1].Apellidos</h4>
-                                    <span class="badge badge-primary">@Model.Listaclientes[Model.Listaclientes.Count - 1].Ingreso.ToString("yyyy-MM-dd")</span>
+                                    @if (Model.Listaclientes.Count > 0)
+                                    {
+                                        <h4 class="mb-0" id="CantidadActivos">@Model.Listaclientes[Model.Listaclientes.Count - 1].Nombres @Model.Listaclientes[Model.Listaclientes.Count - 1].Apellidos</h4>
+                                        <span class="badge badge-primary">@Model.Listaclientes[Model.Listaclientes.Count - 1].Ingreso.ToString("yyyy-MM-dd")</span>
+                                    }
+                                    else
+                                    {
+                                       <h4 class="mb-0" id="CantidadActivos">No hay clientes</h4>
+                                    }
                                 </div>
 
                             </div>
@@ -181,127 +192,28 @@
                         </div>
                         <div class="card-body p-0">
                             <div id="DZ_W_Todo1" class="widget-media dz-scroll height370 my-4 px-4">
-                                <ul class="timeline">
-                                    <li>
-                                        <div class="timeline-panel">
-                                            <div class="media me-2">
-                                                <img alt="image" width="50" src="~/w3crm/images/avatar/1.jpg">
-                                            </div>
-                                            <div class="media-body">
-                                                <h5 class="mb-1">Dr sultads Send you Photo</h5>
-                                                <small class="d-block">29 July 2020 - 02:26 PM</small>
-                                            </div>
-                                            <div class="dropdown">
-                                                <button type="button" class="btn btn-primary light sharp" data-bs-toggle="dropdown">
-                                                    <svg width="18px" height="18px" viewBox="0 0 24 24" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect x="0" y="0" width="24" height="24" /><circle fill="#000000" cx="5" cy="12" r="2" /><circle fill="#000000" cx="12" cy="12" r="2" /><circle fill="#000000" cx="19" cy="12" r="2" /></g></svg>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-end">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Delete</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="timeline-panel">
-                                            <div class="media me-2 media-info">
-                                                KG
-                                            </div>
-                                            <div class="media-body">
-                                                <h5 class="mb-1">Resport created successfully</h5>
-                                                <small class="d-block">29 July 2020 - 02:26 PM</small>
-                                            </div>
-                                            <div class="dropdown">
-                                                <button type="button" class="btn btn-info light sharp" data-bs-toggle="dropdown">
-                                                    <svg width="18px" height="18px" viewBox="0 0 24 24" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect x="0" y="0" width="24" height="24" /><circle fill="#000000" cx="5" cy="12" r="2" /><circle fill="#000000" cx="12" cy="12" r="2" /><circle fill="#000000" cx="19" cy="12" r="2" /></g></svg>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-end">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Delete</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="timeline-panel">
-                                            <div class="media me-2 media-success">
-                                                <i class="fa fa-home"></i>
-                                            </div>
-                                            <div class="media-body">
-                                                <h5 class="mb-1">Reminder : Treatment Time!</h5>
-                                                <small class="d-block">29 July 2020 - 02:26 PM</small>
-                                            </div>
-                                            <div class="dropdown">
-                                                <button type="button" class="btn btn-success light sharp" data-bs-toggle="dropdown">
-                                                    <svg width="18px" height="18px" viewBox="0 0 24 24" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect x="0" y="0" width="24" height="24" /><circle fill="#000000" cx="5" cy="12" r="2" /><circle fill="#000000" cx="12" cy="12" r="2" /><circle fill="#000000" cx="19" cy="12" r="2" /></g></svg>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-end">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Delete</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="timeline-panel">
-                                            <div class="media me-2">
-                                                <img alt="image" width="50" src="~/w3crm/images/avatar/1.jpg">
-                                            </div>
-                                            <div class="media-body">
-                                                <h5 class="mb-1">Dr sultads Send you Photo</h5>
-                                                <small class="d-block">29 July 2020 - 02:26 PM</small>
-                                            </div>
-                                            <div class="dropdown">
-                                                <button type="button" class="btn btn-primary light sharp" data-bs-toggle="dropdown">
-                                                    <svg width="18px" height="18px" viewBox="0 0 24 24" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect x="0" y="0" width="24" height="24" /><circle fill="#000000" cx="5" cy="12" r="2" /><circle fill="#000000" cx="12" cy="12" r="2" /><circle fill="#000000" cx="19" cy="12" r="2" /></g></svg>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-end">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Delete</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="timeline-panel">
-                                            <div class="media me-2 media-danger">
-                                                KG
-                                            </div>
-                                            <div class="media-body">
-                                                <h5 class="mb-1">Resport created successfully</h5>
-                                                <small class="d-block">29 July 2020 - 02:26 PM</small>
-                                            </div>
-                                            <div class="dropdown">
-                                                <button type="button" class="btn btn-danger light sharp" data-bs-toggle="dropdown">
-                                                    <svg width="18px" height="18px" viewBox="0 0 24 24" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect x="0" y="0" width="24" height="24" /><circle fill="#000000" cx="5" cy="12" r="2" /><circle fill="#000000" cx="12" cy="12" r="2" /><circle fill="#000000" cx="19" cy="12" r="2" /></g></svg>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-end">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Delete</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="timeline-panel">
-                                            <div class="media me-2 media-primary">
-                                                <i class="fa fa-home"></i>
-                                            </div>
-                                            <div class="media-body">
-                                                <h5 class="mb-1">Reminder : Treatment Time!</h5>
-                                                <small class="d-block">29 July 2020 - 02:26 PM</small>
-                                            </div>
-                                            <div class="dropdown">
-                                                <button type="button" class="btn btn-primary light sharp" data-bs-toggle="dropdown">
-                                                    <svg width="18px" height="18px" viewBox="0 0 24 24" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect x="0" y="0" width="24" height="24" /><circle fill="#000000" cx="5" cy="12" r="2" /><circle fill="#000000" cx="12" cy="12" r="2" /><circle fill="#000000" cx="19" cy="12" r="2" /></g></svg>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-end">
-                                                    <a class="dropdown-item" href="#">Edit</a>
-                                                    <a class="dropdown-item" href="#">Delete</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
+                                <ul class="timeline" id="tablaNotificaciones">
+                                @foreach (Movimiento movimiento in Model.ObtenerListaMovimientos())
+                                {
+                                   <div class="timeline-panel" id="movimiento_@movimiento.ID">
+                                       <div class="media me-2">
+                                           <img alt="image" width="50" src="~/imagenes/usuarios/imagen_@(movimiento.Usuario_id).jpg">
+                                       </div>
+                                       <div class="media-body">
+                                           <h5 class="mb-1">@movimiento.Titulo</h5>
+                                           <small class="d-block">@movimiento.Ingreso.ToString("dd MMMM yyyy - hh:mm tt", CultureInfo.InvariantCulture)</small>
+                                       </div>
+                                       <div class="dropdown">
+                                           <button type="button" class="btn btn-primary light sharp" data-bs-toggle="dropdown">
+                                               <svg width="18px" height="18px" viewBox="0 0 24 24" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect x="0" y="0" width="24" height="24" /><circle fill="#000000" cx="5" cy="12" r="2" /><circle fill="#000000" cx="12" cy="12" r="2" /><circle fill="#000000" cx="19" cy="12" r="2" /></g></svg>
+                                           </button>
+                                           <div class="dropdown-menu dropdown-menu-end">
+                                                <a class="dropdown-item" onclick="showSweetAlert('@Html.Raw(movimiento.Titulo)', '@Html.Raw(movimiento.Descripcion)')" href="#">Detalles</a>
+                                               <a class="dropdown-item" onclick="eliminarMovimiento('@Html.Raw(movimiento.ID)')" href="#">Eliminar</a>
+                                           </div>
+                                       </div>
+                                   </div>
+                                }
                                 </ul>
                             </div>
                         </div>
@@ -369,6 +281,7 @@
 @section w3crm_style
 	{
 	<link href="~/w3crm/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="~/w3crm/vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
 }
 
 @section w3crm_script
@@ -377,6 +290,10 @@
 		Scripts
 	***********************************-->
 	<script src="~/js/js_clientes.js"></script>
+
+    <script src="~/w3crm/vendor/sweetalert2/dist/sweetalert2.min.js"></script>
+    <script src="~/w3crm/js/plugins-init/sweetalert.init.js"></script>
+    <script src="~/w3crm/js/styleSwitcher.js"></script>
 
     <!-- Required vendors -->
     <script src="~/w3crm/vendor/global/global.min.js"></script>
@@ -419,6 +336,24 @@
             validarApellidos();
             validarEdades();
         });
+
+        function eliminarMovimiento(ID) {
+            document.getElementById('movimiento_'+ID).remove();
+            $.ajax({
+                url: '/ControladorClientes/EliminarMovimiento', 
+                type: 'DELETE',
+                data: { id: ID },
+            });
+        }
+
+        function showSweetAlert(titulo, descripcion) {
+            Swal.fire({
+                title: titulo,
+                text: descripcion,
+                icon: 'info',
+                confirmButtonText: 'OK'
+            });
+        }
 
         function validarEdades() {
             $('#validacion04_Edades').on('keypress', function (e) {
