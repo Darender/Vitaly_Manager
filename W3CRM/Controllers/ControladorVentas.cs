@@ -19,7 +19,7 @@ namespace Vitaly_Manager.Controllers
 
 		public void agregarVenta(Venta nuevo)
 		{
-			using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=\"Vitaly Data\";Integrated Security=True;Encrypt=False"))
+			using (SqlConnection coneccion = new SqlConnection("Data Source=Alolo\\SQLEXPRESS;Initial Catalog=VitalyDataBase;Integrated Security=True;Encrypt=False;"))
 			{
 				coneccion.Open();
 
@@ -67,7 +67,7 @@ namespace Vitaly_Manager.Controllers
 			ListaInstancias.Clear();
 			ListaProductos.Clear();
 
-			using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=\"Vitaly Data\";Integrated Security=True;Encrypt=False"))
+			using (SqlConnection coneccion = new SqlConnection("Data Source=Alolo\\SQLEXPRESS;Initial Catalog=VitalyDataBase;Integrated Security=True;Encrypt=False;"))
 			{
 				coneccion.Open();
 

@@ -35,7 +35,7 @@ namespace W3CRM.Controllers
                 }
             }
 
-            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=\"Vitaly Data\";Integrated Security=True;Encrypt=False"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=Alolo\\SQLEXPRESS;Initial Catalog=VitalyDataBase;Integrated Security=True;Encrypt=False;"))
             {
                 coneccion.Open();
 
@@ -118,7 +118,7 @@ namespace W3CRM.Controllers
 
         public void modificarCliente(Cliente modificado)
         {
-            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=\"Vitaly Data\";Integrated Security=True;Encrypt=False"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=Alolo\\SQLEXPRESS;Initial Catalog=VitalyDataBase;Integrated Security=True;Encrypt=False;"))
             {
                 coneccion.Open();
                 Cliente? antiguo = Listaclientes.FirstOrDefault(c => c.ID == modificado.ID);
@@ -174,7 +174,7 @@ namespace W3CRM.Controllers
         [HttpDelete]
 		public IActionResult Eliminar(int id)
 		{
-			using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=\"Vitaly Data\";Integrated Security=True;Encrypt=False"))
+			using (SqlConnection coneccion = new SqlConnection("Data Source=Alolo\\SQLEXPRESS;Initial Catalog=VitalyDataBase;Integrated Security=True;Encrypt=False;"))
             {
                 coneccion.Open();
 
@@ -204,7 +204,7 @@ namespace W3CRM.Controllers
 
 		public void AgregarDatos(Cliente nuevo)
         {
-            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=\"Vitaly Data\";Integrated Security=True;Encrypt=False"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=Alolo\\SQLEXPRESS;Initial Catalog=VitalyDataBase;Integrated Security=True;Encrypt=False;"))
             {
                 coneccion.Open();
 
@@ -236,7 +236,7 @@ namespace W3CRM.Controllers
         {
             Listaclientes.Clear();
             ListaMovimiento.Clear();
-            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=\"Vitaly Data\";Integrated Security=True;Encrypt=False"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=Alolo\\SQLEXPRESS;Initial Catalog=VitalyDataBase;Integrated Security=True;Encrypt=False;"))
             {
                 coneccion.Open();
 

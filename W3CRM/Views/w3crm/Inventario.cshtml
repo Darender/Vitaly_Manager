@@ -110,117 +110,108 @@
             </div>
             <div class="card-body">
                 <div class="form-validation">
-                    <form class="needs-validation" action="/ControladorInventario/AlterarInstancias" method="post" novalidate id="formulario">
-                        <input type="hidden" id="formulario_instancia_id" name="ID" value="">
-                        <div class="mb-3 row">
-                            <label class="col-lg-3 col-form-label" for="formulario_instancia_tipo">
-                                Tipo
-                            </label>
-                            <div class="col-lg-9">
-                                <select class="wide form-control" id="formulario_instancia_tipo" name="Tipo" required onchange="cargarProductos()">
-                                    <option selected disabled value="" id="formulario_tipo_vacio1">Por favor seleccione</option>
-                                    @foreach (var tipo in Model.ListaTipos)
-                                    {
-                                        <option value="@tipo.ID">@tipo.Nombre</option>
-                                    }
-                                </select>
-                            </div>
-                        </div>
 
-                        <div class="mb-3 row">
-                            <label class="col-lg-3 col-form-label" for="formulario_instancia_producto">
-                                Producto
-                            </label>
-                            <div class="col-lg-9">
-                                <select class="wide form-control" id="formulario_instancia_producto" name="Producto_id" required>
-                                    <option selected disabled value="" id="formulario_producto_vacio">Por favor seleccione</option>
-                                </select>
-                            </div>
-                        </div>
+                    <!--Aqui empieza-->
+                   <!-- ancho de la pantalla sin márgenes -->
+<div class="container-fluid p-0">
+    <form class="needs-validation w-100" action="/ControladorInventario/AlterarInstancias" method="post" novalidate id="formulario">
+        <input type="hidden" id="formulario_instancia_id" name="ID" value="">
 
-                        <div class="mb-3 row">
-                            <label class="col-lg-3 col-form-label" for="formulario_instancia_cantidad">
-                                Cantidad
-                            </label>
-                            <div class="col-lg-9">
-                                <input type="number" step="any" class="form-control" id="formulario_instancia_cantidad" placeholder="10" name="Cantidad" required>
-                            </div>
-                        </div>
+        <div class="row mb-3">
+            <label class="col-md-2 col-form-label" for="formulario_instancia_tipo">Tipo</label>
+            <div class="col-md-10">
+                <select class="wide form-control" id="formulario_instancia_tipo" name="Tipo" required onchange="cargarProductos()">
+                    <option selected disabled value="" id="formulario_tipo_vacio1">Por favor seleccione</option>
+                    @foreach (var tipo in Model.ListaTipos)
+                    {
+                        <option value="@tipo.ID">@tipo.Nombre</option>
+                    }
+                    </select>
+            </div>
+        </div>
 
-                        <div class="mb-3 row">
-                            <label class="col-lg-3 col-form-label" for="formulario_instancia_costo">
-                                Costo/Unidad
-                            </label>
-                            <div class="col-lg-9">
-                                 <div class="input-group">
-									<div class="input-group-text">$</div>
-                                    <input type="number" step="any" class="form-control" id="formulario_instancia_costo" placeholder="65.5" name="Costo" required>
-                                 </div>
-                            </div>
-                        </div>
+        <div class="row mb-3">
+            <label class="col-md-2 col-form-label" for="formulario_instancia_producto">Producto</label>
+            <div class="col-md-10">
+                <select class="wide form-control" id="formulario_instancia_producto" name="Producto_id" required>
+                    <option selected disabled value="" id="formulario_producto_vacio">Por favor seleccione</option>
+                </select>
+            </div>
+        </div>
 
-                       <div class="mb-3 row">
-                                <label class="col-lg-3 col-form-label" for="formulario_instancia_vencimiento">Vencimiento</label>
-                                <div class="col-lg-9">
-                                    <input name="Vencimiento" class="datepicker-default form-control" id="formulario_instancia_vencimiento">                            
-                                </div>
-                        </div>
+        <div class="row mb-3">
+            <label class="col-md-2 col-form-label" for="formulario_instancia_cantidad">Cantidad</label>
+            <div class="col-md-10">
+                <input type="number" step="any" class="form-control" id="formulario_instancia_cantidad" placeholder="10" name="Cantidad" required>
+            </div>
+        </div>
 
-                         <div class="mb-3 row">
-                                <label class="col-lg-3 col-form-label" for="formulario_instancia_llegada">Llegada</label>
-                                <div class="col-lg-9">
-                                    <input name="Llegada" class="datepicker-default form-control" id="formulario_instancia_llegada">                            
-                                </div>
-                        </div>
+        <div class="row mb-3">
+            <label class="col-md-2 col-form-label" for="formulario_instancia_costo">Costo/Unidad</label>
+            <div class="col-md-10">
+                <div class="input-group">
+                    <div class="input-group-text">$</div>
+                    <input type="number" step="any" class="form-control" id="formulario_instancia_costo" placeholder="65.5" name="Costo" required oninput="calcularMargenYPrecio()">
+                </div>
+            </div>
+        </div>
 
-                        <div class="mb-12 row">
-                            <div class="col-lg-12">
-                                <button type="submit" class="btn btn-primary py-2 w-100" id="boton_subir">Agregar</button>
-                            </div>
-                        </div>
-                    </form>
+        <div class="row mb-3">
+            <label class="col-md-2 col-form-label" for="formulario_instancia_vencimiento">Vencimiento</label>
+            <div class="col-md-10">
+                <input name="Vencimiento" class="datepicker-default form-control" id="formulario_instancia_vencimiento">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label class="col-md-2 col-form-label" for="formulario_instancia_material">Es material</label>
+            <div class="col-md-10">
+                <input type="checkbox" class="form-check-input" id="formulario_instancia_material" name="EsMaterial">
+            </div>
+        </div>
+
+        <!-- Campos de Margen de ganancia y Precio de venta -->
+        <div class="row mb-3">
+            <div class="col-md-6 text-center">
+                <label for="formulario_instancia_margen">Margen de ganancia (%)</label>
+                <input type="text" class="form-control text-center" id="formulario_instancia_margen" name="MargenGanancia" readonly>
+            </div>
+            <div class="col-md-6 text-center">
+                <label for="formulario_instancia_precio">Precio de venta</label>
+                <div class="input-group">
+                    <div class="input-group-text">$</div>
+                    <input type="text" class="form-control text-center" id="formulario_instancia_precio" name="PrecioVenta" readonly>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botón de "Agregar"  -->
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <button type="submit" class="btn btn-primary py-2 w-100" id="boton_subir">Agregar Producto</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    function calcularMargenYPrecio() {
+        const costo = parseFloat(document.getElementById("formulario_instancia_costo").value) || 0;
+        const margenPorcentaje = 20;  // Margen de ganancia predeterminado en %
+
+        const margen = (costo * margenPorcentaje) / 100;
+        const precioVenta = costo + margen;
+
+        document.getElementById("formulario_instancia_margen").value = margenPorcentaje.toFixed(2);
+        document.getElementById("formulario_instancia_precio").value = precioVenta.toFixed(2);
+    }
+</script>
+                    <!--TERMINAR AQUI-->
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-lg-6">
-        <div class="card">
-            <div class="card-header border-0 pb-0">
-                <h4 class="card-title">Notificaciones</h4>
-            </div>
-            <div class="card-body p-0">
-                <div id="DZ_W_Todo1" class="widget-media dz-scroll height370 my-4 px-4">
-                    <ul class="timeline">
-                        <li>
-                            <ul class="timeline" id="tablaNotificacionesInventario">
-                                @foreach (Movimiento movimiento in Model.ObtenerListaMovimientos())
-                                {
-                                   <div class="timeline-panel" id="movimiento_@movimiento.ID">
-                                       <div class="media me-2">
-                                           <img alt="image" width="50" src="~/imagenes/usuarios/imagen_@(movimiento.Usuario_id).jpg">
-                                       </div>
-                                       <div class="media-body">
-                                           <h5 class="mb-1">@movimiento.Titulo</h5>
-                                           <small class="d-block">@movimiento.Ingreso.ToString("dd MMMM yyyy - hh:mm tt", CultureInfo.InvariantCulture)</small>
-                                       </div>
-                                       <div class="dropdown">
-                                           <button type="button" class="btn btn-primary light sharp" data-bs-toggle="dropdown">
-                                               <svg width="18px" height="18px" viewBox="0 0 24 24" version="1.1"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><rect x="0" y="0" width="24" height="24" /><circle fill="#000000" cx="5" cy="12" r="2" /><circle fill="#000000" cx="12" cy="12" r="2" /><circle fill="#000000" cx="19" cy="12" r="2" /></g></svg>
-                                           </button>
-                                           <div class="dropdown-menu dropdown-menu-end">
-                                                <a class="dropdown-item" onclick="showSweetAlert('@Html.Raw(movimiento.Titulo)', '@Html.Raw(movimiento.Descripcion)')" href="#">Detalles</a>
-                                               <a class="dropdown-item" onclick="eliminarMovimiento('@Html.Raw(movimiento.ID)')" href="#">Eliminar</a>
-                                           </div>
-                                       </div>
-                                   </div>
-                                }
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
         </div>
