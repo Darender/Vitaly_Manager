@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Data.SqlClient;
-using Vitaly_Manager.Models;
 using System.IO;
 using W3CRM.Controllers;
 using static System.Net.Mime.MediaTypeNames;
+using Vitaly_Manager.Entidades.EntidadesAntiguas;
 
 namespace Vitaly_Manager.Controllers
 {

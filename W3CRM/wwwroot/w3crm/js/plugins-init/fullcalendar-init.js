@@ -55,7 +55,7 @@ function fullCalender(){
 		  },
 		  initialDate: '2021-02-13',
 			  weekNumbers: true,
-			  navLinks: true, // can click day/week names to navigate views
+			  navLinks: true, // can click day/week names to navigate Views
 			  editable: true,
 			  selectable: true,
 			  nowIndicator: true,

@@ -8368,7 +8368,7 @@
       "buildMeta": {
         "exportsType": "namespace",
         "providedExports": [
-          "modelToViewStyleAttribute",
+          "modelToViewstyleAttribute",
           "viewToModelStyleAttribute"
         ]
       }
@@ -8779,7 +8779,7 @@
           "modelViewChangeType",
           "modelViewMergeAfterChangeType",
           "modelViewChangeIndent",
-          "modelViewSplitOnInsert",
+          "modelViewsplitOnInsert",
           "modelViewMergeAfter",
           "viewModelConverter",
           "cleanList",

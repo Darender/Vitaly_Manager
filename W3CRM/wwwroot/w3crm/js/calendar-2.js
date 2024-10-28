@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
         right: 'dayGridMonth,timeGridWeek,timeGridDay'
       },
       initialDate: '2020-09-12',
-      navLinks: true, // can click day/week names to navigate views
+      navLinks: true, // can click day/week names to navigate Views
       editable: true,
       droppable: true, // this allows things to be dropped onto the calendar
       dayMaxEvents: true,

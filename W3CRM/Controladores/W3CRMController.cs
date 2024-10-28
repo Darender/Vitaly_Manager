@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using Vitaly_Manager.Controllers;
-using Vitaly_Manager.Models;
+using Vitaly_Manager.Entidades;
+using Vitaly_Manager.Entidades.EntidadesAntiguas;
 
 namespace W3CRM.Controllers
 {
@@ -49,7 +50,7 @@ namespace W3CRM.Controllers
 
 			if (!String.IsNullOrEmpty(id))
 			{
-				controlador.modificarCliente(new Cliente
+				controlador.modificarCliente(new ClienteAntiguo
 				{
 					ID = int.Parse(id),
 					Nombres = nombre,
@@ -63,8 +64,8 @@ namespace W3CRM.Controllers
 			}
 			else
 			{
-				controlador.AgregarDatos(new Cliente
-				{
+				controlador.AgregarDatos(new ClienteAntiguo
+                {
 					ID = -1,
 					Nombres = nombre,
 					Apellidos = apellido,

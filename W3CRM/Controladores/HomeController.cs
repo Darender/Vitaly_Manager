@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using W3CRM.Models;
+using Vitaly_Manager.Entidades.EntidadesAntiguas;
 
 namespace W3CRM.Controllers
 {

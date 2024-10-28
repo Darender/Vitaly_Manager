@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Data.SqlClient;
-using Vitaly_Manager.Models;
-using W3CRM.Controllers;
+using Vitaly_Manager.Entidades.EntidadesAntiguas;
 
 namespace Vitaly_Manager.Controllers
 {
-	public class ControladorVentas : Controller
+    public class ControladorVentas : Controller
 	{
-		public List<Cliente> ListaClientes = new List<Cliente>();
+		public List<ClienteAntiguo> ListaClientes = new List<ClienteAntiguo>();
 		public List<Tipo_inventario> ListaTipos = new List<Tipo_inventario>();
 		public List<Inventario_Producto> ListaProductos = new List<Inventario_Producto>();
 		public List<Inventario_Instancia> ListaInstancias = new List<Inventario_Instancia>();
@@ -17,7 +16,7 @@ namespace Vitaly_Manager.Controllers
 			UnirDatos();
 		}
 
-		public void agregarVenta(Venta nuevo)
+		public void agregarVenta(VentaAntiguo nuevo)
 		{
 			using (SqlConnection coneccion = new SqlConnection("Data Source=Alolo\\SQLEXPRESS;Initial Catalog=VitalyDataBase;Integrated Security=True;Encrypt=False;"))
 			{
@@ -40,13 +39,13 @@ namespace Vitaly_Manager.Controllers
 			}
 		}
 
-		public void modificarVenta(Venta nuevo)
+		public void modificarVenta(VentaAntiguo nuevo)
 		{
 
 		}
 
 		[HttpPost]
-		public IActionResult AlterarVenta([FromForm] Venta nuevo)
+		public IActionResult AlterarVenta([FromForm] VentaAntiguo nuevo)
 		{
 			ControladorVentas controlador = new ControladorVentas();
 			if (nuevo.ID == 0)
@@ -95,7 +94,7 @@ namespace Vitaly_Manager.Controllers
 
 					DateTime ingreso = Convert.ToDateTime(lector["Ingreso"]);
 
-					Cliente cliente = new Cliente
+					ClienteAntiguo cliente = new ClienteAntiguo
 					{
 						ID = id,
 						Nombres = nombres,

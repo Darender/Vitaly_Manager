@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace W3CRM.Controllers
+namespace Vitaly_Manager.Entidades.EntidadesAntiguas
 {
     public class Tipo_inventario
     {
