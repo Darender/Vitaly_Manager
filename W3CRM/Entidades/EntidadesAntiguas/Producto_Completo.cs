@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Vitaly_Manager.Models
+namespace Vitaly_Manager.Entidades.EntidadesAntiguas
 {
     public class Producto_Completo
     {

@@ -1835,7 +1835,7 @@ var FullCalendar = (function (exports) {
     var CALENDAR_OPTION_REFINERS = {
         buttonText: identity,
         buttonHints: identity,
-        views: identity,
+        Views: identity,
         plugins: identity,
         initialEvents: identity,
         events: identity,
@@ -3056,7 +3056,7 @@ var FullCalendar = (function (exports) {
             var state = this.getCurrentData();
             var spec;
             viewType = viewType || 'day'; // day is default zoom
-            spec = state.viewSpecs[viewType] || this.getUnitViewSpec(viewType);
+            spec = state.Viewspecs[viewType] || this.getUnitViewspec(viewType);
             this.unselect();
             if (spec) {
                 this.dispatch({
@@ -3073,17 +3073,17 @@ var FullCalendar = (function (exports) {
             }
         };
         // Given a duration singular unit, like "week" or "day", finds a matching view spec.
-        // Preference is given to views that have corresponding buttons.
-        CalendarApi.prototype.getUnitViewSpec = function (unit) {
-            var _a = this.getCurrentData(), viewSpecs = _a.viewSpecs, toolbarConfig = _a.toolbarConfig;
-            var viewTypes = [].concat(toolbarConfig.header ? toolbarConfig.header.viewsWithButtons : [], toolbarConfig.footer ? toolbarConfig.footer.viewsWithButtons : []);
+        // Preference is given to Views that have corresponding buttons.
+        CalendarApi.prototype.getUnitViewspec = function (unit) {
+            var _a = this.getCurrentData(), Viewspecs = _a.Viewspecs, toolbarConfig = _a.toolbarConfig;
+            var viewTypes = [].concat(toolbarConfig.header ? toolbarConfig.header.ViewsWithButtons : [], toolbarConfig.footer ? toolbarConfig.footer.ViewsWithButtons : []);
             var i;
             var spec;
-            for (var viewType in viewSpecs) {
+            for (var viewType in Viewspecs) {
                 viewTypes.push(viewType);
             }
             for (i = 0; i < viewTypes.length; i += 1) {
-                spec = viewSpecs[viewTypes[i]];
+                spec = Viewspecs[viewTypes[i]];
                 if (spec) {
                     if (spec.singleUnit === unit) {
                         return spec;
@@ -5164,7 +5164,7 @@ var FullCalendar = (function (exports) {
     }());
 
     var ViewContextType = createContext({}); // for Components
-    function buildViewContext(viewSpec, viewApi, viewOptions, dateProfileGenerator, dateEnv, theme, pluginHooks, dispatch, getCurrentData, emitter, calendarApi, registerInteractiveComponent, unregisterInteractiveComponent) {
+    function buildViewContext(Viewspec, viewApi, viewOptions, dateProfileGenerator, dateEnv, theme, pluginHooks, dispatch, getCurrentData, emitter, calendarApi, registerInteractiveComponent, unregisterInteractiveComponent) {
         return {
             dateEnv: dateEnv,
             options: viewOptions,
@@ -5173,7 +5173,7 @@ var FullCalendar = (function (exports) {
             dispatch: dispatch,
             getCurrentData: getCurrentData,
             calendarApi: calendarApi,
-            viewSpec: viewSpec,
+            Viewspec: Viewspec,
             viewApi: viewApi,
             dateProfileGenerator: dateProfileGenerator,
             theme: theme,
@@ -5296,7 +5296,7 @@ var FullCalendar = (function (exports) {
             dateSelectionTransformers: input.dateSelectionTransformers || [],
             datePointTransforms: input.datePointTransforms || [],
             dateSpanTransforms: input.dateSpanTransforms || [],
-            views: input.views || {},
+            Views: input.Views || {},
             viewPropsTransformers: input.viewPropsTransformers || [],
             isPropsValid: input.isPropsValid || null,
             externalDefTransforms: input.externalDefTransforms || [],
@@ -5334,7 +5334,7 @@ var FullCalendar = (function (exports) {
             dateSelectionTransformers: [],
             datePointTransforms: [],
             dateSpanTransforms: [],
-            views: {},
+            Views: {},
             viewPropsTransformers: [],
             isPropsValid: null,
             externalDefTransforms: [],
@@ -5399,7 +5399,7 @@ var FullCalendar = (function (exports) {
             dateSelectionTransformers: hooks0.dateSelectionTransformers.concat(hooks1.dateSelectionTransformers),
             datePointTransforms: hooks0.datePointTransforms.concat(hooks1.datePointTransforms),
             dateSpanTransforms: hooks0.dateSpanTransforms.concat(hooks1.dateSpanTransforms),
-            views: __assign(__assign({}, hooks0.views), hooks1.views),
+            Views: __assign(__assign({}, hooks0.Views), hooks1.Views),
             viewPropsTransformers: hooks0.viewPropsTransformers.concat(hooks1.viewPropsTransformers),
             isPropsValid: hooks1.isPropsValid || hooks0.isPropsValid,
             externalDefTransforms: hooks0.externalDefTransforms.concat(hooks1.externalDefTransforms),
@@ -5678,7 +5678,7 @@ var FullCalendar = (function (exports) {
             var options = context.options;
             var hookProps = { view: context.viewApi };
             var customClassNames = this.normalizeClassNames(options.viewClassNames, hookProps);
-            return (createElement(MountHook, { hookProps: hookProps, didMount: options.viewDidMount, willUnmount: options.viewWillUnmount, elRef: props.elRef }, function (rootElRef) { return props.children(rootElRef, ["fc-" + props.viewSpec.type + "-view", 'fc-view'].concat(customClassNames)); }));
+            return (createElement(MountHook, { hookProps: hookProps, didMount: options.viewDidMount, willUnmount: options.viewWillUnmount, elRef: props.elRef }, function (rootElRef) { return props.children(rootElRef, ["fc-" + props.Viewspec.type + "-view", 'fc-view'].concat(customClassNames)); }));
         };
         return ViewRoot;
     }(BaseComponent));
@@ -5702,19 +5702,19 @@ var FullCalendar = (function (exports) {
         };
     }
     function createViewHookComponent(options) {
-        return function (viewProps) { return (createElement(ViewContextType.Consumer, null, function (context) { return (createElement(ViewRoot, { viewSpec: context.viewSpec }, function (viewElRef, viewClassNames) {
+        return function (viewProps) { return (createElement(ViewContextType.Consumer, null, function (context) { return (createElement(ViewRoot, { Viewspec: context.Viewspec }, function (viewElRef, viewClassNames) {
             var hookProps = __assign(__assign({}, viewProps), { nextDayThreshold: context.options.nextDayThreshold });
             return (createElement(RenderHook, { hookProps: hookProps, classNames: options.classNames, content: options.content, didMount: options.didMount, willUnmount: options.willUnmount, elRef: viewElRef }, function (rootElRef, customClassNames, innerElRef, innerContent) { return (createElement("div", { className: viewClassNames.concat(customClassNames).join(' '), ref: rootElRef }, innerContent)); }));
         })); })); };
     }
 
-    function buildViewSpecs(defaultInputs, optionOverrides, dynamicOptionOverrides, localeDefaults) {
+    function buildViewspecs(defaultInputs, optionOverrides, dynamicOptionOverrides, localeDefaults) {
         var defaultConfigs = parseViewConfigs(defaultInputs);
-        var overrideConfigs = parseViewConfigs(optionOverrides.views);
+        var overrideConfigs = parseViewConfigs(optionOverrides.Views);
         var viewDefs = compileViewDefs(defaultConfigs, overrideConfigs);
-        return mapHash(viewDefs, function (viewDef) { return buildViewSpec(viewDef, overrideConfigs, optionOverrides, dynamicOptionOverrides, localeDefaults); });
+        return mapHash(viewDefs, function (viewDef) { return buildViewspec(viewDef, overrideConfigs, optionOverrides, dynamicOptionOverrides, localeDefaults); });
     }
-    function buildViewSpec(viewDef, overrideConfigs, optionOverrides, dynamicOptionOverrides, localeDefaults) {
+    function buildViewspec(viewDef, overrideConfigs, optionOverrides, dynamicOptionOverrides, localeDefaults) {
         var durationInput = viewDef.overrides.duration ||
             viewDef.defaults.duration ||
             dynamicOptionOverrides.duration ||
@@ -6474,30 +6474,30 @@ var FullCalendar = (function (exports) {
         }
     }
 
-    function parseToolbars(calendarOptions, calendarOptionOverrides, theme, viewSpecs, calendarApi) {
-        var header = calendarOptions.headerToolbar ? parseToolbar(calendarOptions.headerToolbar, calendarOptions, calendarOptionOverrides, theme, viewSpecs, calendarApi) : null;
-        var footer = calendarOptions.footerToolbar ? parseToolbar(calendarOptions.footerToolbar, calendarOptions, calendarOptionOverrides, theme, viewSpecs, calendarApi) : null;
+    function parseToolbars(calendarOptions, calendarOptionOverrides, theme, Viewspecs, calendarApi) {
+        var header = calendarOptions.headerToolbar ? parseToolbar(calendarOptions.headerToolbar, calendarOptions, calendarOptionOverrides, theme, Viewspecs, calendarApi) : null;
+        var footer = calendarOptions.footerToolbar ? parseToolbar(calendarOptions.footerToolbar, calendarOptions, calendarOptionOverrides, theme, Viewspecs, calendarApi) : null;
         return { header: header, footer: footer };
     }
-    function parseToolbar(sectionStrHash, calendarOptions, calendarOptionOverrides, theme, viewSpecs, calendarApi) {
+    function parseToolbar(sectionStrHash, calendarOptions, calendarOptionOverrides, theme, Viewspecs, calendarApi) {
         var sectionWidgets = {};
-        var viewsWithButtons = [];
+        var ViewsWithButtons = [];
         var hasTitle = false;
         for (var sectionName in sectionStrHash) {
             var sectionStr = sectionStrHash[sectionName];
-            var sectionRes = parseSection(sectionStr, calendarOptions, calendarOptionOverrides, theme, viewSpecs, calendarApi);
+            var sectionRes = parseSection(sectionStr, calendarOptions, calendarOptionOverrides, theme, Viewspecs, calendarApi);
             sectionWidgets[sectionName] = sectionRes.widgets;
-            viewsWithButtons.push.apply(viewsWithButtons, sectionRes.viewsWithButtons);
+            ViewsWithButtons.push.apply(ViewsWithButtons, sectionRes.ViewsWithButtons);
             hasTitle = hasTitle || sectionRes.hasTitle;
         }
-        return { sectionWidgets: sectionWidgets, viewsWithButtons: viewsWithButtons, hasTitle: hasTitle };
+        return { sectionWidgets: sectionWidgets, ViewsWithButtons: ViewsWithButtons, hasTitle: hasTitle };
     }
     /*
     BAD: querying icons and text here. should be done at render time
     */
     function parseSection(sectionStr, calendarOptions, // defaults+overrides, then refined
     calendarOptionOverrides, // overrides only!, unrefined :(
-    theme, viewSpecs, calendarApi) {
+    theme, Viewspecs, calendarApi) {
         var isRtl = calendarOptions.direction === 'rtl';
         var calendarCustomButtons = calendarOptions.customButtons || {};
         var calendarButtonTextOverrides = calendarOptionOverrides.buttonText || {};
@@ -6505,7 +6505,7 @@ var FullCalendar = (function (exports) {
         var calendarButtonHintOverrides = calendarOptionOverrides.buttonHints || {};
         var calendarButtonHints = calendarOptions.buttonHints || {};
         var sectionSubstrs = sectionStr ? sectionStr.split(' ') : [];
-        var viewsWithButtons = [];
+        var ViewsWithButtons = [];
         var hasTitle = false;
         var widgets = sectionSubstrs.map(function (buttonGroupStr) { return (buttonGroupStr.split(',').map(function (buttonName) {
             if (buttonName === 'title') {
@@ -6513,7 +6513,7 @@ var FullCalendar = (function (exports) {
                 return { buttonName: buttonName };
             }
             var customButtonProps;
-            var viewSpec;
+            var Viewspec;
             var buttonClick;
             var buttonIcon; // only one of these will be set
             var buttonText; // "
@@ -6530,18 +6530,18 @@ var FullCalendar = (function (exports) {
                     (buttonText = customButtonProps.text);
                 buttonHint = customButtonProps.hint || customButtonProps.text;
             }
-            else if ((viewSpec = viewSpecs[buttonName])) {
-                viewsWithButtons.push(buttonName);
+            else if ((Viewspec = Viewspecs[buttonName])) {
+                ViewsWithButtons.push(buttonName);
                 buttonClick = function () {
                     calendarApi.changeView(buttonName);
                 };
-                (buttonText = viewSpec.buttonTextOverride) ||
+                (buttonText = Viewspec.buttonTextOverride) ||
                     (buttonIcon = theme.getIconClass(buttonName, isRtl)) ||
-                    (buttonText = viewSpec.buttonTextDefault);
-                var textFallback = viewSpec.buttonTextOverride ||
-                    viewSpec.buttonTextDefault;
-                buttonHint = formatWithOrdinals(viewSpec.buttonTitleOverride ||
-                    viewSpec.buttonTitleDefault ||
+                    (buttonText = Viewspec.buttonTextDefault);
+                var textFallback = Viewspec.buttonTextOverride ||
+                    Viewspec.buttonTextDefault;
+                buttonHint = formatWithOrdinals(Viewspec.buttonTitleOverride ||
+                    Viewspec.buttonTitleDefault ||
                     calendarOptions.viewHint, [textFallback, buttonName], // view-name = buttonName
                 textFallback);
             }
@@ -6570,7 +6570,7 @@ var FullCalendar = (function (exports) {
             }
             return { buttonName: buttonName, buttonClick: buttonClick, buttonIcon: buttonIcon, buttonText: buttonText, buttonHint: buttonHint };
         })); });
-        return { widgets: widgets, viewsWithButtons: viewsWithButtons, hasTitle: hasTitle };
+        return { widgets: widgets, ViewsWithButtons: ViewsWithButtons, hasTitle: hasTitle };
     }
 
     var eventSourceDef$3 = {
@@ -7046,7 +7046,7 @@ var FullCalendar = (function (exports) {
     // Computes what the title at the top of the calendarApi should be for this view
     function buildTitle(dateProfile, viewOptions, dateEnv) {
         var range;
-        // for views that span a large unit of time, show the proper interval, ignoring stray days before and after
+        // for Views that span a large unit of time, show the proper interval, ignoring stray days before and after
         if (/^(year|month)$/.test(dateProfile.currentRangeUnit)) {
             range = dateProfile.currentRange;
         }
@@ -7090,7 +7090,7 @@ var FullCalendar = (function (exports) {
             this.buildDateEnv = memoize(buildDateEnv);
             this.buildTheme = memoize(buildTheme);
             this.parseToolbars = memoize(parseToolbars);
-            this.buildViewSpecs = memoize(buildViewSpecs);
+            this.buildViewspecs = memoize(buildViewspecs);
             this.buildDateProfileGenerator = memoizeObjArg(buildDateProfileGenerator);
             this.buildViewApi = memoize(buildViewApi);
             this.buildViewUiProps = memoizeObjArg(buildViewUiProps);
@@ -7282,14 +7282,14 @@ var FullCalendar = (function (exports) {
             var _a = this.processRawCalendarOptions(optionOverrides, dynamicOptionOverrides), refinedOptions = _a.refinedOptions, pluginHooks = _a.pluginHooks, localeDefaults = _a.localeDefaults, availableLocaleData = _a.availableLocaleData, extra = _a.extra;
             warnUnknownOptions(extra);
             var dateEnv = this.buildDateEnv(refinedOptions.timeZone, refinedOptions.locale, refinedOptions.weekNumberCalculation, refinedOptions.firstDay, refinedOptions.weekText, pluginHooks, availableLocaleData, refinedOptions.defaultRangeSeparator);
-            var viewSpecs = this.buildViewSpecs(pluginHooks.views, optionOverrides, dynamicOptionOverrides, localeDefaults);
+            var Viewspecs = this.buildViewspecs(pluginHooks.Views, optionOverrides, dynamicOptionOverrides, localeDefaults);
             var theme = this.buildTheme(refinedOptions, pluginHooks);
-            var toolbarConfig = this.parseToolbars(refinedOptions, optionOverrides, theme, viewSpecs, calendarApi);
+            var toolbarConfig = this.parseToolbars(refinedOptions, optionOverrides, theme, Viewspecs, calendarApi);
             return {
                 calendarOptions: refinedOptions,
                 pluginHooks: pluginHooks,
                 dateEnv: dateEnv,
-                viewSpecs: viewSpecs,
+                Viewspecs: Viewspecs,
                 theme: theme,
                 toolbarConfig: toolbarConfig,
                 localeDefaults: localeDefaults,
@@ -7350,17 +7350,17 @@ var FullCalendar = (function (exports) {
             };
         };
         CalendarDataManager.prototype._computeCurrentViewData = function (viewType, optionsData, optionOverrides, dynamicOptionOverrides) {
-            var viewSpec = optionsData.viewSpecs[viewType];
-            if (!viewSpec) {
+            var Viewspec = optionsData.Viewspecs[viewType];
+            if (!Viewspec) {
                 throw new Error("viewType \"" + viewType + "\" is not available. Please make sure you've loaded all neccessary plugins");
             }
-            var _a = this.processRawViewOptions(viewSpec, optionsData.pluginHooks, optionsData.localeDefaults, optionOverrides, dynamicOptionOverrides), refinedOptions = _a.refinedOptions, extra = _a.extra;
+            var _a = this.processRawViewOptions(Viewspec, optionsData.pluginHooks, optionsData.localeDefaults, optionOverrides, dynamicOptionOverrides), refinedOptions = _a.refinedOptions, extra = _a.extra;
             warnUnknownOptions(extra);
             var dateProfileGenerator = this.buildDateProfileGenerator({
-                dateProfileGeneratorClass: viewSpec.optionDefaults.dateProfileGeneratorClass,
-                duration: viewSpec.duration,
-                durationUnit: viewSpec.durationUnit,
-                usesMinMaxTime: viewSpec.optionDefaults.usesMinMaxTime,
+                dateProfileGeneratorClass: Viewspec.optionDefaults.dateProfileGeneratorClass,
+                duration: Viewspec.duration,
+                durationUnit: Viewspec.durationUnit,
+                usesMinMaxTime: Viewspec.optionDefaults.usesMinMaxTime,
                 dateEnv: optionsData.dateEnv,
                 calendarApi: this.props.calendarApi,
                 slotMinTime: refinedOptions.slotMinTime,
@@ -7378,15 +7378,15 @@ var FullCalendar = (function (exports) {
                 fixedWeekCount: refinedOptions.fixedWeekCount,
             });
             var viewApi = this.buildViewApi(viewType, this.getCurrentData, optionsData.dateEnv);
-            return { viewSpec: viewSpec, options: refinedOptions, dateProfileGenerator: dateProfileGenerator, viewApi: viewApi };
+            return { Viewspec: Viewspec, options: refinedOptions, dateProfileGenerator: dateProfileGenerator, viewApi: viewApi };
         };
-        CalendarDataManager.prototype.processRawViewOptions = function (viewSpec, pluginHooks, localeDefaults, optionOverrides, dynamicOptionOverrides) {
+        CalendarDataManager.prototype.processRawViewOptions = function (Viewspec, pluginHooks, localeDefaults, optionOverrides, dynamicOptionOverrides) {
             var raw = mergeRawOptions([
                 BASE_OPTION_DEFAULTS,
-                viewSpec.optionDefaults,
+                Viewspec.optionDefaults,
                 localeDefaults,
                 optionOverrides,
-                viewSpec.optionOverrides,
+                Viewspec.optionOverrides,
                 dynamicOptionOverrides,
             ]);
             var refiners = __assign(__assign(__assign(__assign(__assign(__assign({}, BASE_OPTION_REFINERS), CALENDAR_LISTENER_REFINERS), CALENDAR_OPTION_REFINERS), VIEW_OPTION_REFINERS), pluginHooks.listenerRefiners), pluginHooks.optionRefiners);
@@ -8168,7 +8168,7 @@ var FullCalendar = (function (exports) {
         CalendarContent.prototype.render = function () {
             var props = this.props;
             var toolbarConfig = props.toolbarConfig, options = props.options;
-            var toolbarProps = this.buildToolbarProps(props.viewSpec, props.dateProfile, props.dateProfileGenerator, props.currentDate, getNow(props.options.now, props.dateEnv), // TODO: use NowTimer????
+            var toolbarProps = this.buildToolbarProps(props.Viewspec, props.dateProfile, props.dateProfileGenerator, props.currentDate, getNow(props.options.now, props.dateEnv), // TODO: use NowTimer????
             props.viewTitle);
             var viewVGrow = false;
             var viewHeight = '';
@@ -8185,7 +8185,7 @@ var FullCalendar = (function (exports) {
             else {
                 viewAspectRatio = Math.max(options.aspectRatio, 0.5); // prevent from getting too tall
             }
-            var viewContext = this.buildViewContext(props.viewSpec, props.viewApi, props.options, props.dateProfileGenerator, props.dateEnv, props.theme, props.pluginHooks, props.dispatch, props.getCurrentData, props.emitter, props.calendarApi, this.registerInteractiveComponent, this.unregisterInteractiveComponent);
+            var viewContext = this.buildViewContext(props.Viewspec, props.viewApi, props.options, props.dateProfileGenerator, props.dateEnv, props.theme, props.pluginHooks, props.dispatch, props.getCurrentData, props.emitter, props.calendarApi, this.registerInteractiveComponent, this.unregisterInteractiveComponent);
             var viewLabelId = (toolbarConfig.header && toolbarConfig.header.hasTitle)
                 ? this.state.viewLabelId
                 : '';
@@ -8231,7 +8231,7 @@ var FullCalendar = (function (exports) {
         };
         CalendarContent.prototype.renderView = function (props) {
             var pluginHooks = props.pluginHooks;
-            var viewSpec = props.viewSpec;
+            var Viewspec = props.Viewspec;
             var viewProps = {
                 dateProfile: props.dateProfile,
                 businessHours: props.businessHours,
@@ -8249,20 +8249,20 @@ var FullCalendar = (function (exports) {
                 var transformer = transformers_1[_i];
                 __assign(viewProps, transformer.transform(viewProps, props));
             }
-            var ViewComponent = viewSpec.component;
+            var ViewComponent = Viewspec.component;
             return (createElement(ViewComponent, __assign({}, viewProps)));
         };
         return CalendarContent;
     }(PureComponent));
-    function buildToolbarProps(viewSpec, dateProfile, dateProfileGenerator, currentDate, now, title) {
+    function buildToolbarProps(Viewspec, dateProfile, dateProfileGenerator, currentDate, now, title) {
         // don't force any date-profiles to valid date profiles (the `false`) so that we can tell if it's invalid
         var todayInfo = dateProfileGenerator.build(now, undefined, false); // TODO: need `undefined` or else INFINITE LOOP for some reason
         var prevInfo = dateProfileGenerator.buildPrev(dateProfile, currentDate, false);
         var nextInfo = dateProfileGenerator.buildNext(dateProfile, currentDate, false);
         return {
             title: title,
-            activeButton: viewSpec.type,
-            navUnit: viewSpec.singleUnit,
+            activeButton: Viewspec.type,
+            navUnit: Viewspec.singleUnit,
             isTodayEnabled: todayInfo.isValid && !rangeContainsMarker(dateProfile.currentRange, now),
             isPrevEnabled: prevInfo.isValid,
             isNextEnabled: nextInfo.isValid,
@@ -12069,7 +12069,7 @@ var FullCalendar = (function (exports) {
         listenerRefiners: LISTENER_REFINERS,
     });
 
-    /* An abstract class for the daygrid views, as well as month view. Renders one or more rows of day cells.
+    /* An abstract class for the daygrid Views, as well as month view. Renders one or more rows of day cells.
     ----------------------------------------------------------------------------------------------------------------------*/
     // It is a manager for a Table subcomponent, which does most of the heavy lifting.
     // It is responsible for managing width/height.
@@ -12102,7 +12102,7 @@ var FullCalendar = (function (exports) {
                 liquid: true,
                 chunk: { content: bodyContent },
             });
-            return (createElement(ViewRoot, { viewSpec: context.viewSpec }, function (rootElRef, classNames) { return (createElement("div", { ref: rootElRef, className: ['fc-daygrid'].concat(classNames).join(' ') },
+            return (createElement(ViewRoot, { Viewspec: context.Viewspec }, function (rootElRef, classNames) { return (createElement("div", { ref: rootElRef, className: ['fc-daygrid'].concat(classNames).join(' ') },
                 createElement(SimpleScrollGrid, { liquid: !props.isHeightAuto && !props.forPrint, collapsibleWidth: props.forPrint, cols: [] /* TODO: make optional? */, sections: sections }))); }));
         };
         TableView.prototype.renderHScrollLayout = function (headerRowContent, bodyContent, colCnt, dayMinWidth) {
@@ -12147,7 +12147,7 @@ var FullCalendar = (function (exports) {
                         }],
                 });
             }
-            return (createElement(ViewRoot, { viewSpec: context.viewSpec }, function (rootElRef, classNames) { return (createElement("div", { ref: rootElRef, className: ['fc-daygrid'].concat(classNames).join(' ') },
+            return (createElement(ViewRoot, { Viewspec: context.Viewspec }, function (rootElRef, classNames) { return (createElement("div", { ref: rootElRef, className: ['fc-daygrid'].concat(classNames).join(' ') },
                 createElement(ScrollGrid, { liquid: !props.isHeightAuto && !props.forPrint, collapsibleWidth: props.forPrint, colGroups: [{ cols: [{ span: colCnt, minWidth: dayMinWidth }] }], sections: sections }))); }));
         };
         return TableView;
@@ -12956,7 +12956,7 @@ var FullCalendar = (function (exports) {
             var start = renderRange.start;
             var end = renderRange.end;
             var endOfWeek;
-            // year and month views should be aligned with weeks. this is already done for week
+            // year and month Views should be aligned with weeks. this is already done for week
             if (/^(year|month)$/.test(currentRangeUnit)) {
                 start = dateEnv.startOfWeek(start);
                 // make end-of-week if not already
@@ -12979,7 +12979,7 @@ var FullCalendar = (function (exports) {
 
     var dayGridPlugin = createPlugin({
         initialView: 'dayGridMonth',
-        views: {
+        Views: {
             dayGrid: {
                 component: DayTableView,
                 dateProfileGeneratorClass: TableDateProfileGenerator,
@@ -13106,7 +13106,7 @@ var FullCalendar = (function (exports) {
                 var dateProfile = _this.props.dateProfile;
                 var range = dateProfile.renderRange;
                 var dayCnt = diffDays(range.start, range.end);
-                var navLinkAttrs = (dayCnt === 1) // only do in day views (to avoid doing in week views that dont need it)
+                var navLinkAttrs = (dayCnt === 1) // only do in day Views (to avoid doing in week Views that dont need it)
                     ? buildNavLinkAttrs(_this.context, range.start, 'week')
                     : {};
                 if (options.weekNumbers && rowKey === 'day') {
@@ -13186,7 +13186,7 @@ var FullCalendar = (function (exports) {
                     content: timeContent,
                 },
             });
-            return (createElement(ViewRoot, { viewSpec: context.viewSpec, elRef: this.rootElRef }, function (rootElRef, classNames) { return (createElement("div", { className: ['fc-timegrid'].concat(classNames).join(' '), ref: rootElRef },
+            return (createElement(ViewRoot, { Viewspec: context.Viewspec, elRef: this.rootElRef }, function (rootElRef, classNames) { return (createElement("div", { className: ['fc-timegrid'].concat(classNames).join(' '), ref: rootElRef },
                 createElement(SimpleScrollGrid, { liquid: !props.isHeightAuto && !props.forPrint, collapsibleWidth: props.forPrint, cols: [{ width: 'shrink' }], sections: sections }))); }));
         };
         TimeColsView.prototype.renderHScrollLayout = function (headerRowContent, allDayContent, timeContent, colCnt, dayMinWidth, slatMetas, slatCoords) {
@@ -13294,7 +13294,7 @@ var FullCalendar = (function (exports) {
                     ],
                 });
             }
-            return (createElement(ViewRoot, { viewSpec: context.viewSpec, elRef: this.rootElRef }, function (rootElRef, classNames) { return (createElement("div", { className: ['fc-timegrid'].concat(classNames).join(' '), ref: rootElRef },
+            return (createElement(ViewRoot, { Viewspec: context.Viewspec, elRef: this.rootElRef }, function (rootElRef, classNames) { return (createElement("div", { className: ['fc-timegrid'].concat(classNames).join(' '), ref: rootElRef },
                 createElement(ScrollGrid, { liquid: !props.isHeightAuto && !props.forPrint, collapsibleWidth: false, colGroups: [
                         { width: 'shrink', cols: [{ width: 'shrink' }] },
                         { cols: [{ span: colCnt, minWidth: dayMinWidth }] },
@@ -14205,7 +14205,7 @@ var FullCalendar = (function (exports) {
     var timeGridPlugin = createPlugin({
         initialView: 'timeGridWeek',
         optionRefiners: OPTION_REFINERS$2,
-        views: {
+        Views: {
             timeGrid: {
                 component: DayTimeColsView,
                 usesMinMaxTime: true,
@@ -14361,7 +14361,7 @@ var FullCalendar = (function (exports) {
             ];
             var _b = this.computeDateVars(props.dateProfile), dayDates = _b.dayDates, dayRanges = _b.dayRanges;
             var eventSegs = this.eventStoreToSegs(props.eventStore, props.eventUiBases, dayRanges);
-            return (createElement(ViewRoot, { viewSpec: context.viewSpec, elRef: this.setRootEl }, function (rootElRef, classNames) { return (createElement("div", { ref: rootElRef, className: extraClassNames.concat(classNames).join(' ') },
+            return (createElement(ViewRoot, { Viewspec: context.Viewspec, elRef: this.setRootEl }, function (rootElRef, classNames) { return (createElement("div", { ref: rootElRef, className: extraClassNames.concat(classNames).join(' ') },
                 createElement(Scroller, { liquid: !props.isHeightAuto, overflowX: props.isHeightAuto ? 'visible' : 'hidden', overflowY: props.isHeightAuto ? 'visible' : 'auto' }, eventSegs.length > 0 ?
                     _this.renderSegList(eventSegs, dayDates) :
                     _this.renderEmptyMessage()))); }));
@@ -14499,7 +14499,7 @@ var FullCalendar = (function (exports) {
 
     var listPlugin = createPlugin({
         optionRefiners: OPTION_REFINERS$1,
-        views: {
+        Views: {
             list: {
                 component: ListView,
                 buttonTextKey: 'list',

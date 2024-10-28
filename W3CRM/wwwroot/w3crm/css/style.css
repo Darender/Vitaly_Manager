@@ -21263,7 +21263,7 @@ Fixing Order => Base + Typography >> General Layout + Grid >> Page Layout + Comp
     font-size: 1.375rem; }
   [data-container="boxed"] .email-susb {
     display: none; }
-  [data-container="boxed"] .market-previews,
+  [data-container="boxed"] .market-preViews,
   [data-container="boxed"] .assets-al {
     width: 50%; }
   [data-container="boxed"] .buy-coin .coin-img img {
@@ -21328,7 +21328,7 @@ Fixing Order => Base + Typography >> General Layout + Grid >> Page Layout + Comp
     padding-right: 0rem; }
   [data-container="wide-boxed"] .email-susb {
     display: none; }
-  [data-container="wide-boxed"] .market-previews,
+  [data-container="wide-boxed"] .market-preViews,
   [data-container="wide-boxed"] .assets-al {
     width: 50%; }
   [data-container="wide-boxed"] .buy-coin .coin-img img {
@@ -22408,7 +22408,7 @@ Fixing Order => Base + Typography >> General Layout + Grid >> Page Layout + Comp
   [data-theme-version="dark"] #coin-chart line,
   [data-theme-version="dark"] .revenueMap line {
     stroke: #444444; }
-  [data-theme-version="dark"] .previews-info-list:hover {
+  [data-theme-version="dark"] .preViews-info-list:hover {
     background-color: #1E1E1E; }
   [data-theme-version="dark"] .sell-element .sell-blance .form-control,
   [data-theme-version="dark"] .limit-sell .nav-tabs {
@@ -37222,7 +37222,7 @@ html[dir="rtl"] [direction="rtl"][data-sidebar-style="compact"]:not([data-layout
   [data-theme-version="dark"] #coin-chart line,
   [data-theme-version="dark"] .revenueMap line {
     stroke: #444444; }
-  [data-theme-version="dark"] .previews-info-list:hover {
+  [data-theme-version="dark"] .preViews-info-list:hover {
     background-color: #1E1E1E; }
   [data-theme-version="dark"] .sell-element .sell-blance .form-control,
   [data-theme-version="dark"] .limit-sell .nav-tabs {

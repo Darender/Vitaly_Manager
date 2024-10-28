@@ -1,4 +1,5 @@
 ﻿@using W3CRM.Controllers
+@using Vitaly_Manager.Entidades.EntidadesAntiguas
 @{
     ViewData["Title"] = "Ventas";
 }
@@ -40,7 +41,7 @@
 								<div>
 									<select class="wide form-control" id="formulario_cliente" name="Cliente_id" required onchange="cargarProductos()">
 										<option selected disabled value="" id="formulario_cliente_vacio">Por favor seleccione</option>
-										@foreach (Cliente item in Model.ListaClientes)
+										@foreach (ClienteAntiguo item in Model.ListaClientes)
 										{
 											<option value="cliente_@item.ID">@item.Nombres @item.Apellidos</option>
 										}

@@ -391,12 +391,12 @@ function (_Emitter) {
         addRemoveLinks: false,
 
         /**
-         * Defines where to display the file previews – if `null` the
+         * Defines where to display the file preViews – if `null` the
          * Dropzone element itself is used. Can be a plain `HTMLElement` or a CSS
-         * selector. The element should have the `dropzone-previews` class so
-         * the previews are displayed properly.
+         * selector. The element should have the `dropzone-preViews` class so
+         * the preViews are displayed properly.
          */
-        previewsContainer: null,
+        preViewsContainer: null,
 
         /**
          * This is the element the hidden input field (which is used when clicking on the
@@ -758,15 +758,15 @@ function (_Emitter) {
         addedfile: function addedfile(file) {
           var _this2 = this;
 
-          if (this.element === this.previewsContainer) {
+          if (this.element === this.preViewsContainer) {
             this.element.classList.add("dlab-started");
           }
 
-          if (this.previewsContainer) {
+          if (this.preViewsContainer) {
             file.previewElement = Dropzone.createElement(this.options.previewTemplate.trim());
             file.previewTemplate = file.previewElement; // Backwards compatibility
 
-            this.previewsContainer.appendChild(file.previewElement);
+            this.preViewsContainer.appendChild(file.previewElement);
             var _iteratorNormalCompletion3 = true;
             var _didIteratorError3 = false;
             var _iteratorError3 = undefined;
@@ -1122,14 +1122,14 @@ function (_Emitter) {
     if ((fallback = _this.getExistingFallback()) && fallback.parentNode) {
       // Remove the fallback
       fallback.parentNode.removeChild(fallback);
-    } // Display previews in the previewsContainer element or the Dropzone element unless explicitly set to false
+    } // Display preViews in the preViewsContainer element or the Dropzone element unless explicitly set to false
 
 
-    if (_this.options.previewsContainer !== false) {
-      if (_this.options.previewsContainer) {
-        _this.previewsContainer = Dropzone.getElement(_this.options.previewsContainer, "previewsContainer");
+    if (_this.options.preViewsContainer !== false) {
+      if (_this.options.preViewsContainer) {
+        _this.preViewsContainer = Dropzone.getElement(_this.options.preViewsContainer, "preViewsContainer");
       } else {
-        _this.previewsContainer = _this.element;
+        _this.preViewsContainer = _this.element;
       }
     }
 

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Vitaly_Manager.Models
+namespace Vitaly_Manager.Entidades.EntidadesAntiguas
 {
     public class Movimiento
     {

@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Data.SqlClient;
-using Vitaly_Manager.Models;
-using W3CRM.Controllers;
 using System.Text.Json;
 using Microsoft.AspNetCore.Http.HttpResults;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System;
+using Vitaly_Manager.Entidades.EntidadesAntiguas;
 
 
 namespace Vitaly_Manager.Controllers

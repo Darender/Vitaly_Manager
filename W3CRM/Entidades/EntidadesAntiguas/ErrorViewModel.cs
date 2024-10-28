@@ -1,4 +1,4 @@
-namespace W3CRM.Models
+namespace Vitaly_Manager.Entidades.EntidadesAntiguas
 {
     public class ErrorViewModel
     {

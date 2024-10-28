@@ -2,14 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Data.SqlClient;
 using Vitaly_Manager.Controllers;
-using Vitaly_Manager.Models;
+using Vitaly_Manager.Entidades.EntidadesAntiguas;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace W3CRM.Controllers
 {
     public class ControladorClientes : Controller
     {
-        public List<Cliente> Listaclientes = new();
+        public List<ClienteAntiguo> Listaclientes = new();
         public List<Movimiento> ListaMovimiento = new();
         public string ultimos30dias;
         public string activosUltimos30;
@@ -78,7 +78,7 @@ namespace W3CRM.Controllers
             DateTime hace30Dias = DateTime.Today.AddDays(-30);
             int totalUltimos30 = 0;
 
-            foreach (Cliente valor in Listaclientes)
+            foreach (ClienteAntiguo valor in Listaclientes)
             {
                 if (valor.Ultima_Conusulta > hace30Dias && valor.Ultima_Conusulta != null)
                 {
@@ -95,7 +95,7 @@ namespace W3CRM.Controllers
             DateTime hace30Dias = DateTime.Today.AddDays(-30);
             float totalUltimos30 = 0;
 
-            foreach(Cliente valor in Listaclientes)
+            foreach(ClienteAntiguo valor in Listaclientes)
             {
                 if(valor.Ingreso > hace30Dias)
                 {
@@ -116,12 +116,12 @@ namespace W3CRM.Controllers
             return (totalUltimos30 * 100) / (Listaclientes.Count - totalUltimos30);
         }
 
-        public void modificarCliente(Cliente modificado)
+        public void modificarCliente(ClienteAntiguo modificado)
         {
             using (SqlConnection coneccion = new SqlConnection("Data Source=Alolo\\SQLEXPRESS;Initial Catalog=VitalyDataBase;Integrated Security=True;Encrypt=False;"))
             {
                 coneccion.Open();
-                Cliente? antiguo = Listaclientes.FirstOrDefault(c => c.ID == modificado.ID);
+                ClienteAntiguo? antiguo = Listaclientes.FirstOrDefault(c => c.ID == modificado.ID);
                 #pragma warning disable CS8602 
                 string titulo = $"El cliente {antiguo.Nombres} ah sido modificado";
                 string descripcion = $"El cliente con id {modificado.ID} fue modificado por {ControladorConfiguracion.usuarioActual.Nombres}, la comparacion entre antes y despues es el siguiente: " +
@@ -150,9 +150,9 @@ namespace W3CRM.Controllers
         public IActionResult ObtenerCliente(int id)
         {
             UnirDatos();
-            Cliente? cliente = null;
+            ClienteAntiguo? cliente = null;
 
-            foreach(Cliente valor in Listaclientes)
+            foreach(ClienteAntiguo valor in Listaclientes)
             {
                 if (valor.ID == id)
                 {
@@ -178,7 +178,7 @@ namespace W3CRM.Controllers
             {
                 coneccion.Open();
 
-                Cliente? antiguo = Listaclientes.FirstOrDefault(c => c.ID == id);
+                ClienteAntiguo? antiguo = Listaclientes.FirstOrDefault(c => c.ID == id);
                 #pragma warning disable CS8602
                 string titulo = $"El cliente {antiguo.Nombres} ah sido borrado";
                 string descripcion = $"El usuario con id {id} fue eliminado por {ControladorConfiguracion.usuarioActual.Nombres}, la informacion del cliente eliminado es la siguiente: " +
@@ -202,7 +202,7 @@ namespace W3CRM.Controllers
             return Json(new { porcentaje = ultimos30dias, cantidad = Listaclientes.Count }); 
 		}
 
-		public void AgregarDatos(Cliente nuevo)
+		public void AgregarDatos(ClienteAntiguo nuevo)
         {
             using (SqlConnection coneccion = new SqlConnection("Data Source=Alolo\\SQLEXPRESS;Initial Catalog=VitalyDataBase;Integrated Security=True;Encrypt=False;"))
             {
@@ -264,7 +264,7 @@ namespace W3CRM.Controllers
 
                     DateTime ingreso = Convert.ToDateTime(lector["Ingreso"]);
 
-                    Cliente cliente = new Cliente
+                    ClienteAntiguo cliente = new ClienteAntiguo
                     {
                         ID = id,
                         Nombres = nombres,

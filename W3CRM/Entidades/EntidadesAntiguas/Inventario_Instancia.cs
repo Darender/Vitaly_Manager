@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Vitaly_Manager.Models
+namespace Vitaly_Manager.Entidades.EntidadesAntiguas
 {
     public class Inventario_Instancia
     {
@@ -10,7 +10,7 @@ namespace Vitaly_Manager.Models
         public int ID { get; set; }
         [ForeignKey("Inventario_Producto"), Required]
         public int Producto_id { get; set; }
-        
+
         [Required]
         public required float Cantidad { get; set; }
         [Required]
