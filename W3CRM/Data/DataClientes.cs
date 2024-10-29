@@ -5,7 +5,34 @@ namespace Vitaly_Manager.Data
 {
     public static class DataClientes
     {
+        public static List<Cliente> ListaClientes() { 
+            List<Cliente> lista = new List<Cliente>();
+            using (SqlConnection coneccion = new SqlConnection(MainServidor.Servidor))
+            {
+                coneccion.Open();
+                SqlCommand comando = new SqlCommand("SELECT * FROM cliente", coneccion);
+                SqlDataReader lector = comando.ExecuteReader();
 
+                while (lector.Read())
+                {
+                    int folio = Convert.ToInt32(lector["folio"]);
+                    int IDcliente = Convert.ToInt32(lector["IDcliente"]);
+                    DateOnly fechaVenta = DateOnly.FromDateTime(Convert.ToDateTime(lector["fechaVenta"]));
+
+                    Venta nuevo = new Venta
+                    {
+                        Folio = folio,
+                        ID_Cliente = IDcliente,
+                        Fecha_Venta = fechaVenta,
+                    };
+
+                    listaVentas.Add(nuevo);
+                }
+                lector.Close();
+                return lista;
+        }
+
+        // Sin testeo
         /// <summary>
         /// Elimina un cliente de la base de datos
         /// </summary>
