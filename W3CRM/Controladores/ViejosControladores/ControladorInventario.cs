@@ -7,15 +7,16 @@ using System;
 using Vitaly_Manager.Entidades.EntidadesAntiguas;
 
 
-namespace Vitaly_Manager.Controllers
+namespace Vitaly_Manager.Controladores.ViejosControladores
 {
     public class ControladorInventario : Controller
     {
-        public  List<Tipo_inventario> ListaTipos= new List<Tipo_inventario>();
-        public  List<Inventario_Producto> ListaProductos = new List<Inventario_Producto>();
-        public  List<Inventario_Instancia> ListaInstancias = new List<Inventario_Instancia>();
+        public List<Tipo_inventario> ListaTipos = new List<Tipo_inventario>();
+        public List<Inventario_Producto> ListaProductos = new List<Inventario_Producto>();
+        public List<Inventario_Instancia> ListaInstancias = new List<Inventario_Instancia>();
         public List<Movimiento> ListaMovimientos = new List<Movimiento>();
-        public ControladorInventario() {
+        public ControladorInventario()
+        {
             unirDatos();
         }
 
@@ -30,7 +31,7 @@ namespace Vitaly_Manager.Controllers
                 }
             }
 
-            using (SqlConnection coneccion = new SqlConnection("Data Source=Alolo\\SQLEXPRESS;Initial Catalog=VitalyDataBase;Integrated Security=True;Encrypt=False;"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False"))
             {
                 coneccion.Open();
 
@@ -201,10 +202,11 @@ namespace Vitaly_Manager.Controllers
                 .OrderBy(instancia => instancia.Llegada)
                 .FirstOrDefault();
 
-            if(obtenido != null)
+            if (obtenido != null)
             {
                 return obtenido.Llegada.HasValue ? obtenido.Llegada.Value.ToString("yyyy-MM-dd") : null;
-            } else
+            }
+            else
             {
                 return "";
             }
@@ -226,13 +228,13 @@ namespace Vitaly_Manager.Controllers
             if (totalUltimos30 == 0)
                 return 0;
 
-            return (capitalInventario() / totalUltimos30) * 100;
+            return capitalInventario() / totalUltimos30 * 100;
         }
 
         public float capitalInventario()
         {
             float total = 0;
-            foreach(Inventario_Instancia valor in ListaInstancias)
+            foreach (Inventario_Instancia valor in ListaInstancias)
             {
                 total += valor.Cantidad * valor.Costo;
             }
@@ -252,7 +254,7 @@ namespace Vitaly_Manager.Controllers
                     completo = new Producto_Completo
                     {
                         Instancia_id = instancia.ID,
-                        Producto_id = producto.ID, 
+                        Producto_id = producto.ID,
                         Tipo_id = producto.Tipo,
                         Nombre_Producto = producto.Nombre,
                         Nombre_Tipo = getTipoNombre(instancia),
@@ -278,12 +280,12 @@ namespace Vitaly_Manager.Controllers
 
         public void modificarInstancia(Inventario_Instancia modificado)
         {
-            using (SqlConnection conexion = new SqlConnection("Data Source=Alolo\\SQLEXPRESS;Initial Catalog=VitalyDataBase;Integrated Security=True;Encrypt=False;"))
+            using (SqlConnection conexion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False"))
             {
                 conexion.Open();
 
                 Inventario_Instancia? antiguo = ListaInstancias.FirstOrDefault(c => c.ID == modificado.ID);
-                #pragma warning disable CS8602
+#pragma warning disable CS8602
                 string titulo = $"La instancia de {getProducto(modificado).Nombre} - {getProducto(modificado).Proveedor} ah sido modificado";
                 string descripcion = $"La instancia con id {modificado.ID} fue modificado por {ControladorConfiguracion.usuarioActual.Nombres}, la comparacion entre antes y despues es el siguiente: " +
                     $". Producto_id: {antiguo.Producto_id} -> {modificado.Producto_id}" +
@@ -337,13 +339,13 @@ namespace Vitaly_Manager.Controllers
         [HttpDelete]
         public IActionResult Eliminar(int id)
         {
-            using (SqlConnection coneccion = new SqlConnection("Data Source=Alolo\\SQLEXPRESS;Initial Catalog=VitalyDataBase;Integrated Security=True;Encrypt=False;"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False"))
             {
                 coneccion.Open();
 
                 Inventario_Instancia? antiguo = ListaInstancias.FirstOrDefault(c => c.ID == id);
                 Inventario_Producto? producto = getProducto(antiguo);
-                #pragma warning disable CS8602
+#pragma warning disable CS8602
                 string titulo = $"La instancia {producto.Nombre} - {producto.Proveedor} ah sido borrado";
                 string descripcion = $"La instancia con id {id} fue eliminado por {ControladorConfiguracion.usuarioActual.Nombres}, la informacion de la instancia eliminada es la siguiente: " +
                     $". Nombre: {producto.Nombre}" +
@@ -366,7 +368,7 @@ namespace Vitaly_Manager.Controllers
             }
 
             unirDatos();
-            return Json(new {});
+            return Json(new { });
         }
 
         public int getTipoID(Inventario_Instancia instancia)
@@ -423,11 +425,12 @@ namespace Vitaly_Manager.Controllers
             if (nuevaInstancia.ID == 0)
             {
                 controlador.agregarInstancia(nuevaInstancia);
-            } else
+            }
+            else
             {
                 controlador.modificarInstancia(nuevaInstancia);
             }
-            return View("../W3CRM/Inventario",controlador);
+            return View("../W3CRM/Inventario", controlador);
         }
 
         [HttpPost]
@@ -440,7 +443,7 @@ namespace Vitaly_Manager.Controllers
 
         public void agregarInstancia(Inventario_Instancia objeto)
         {
-            using (SqlConnection coneccion = new SqlConnection("Data Source=Alolo\\SQLEXPRESS;Initial Catalog=VitalyDataBase;Integrated Security=True;Encrypt=False;"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False"))
             {
                 coneccion.Open();
                 DateTime? vencimiento = objeto.Vencimiento;
@@ -483,11 +486,9 @@ namespace Vitaly_Manager.Controllers
 
             foreach (Inventario_Producto valor in ListaProductos)
             {
-                if(valor.Tipo == tipo)
+                if (valor.Tipo == tipo)
                     productosDelTipo.Add(valor);
             }
-
-            // Retorna los productos en formato JSON
             return Json(productosDelTipo);
         }
 
@@ -512,20 +513,20 @@ namespace Vitaly_Manager.Controllers
             }
             else
             {
-                return (totalUltimos30 / (float)ListaProductos.Count) * 100;
+                return totalUltimos30 / (float)ListaProductos.Count * 100;
             }
         }
 
         public void agregarProducto(Inventario_Producto nuevo)
         {
-            using (SqlConnection coneccion = new SqlConnection("Data Source=Alolo\\SQLEXPRESS;Initial Catalog=VitalyDataBase;Integrated Security=True;Encrypt=False;"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False"))
             {
                 coneccion.Open();
 
                 string tipoNombre = "";
-                foreach(Tipo_inventario tipo in ListaTipos)
+                foreach (Tipo_inventario tipo in ListaTipos)
                 {
-                    if(tipo.ID == nuevo.Tipo)
+                    if (tipo.ID == nuevo.Tipo)
                     {
                         tipoNombre = tipo.Nombre;
                     }
@@ -557,7 +558,7 @@ namespace Vitaly_Manager.Controllers
             ListaInstancias.Clear();
             ListaProductos.Clear();
             ListaMovimientos.Clear();
-            using (SqlConnection coneccion = new SqlConnection("Data Source=Alolo\\SQLEXPRESS;Initial Catalog=VitalyDataBase;Integrated Security=True;Encrypt=False;"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False"))
             {
                 coneccion.Open();
 

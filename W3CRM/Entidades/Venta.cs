@@ -26,5 +26,22 @@ namespace Vitaly_Manager.Entidades
 				_fechaVenta = value;
 			}
 		}
-	}
+
+        private decimal _importeTotal;
+
+        [Range(typeof(decimal), "-99999999.99", "99999999.99", ErrorMessage = "El valor debe estar entre -99999999.99 y 99999999.99.")]
+        [RegularExpression(@"-?\d{1,8}(\.\d{1,2})?", ErrorMessage = "El valor debe tener hasta 8 dígitos enteros y 2 decimales.")]
+        public decimal Importe_Total
+        {
+            get => _importeTotal;
+            set
+            {
+                if (value < -99999999.99m || value > 99999999.99m)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(Importe_Total), "El valor debe estar entre -99999999.99 y 99999999.99.");
+                }
+                _importeTotal = Math.Round(value, 2);
+            }
+        }
+    }
 }

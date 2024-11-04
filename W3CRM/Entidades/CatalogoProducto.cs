@@ -6,7 +6,7 @@ namespace Vitaly_Manager.Entidades
 	public class CatalogoProducto
 	{
 		[Key]
-		public int ID { get; set; }
+		public int ID_Producto { get; set; }
 
 		private string _nombre;
 
