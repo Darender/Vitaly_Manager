@@ -5,34 +5,74 @@ namespace Vitaly_Manager.Data
 {
     public static class DataClientes
     {
-        public static List<Cliente> ListaClientes() { 
-            List<Cliente> lista = new List<Cliente>();
-            using (SqlConnection coneccion = new SqlConnection(MainServidor.Servidor))
+
+
+        /// <summary>
+        /// Optiene a todos los clientes de la base de datos y los pone una lista
+        /// </summary>
+        /// <param name="respuesta">Mensaje de respuesta</param>
+        /// <param name="exito">Booleano de si fue exito o fracaso la consulta</param>
+        /// <returns></returns>
+        public static List<Cliente> ListaClientes(out string respuesta, out bool exito)
+        {
+            List<Cliente> listaClientes = new List<Cliente>();
+            try
             {
-                coneccion.Open();
-                SqlCommand comando = new SqlCommand("SELECT * FROM cliente", coneccion);
-                SqlDataReader lector = comando.ExecuteReader();
-
-                while (lector.Read())
+                using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
                 {
-                    int folio = Convert.ToInt32(lector["folio"]);
-                    int IDcliente = Convert.ToInt32(lector["IDcliente"]);
-                    DateOnly fechaVenta = DateOnly.FromDateTime(Convert.ToDateTime(lector["fechaVenta"]));
+                    conexion.Open();
+                    SqlCommand comando = new SqlCommand("SELECT * FROM cliente", conexion);
+                    SqlDataReader lector = comando.ExecuteReader();
 
-                    Venta nuevo = new Venta
+                    while (lector.Read())
                     {
-                        Folio = folio,
-                        ID_Cliente = IDcliente,
-                        Fecha_Venta = fechaVenta,
-                    };
+                        int idCliente = lector["idCliente"] != DBNull.Value ? Convert.ToInt32(lector["idCliente"]) : 0;
+                        string nombre = lector["nombre"] != DBNull.Value ? Convert.ToString(lector["nombre"])! : "N/A";
+                        string apellidoP = lector["apellidoP"] != DBNull.Value ? Convert.ToString(lector["apellidoP"])! : "N/A";
+                        string apellidoM = lector["apellidoM"] != DBNull.Value ? Convert.ToString(lector["apellidoM"])! : "N/A";
+                        string? telefono = lector["telefono"] != DBNull.Value ? Convert.ToString(lector["telefono"]) : null;
+                        string? genero = lector["genero"] != DBNull.Value ? Convert.ToString(lector["genero"]) : null;
+                        string? contactoAlternativo = lector["contactoAlternativo"] != DBNull.Value ? Convert.ToString(lector["contactoAlternativo"]) : null;
+                        int? edad = lector["edad"] != DBNull.Value ? Convert.ToInt32(lector["edad"]) : null;
+                        DateOnly fechaRegistro = lector["fechaRegistro"] != DBNull.Value ? DateOnly.FromDateTime(Convert.ToDateTime(lector["fechaRegistro"])) : DateOnly.MinValue;
 
-                    listaVentas.Add(nuevo);
+                        Cliente nuevo = new Cliente
+                        {
+                            ID_Cliente = idCliente,
+                            Nombre = nombre,
+                            ApellidoP = apellidoP,
+                            ApellidoM = apellidoM,
+                            Telefono = telefono,
+                            Genero = genero,
+                            ContractoAlternativo = contactoAlternativo,
+                            Edad = edad,
+                            FechaRegistro = fechaRegistro
+                        };
+
+                        listaClientes.Add(nuevo);
+                    }
+
+                    lector.Close();
                 }
-                lector.Close();
-                return lista;
+                exito = true;
+                respuesta = "Consulta exitosa";
+                return listaClientes;
+            }
+            catch (SqlException ex)
+            {
+                exito = false;
+                respuesta = $"Error en la base de datos: {ex.Message}";
+                return new List<Cliente>();
+            }
+            catch (Exception ex)
+            {
+                exito = false;
+                respuesta = $"Error inesperado: {ex.Message}";
+                return new List<Cliente>();
+            }
         }
 
-        // Sin testeo
+
         /// <summary>
         /// Elimina un cliente de la base de datos
         /// </summary>

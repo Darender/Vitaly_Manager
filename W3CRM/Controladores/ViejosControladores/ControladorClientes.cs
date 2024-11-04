@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.SqlClient;
-using Vitaly_Manager.Controllers;
 using Vitaly_Manager.Entidades.EntidadesAntiguas;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace W3CRM.Controllers
+namespace Vitaly_Manager.Controladores.ViejosControladores
 {
     public class ControladorClientes : Controller
     {
@@ -28,14 +27,14 @@ namespace W3CRM.Controllers
         {
             foreach (Movimiento movimiento in ListaMovimiento)
             {
-                if(movimiento.ID == id)
+                if (movimiento.ID == id)
                 {
                     ListaMovimiento.Remove(movimiento);
                     break;
                 }
             }
 
-            using (SqlConnection coneccion = new SqlConnection("Data Source=ForjaDelTrabajo;Initial Catalog=Vitaly Manager;Integrated Security=True;Encrypt=False"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False"))
             {
                 coneccion.Open();
 
@@ -70,7 +69,7 @@ namespace W3CRM.Controllers
                 return 0; // o puedes lanzar una excepción si lo prefieres
             }
 
-            return (activos / (float)Listaclientes.Count) * 100;
+            return activos / Listaclientes.Count * 100;
         }
 
         public int activosUltimos30Dias()
@@ -95,9 +94,9 @@ namespace W3CRM.Controllers
             DateTime hace30Dias = DateTime.Today.AddDays(-30);
             float totalUltimos30 = 0;
 
-            foreach(ClienteAntiguo valor in Listaclientes)
+            foreach (ClienteAntiguo valor in Listaclientes)
             {
-                if(valor.Ingreso > hace30Dias)
+                if (valor.Ingreso > hace30Dias)
                 {
                     totalUltimos30++;
                 }
@@ -113,16 +112,16 @@ namespace W3CRM.Controllers
                 return 100 * totalUltimos30;
             }
 
-            return (totalUltimos30 * 100) / (Listaclientes.Count - totalUltimos30);
+            return totalUltimos30 * 100 / (Listaclientes.Count - totalUltimos30);
         }
 
         public void modificarCliente(ClienteAntiguo modificado)
         {
-            using (SqlConnection coneccion = new SqlConnection("Data Source=ForjaDelTrabajo;Initial Catalog=Vitaly Manager;Integrated Security=True;Encrypt=False"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False"))
             {
                 coneccion.Open();
                 ClienteAntiguo? antiguo = Listaclientes.FirstOrDefault(c => c.ID == modificado.ID);
-                #pragma warning disable CS8602 
+#pragma warning disable CS8602
                 string titulo = $"El cliente {antiguo.Nombres} ah sido modificado";
                 string descripcion = $"El cliente con id {modificado.ID} fue modificado por {ControladorConfiguracion.usuarioActual.Nombres}, la comparacion entre antes y despues es el siguiente: " +
                     $". Nombre(s): {antiguo.Nombres} -> {modificado.Nombres}" +
@@ -152,7 +151,7 @@ namespace W3CRM.Controllers
             UnirDatos();
             ClienteAntiguo? cliente = null;
 
-            foreach(ClienteAntiguo valor in Listaclientes)
+            foreach (ClienteAntiguo valor in Listaclientes)
             {
                 if (valor.ID == id)
                 {
@@ -172,14 +171,14 @@ namespace W3CRM.Controllers
         }
 
         [HttpDelete]
-		public IActionResult Eliminar(int id)
-		{
-			using (SqlConnection coneccion = new SqlConnection("Data Source=ForjaDelTrabajo;Initial Catalog=Vitaly Manager;Integrated Security=True;Encrypt=False"))
+        public IActionResult Eliminar(int id)
+        {
+            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False"))
             {
                 coneccion.Open();
 
                 ClienteAntiguo? antiguo = Listaclientes.FirstOrDefault(c => c.ID == id);
-                #pragma warning disable CS8602
+#pragma warning disable CS8602
                 string titulo = $"El cliente {antiguo.Nombres} ah sido borrado";
                 string descripcion = $"El usuario con id {id} fue eliminado por {ControladorConfiguracion.usuarioActual.Nombres}, la informacion del cliente eliminado es la siguiente: " +
                     $". Nombre(s): {antiguo.Nombres}" +
@@ -195,16 +194,16 @@ namespace W3CRM.Controllers
 
                 query = $"DELETE FROM Clientes WHERE ID = {id}";
                 comando = new SqlCommand(query, coneccion);
-				comando.ExecuteNonQuery();
+                comando.ExecuteNonQuery();
                 coneccion.Close();
-			}
+            }
             UnirDatos();
-            return Json(new { porcentaje = ultimos30dias, cantidad = Listaclientes.Count }); 
-		}
+            return Json(new { porcentaje = ultimos30dias, cantidad = Listaclientes.Count });
+        }
 
-		public void AgregarDatos(ClienteAntiguo nuevo)
+        public void AgregarDatos(ClienteAntiguo nuevo)
         {
-            using (SqlConnection coneccion = new SqlConnection("Data Source=ForjaDelTrabajo;Initial Catalog=Vitaly Manager;Integrated Security=True;Encrypt=False"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False"))
             {
                 coneccion.Open();
 
@@ -232,11 +231,11 @@ namespace W3CRM.Controllers
                 UnirDatos();
             }
         }
-    void UnirDatos()
+        void UnirDatos()
         {
             Listaclientes.Clear();
             ListaMovimiento.Clear();
-            using (SqlConnection coneccion = new SqlConnection("Data Source=ForjaDelTrabajo;Initial Catalog=Vitaly Manager;Integrated Security=True;Encrypt=False"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False"))
             {
                 coneccion.Open();
 
@@ -287,7 +286,7 @@ namespace W3CRM.Controllers
                 {
                     int tipo_movimiento_id = Convert.ToInt32(lector["Tipo_movimiento_id"]);
 
-                    if(tipo_movimiento_id != 1)
+                    if (tipo_movimiento_id != 1)
                     {
                         continue;
                     }

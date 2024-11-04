@@ -26,7 +26,7 @@
         <div class="col-lg-4 col-md-6 col-sm-8">
             <div class="login-form">
                 <div class="text-center">
-                    <h3 class="title">Bienvenida a Vitaly Manager</h3>
+                    <h3 class="title">@ViewBag.Mensaje</h3>
                     <p>Inicie sesión en su cuenta para comenzar a usar Vitaly Manager</p>
                 </div>
                 @using (Html.BeginForm("InicioSesion", "ControladorConfiguracion", FormMethod.Post, new { @class = "needs-validation" }))

@@ -22,18 +22,21 @@ namespace Vitaly_Manager.Data
                     int folio = Convert.ToInt32(lector["folio"]);
                     int IDcliente = Convert.ToInt32(lector["IDcliente"]);
                     DateOnly fechaVenta = DateOnly.FromDateTime(Convert.ToDateTime(lector["fechaVenta"]));
+                    decimal importeTotal = Convert.ToInt32(lector["importeTotal"]);
+
 
                     Venta nuevo = new Venta
                     {
                         Folio = folio,
                         ID_Cliente = IDcliente,
                         Fecha_Venta = fechaVenta,
+                        Importe_Total = importeTotal
                     };
 
                     listaVentas.Add(nuevo);
                 }
                 lector.Close();
-                return new List<Venta>();
+                return listaVentas;
             }
         }
     }

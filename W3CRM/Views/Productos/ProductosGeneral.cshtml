@@ -2,7 +2,7 @@
 @using Vitaly_Manager.Entidades.EntidadesAntiguas
 @using W3CRM.Controllers
 @{
-	ViewData["Title"] = "Inventario";
+	ViewData["Title"] = "ProductosGeneral";
 }
 <!--**********************************
 	Content body start
@@ -17,7 +17,7 @@
 <div class="content-body">
     <div class="page-titles">
         <ol class="breadcrumb">
-            <li><h5 class="bc-title">Inventario</h5></li>
+            <li><h5 class="bc-title">Productos</h5></li>
             <li class="breadcrumb-item">
                 <a href="@Url.Action("Index", "w3crm")">
                     <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -27,7 +27,7 @@
                     Inicio
                 </a>
             </li>
-            <li class="breadcrumb-item active"><a href="javascript:void(0)">Inventario</a></li>
+            <li class="breadcrumb-item active"><a href="javascript:void(0)">Productos General</a></li>
         </ol>
         <a class="text-primary fs-13" data-bs-toggle="offcanvas" href="#offcanvasExample1" role="button" aria-controls="offcanvasExample1">+ Add Task</a>
     </div>
@@ -106,106 +106,105 @@
     <div class="col-lg-6">
         <div class="card">
             <div class="card-header">
-                <h4 class="card-title">Suplir inventario</h4>
+                <h4 class="card-title">Nuevo lote de productos</h4>
             </div>
             <div class="card-body">
                 <div class="form-validation">
 
                     <!--Aqui empieza-->
                    <!-- ancho de la pantalla sin márgenes -->
-<div class="container-fluid p-0">
-    <form class="needs-validation w-100" action="/ControladorInventario/AlterarInstancias" method="post" novalidate id="formulario">
-        <input type="hidden" id="formulario_instancia_id" name="ID" value="">
+                <div class="container-fluid p-0">
+                    <form class="needs-validation w-100" action="/ControladorProductos/AgregarLoteProducto" method="post" novalidate id="formulario">
+                        <input type="hidden" id="formulario_instancia_id" name="ID" value="">
+                        <div class="row mb-3">
+                            <label class="col-md-2 col-form-label" for="formulario_instancia_tipo">Tipo</label>
+                            <div class="col-md-10">
+                                <select class="wide form-control" id="formulario_instancia_tipo" name="Tipo" required onchange="cargarProductos()">
+                                    <option selected disabled value="" id="formulario_tipo_vacio1">Por favor seleccione</option>
+                                    @foreach (var tipo in Model.ListaTipos)
+                                    {
+                                        <option value="@tipo.ID">@tipo.Nombre</option>
+                                    }
+                                    </select>
+                            </div>
+                        </div>
 
-        <div class="row mb-3">
-            <label class="col-md-2 col-form-label" for="formulario_instancia_tipo">Tipo</label>
-            <div class="col-md-10">
-                <select class="wide form-control" id="formulario_instancia_tipo" name="Tipo" required onchange="cargarProductos()">
-                    <option selected disabled value="" id="formulario_tipo_vacio1">Por favor seleccione</option>
-                    @foreach (var tipo in Model.ListaTipos)
-                    {
-                        <option value="@tipo.ID">@tipo.Nombre</option>
+                        <div class="row mb-3">
+                            <label class="col-md-2 col-form-label" for="formulario_instancia_producto">Producto</label>
+                            <div class="col-md-10">
+                                <select class="wide form-control" id="formulario_instancia_producto" name="Producto_id" required>
+                                    <option selected disabled value="" id="formulario_producto_vacio">Por favor seleccione</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-md-2 col-form-label" for="formulario_instancia_cantidad">Cantidad</label>
+                            <div class="col-md-10">
+                                <input type="number" step="any" class="form-control" id="formulario_instancia_cantidad" placeholder="10" name="Cantidad" required>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-md-2 col-form-label" for="formulario_instancia_costo">Costo/Unidad</label>
+                            <div class="col-md-10">
+                                <div class="input-group">
+                                    <div class="input-group-text">$</div>
+                                    <input type="number" step="any" class="form-control" id="formulario_instancia_costo" placeholder="65.5" name="Costo" required oninput="calcularMargenYPrecio()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-md-2 col-form-label" for="formulario_instancia_vencimiento">Vencimiento</label>
+                            <div class="col-md-10">
+                                <input name="Vencimiento" class="datepicker-default form-control" id="formulario_instancia_vencimiento">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-md-2 col-form-label" for="formulario_instancia_material">Es material</label>
+                            <div class="col-md-10">
+                                <input type="checkbox" class="form-check-input" id="formulario_instancia_material" name="EsMaterial">
+                            </div>
+                        </div>
+
+                        <!-- Campos de Margen de ganancia y Precio de venta -->
+                        <div class="row mb-3">
+                            <div class="col-md-6 text-center">
+                                <label for="formulario_instancia_margen">Margen de ganancia (%)</label>
+                                <input type="text" class="form-control text-center" id="formulario_instancia_margen" name="MargenGanancia" readonly>
+                            </div>
+                            <div class="col-md-6 text-center">
+                                <label for="formulario_instancia_precio">Precio de venta</label>
+                                <div class="input-group">
+                                    <div class="input-group-text">$</div>
+                                    <input type="text" class="form-control text-center" id="formulario_instancia_precio" name="PrecioVenta" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botón de "Agregar"  -->
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-primary py-2 w-100" id="boton_subir">Agregar Producto</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <script>
+                    function calcularMargenYPrecio() {
+                        const costo = parseFloat(document.getElementById("formulario_instancia_costo").value) || 0;
+                        const margenPorcentaje = 20;  // Margen de ganancia predeterminado en %
+
+                        const margen = (costo * margenPorcentaje) / 100;
+                        const precioVenta = costo + margen;
+
+                        document.getElementById("formulario_instancia_margen").value = margenPorcentaje.toFixed(2);
+                        document.getElementById("formulario_instancia_precio").value = precioVenta.toFixed(2);
                     }
-                    </select>
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <label class="col-md-2 col-form-label" for="formulario_instancia_producto">Producto</label>
-            <div class="col-md-10">
-                <select class="wide form-control" id="formulario_instancia_producto" name="Producto_id" required>
-                    <option selected disabled value="" id="formulario_producto_vacio">Por favor seleccione</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <label class="col-md-2 col-form-label" for="formulario_instancia_cantidad">Cantidad</label>
-            <div class="col-md-10">
-                <input type="number" step="any" class="form-control" id="formulario_instancia_cantidad" placeholder="10" name="Cantidad" required>
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <label class="col-md-2 col-form-label" for="formulario_instancia_costo">Costo/Unidad</label>
-            <div class="col-md-10">
-                <div class="input-group">
-                    <div class="input-group-text">$</div>
-                    <input type="number" step="any" class="form-control" id="formulario_instancia_costo" placeholder="65.5" name="Costo" required oninput="calcularMargenYPrecio()">
-                </div>
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <label class="col-md-2 col-form-label" for="formulario_instancia_vencimiento">Vencimiento</label>
-            <div class="col-md-10">
-                <input name="Vencimiento" class="datepicker-default form-control" id="formulario_instancia_vencimiento">
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <label class="col-md-2 col-form-label" for="formulario_instancia_material">Es material</label>
-            <div class="col-md-10">
-                <input type="checkbox" class="form-check-input" id="formulario_instancia_material" name="EsMaterial">
-            </div>
-        </div>
-
-        <!-- Campos de Margen de ganancia y Precio de venta -->
-        <div class="row mb-3">
-            <div class="col-md-6 text-center">
-                <label for="formulario_instancia_margen">Margen de ganancia (%)</label>
-                <input type="text" class="form-control text-center" id="formulario_instancia_margen" name="MargenGanancia" readonly>
-            </div>
-            <div class="col-md-6 text-center">
-                <label for="formulario_instancia_precio">Precio de venta</label>
-                <div class="input-group">
-                    <div class="input-group-text">$</div>
-                    <input type="text" class="form-control text-center" id="formulario_instancia_precio" name="PrecioVenta" readonly>
-                </div>
-            </div>
-        </div>
-
-        <!-- Botón de "Agregar"  -->
-        <div class="row mb-3">
-            <div class="col-md-12">
-                <button type="submit" class="btn btn-primary py-2 w-100" id="boton_subir">Agregar Producto</button>
-            </div>
-        </div>
-    </form>
-</div>
-
-<script>
-    function calcularMargenYPrecio() {
-        const costo = parseFloat(document.getElementById("formulario_instancia_costo").value) || 0;
-        const margenPorcentaje = 20;  // Margen de ganancia predeterminado en %
-
-        const margen = (costo * margenPorcentaje) / 100;
-        const precioVenta = costo + margen;
-
-        document.getElementById("formulario_instancia_margen").value = margenPorcentaje.toFixed(2);
-        document.getElementById("formulario_instancia_precio").value = precioVenta.toFixed(2);
-    }
-</script>
+                </script>
                     <!--TERMINAR AQUI-->
                 </div>
             </div>
@@ -592,7 +591,7 @@
             var tipoSeleccionado = document.getElementById("formulario_instancia_tipo").value;
 
             // Realiza una petición AJAX para obtener los productos del tipo seleccionado
-            fetch('/ControladorInventario/ObtenerProductosPorTipo?tipo=' + tipoSeleccionado)
+            fetch('/ProductosController/ObtenerProductosPorTipo?tipo=' + tipoSeleccionado)
                 .then(response => response.json())
                 .then(data => {
                     var selectProductos = document.getElementById("formulario_instancia_producto");
@@ -611,8 +610,8 @@
                     console.error('Error al obtener productos:', error);
                     reject(error);
                 });
-        });
-    }
+            });
+        }
 
     function modificarInstancia(idInstancia) {
     console.log(idInstancia);

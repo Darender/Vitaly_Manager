@@ -5,7 +5,7 @@ namespace Vitaly_Manager.Entidades
 	public class Cliente
 	{
 		[Key]
-		public required int ID { get; set; }
+		public required int ID_Cliente { get; set; }
 
 		private string _nombre;
 		private string _apellidoP;
