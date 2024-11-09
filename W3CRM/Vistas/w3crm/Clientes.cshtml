@@ -10,7 +10,7 @@
 ***********************************-->
 <div class="content-body">
     <div class="page-titles">
-        <ol class="breadcrumb">
+        <ol class="breadcrumb" id="formato_clientes">
             <li><h5 class="bc-title">Clientes</h5></li>
             <li class="breadcrumb-item">
                 <a href="@Url.Action("Index", "w3crm")">
@@ -65,7 +65,7 @@
                                     </svg>
                                 </span>
                                 <div class="media-body">
-                                    <p class="mb-1">Activos en los últimos 30 días</p>
+                                    <p class="mb-1" id="p_actividad">Activos en los últimos 30 días</p>
                                     <h4 class="mb-0" id="CantidadActivos">@Model.activosUltimos30</h4>
                                     <span class="badge badge-success">@Model.porcentajeActivosUltimos30%</span> <!-- Cambié la clase a 'badge-success' -->
                                 </div>
@@ -86,7 +86,7 @@
                                     </svg>
                                 </span>
                                 <div class="media-body">
-                                    <p class="mb-1">Ultimo cliente agregado</p>
+                                    <p class="mb-1" id="p_ultimosClientes">Ultimo cliente agregado</p>
                                     @if (Model.Listaclientes.Count > 0)
                                     {
                                         <h4 class="mb-0" id="CantidadActivos">@Model.Listaclientes[Model.Listaclientes.Count - 1].Nombres @Model.Listaclientes[Model.Listaclientes.Count - 1].Apellidos</h4>

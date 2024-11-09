@@ -20,7 +20,7 @@ namespace Vitaly_Manager.Controladores
         {
             bool exito = false;
             string respuesta = "";
-            List<TipoProducto> lista = DataTipoProducto.ListaTiposProductos(out respuesta, out exito);
+            List<TipoProducto> lista = DatosTipoProducto.ListaTiposProductos(out respuesta, out exito);
             ViewBag.Mensaje = lista[0].Tipo;
             return View();
         }

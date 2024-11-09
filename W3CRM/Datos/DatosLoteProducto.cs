@@ -4,7 +4,7 @@ using Vitaly_Manager.Entidades;
 
 namespace Vitaly_Manager.Data
 {
-    public static class DataLoteProducto
+    public static class DatosLoteProducto
     {
         /// <summary>
         /// Agrega un nuevo lote de producto a la base de datos

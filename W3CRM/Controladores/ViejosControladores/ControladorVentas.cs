@@ -18,7 +18,7 @@ namespace Vitaly_Manager.Controladores.ViejosControladores
 
         public void agregarVenta(VentaAntiguo nuevo)
         {
-            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-E6EPG51;Initial Catalog=Vitaly Manager;Integrated Security=True;Encrypt=False"))
             {
                 coneccion.Open();
 
@@ -66,7 +66,7 @@ namespace Vitaly_Manager.Controladores.ViejosControladores
             ListaInstancias.Clear();
             ListaProductos.Clear();
 
-            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-E6EPG51;Initial Catalog=Vitaly Manager;Integrated Security=True;Encrypt=False"))
             {
                 coneccion.Open();
 

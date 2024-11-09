@@ -3,7 +3,7 @@ using Vitaly_Manager.Entidades;
 
 namespace Vitaly_Manager.Data
 {
-    public class DataIVA
+    public class DatosIVA
     {
         /// <summary>
         /// Duelve el ultimo iva de la lista

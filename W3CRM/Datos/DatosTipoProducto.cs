@@ -3,7 +3,7 @@ using Vitaly_Manager.Entidades;
 
 namespace Vitaly_Manager.Data
 {
-    public static class DataTipoProducto
+    public static class DatosTipoProducto
     {
         /// <summary>
         /// Obtiene una lista de los tipos de productos que hay en la base de datos

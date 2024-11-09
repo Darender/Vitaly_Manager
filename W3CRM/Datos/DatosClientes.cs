@@ -3,7 +3,7 @@ using Vitaly_Manager.Entidades;
 
 namespace Vitaly_Manager.Data
 {
-    public static class DataClientes
+    public static class DatosClientes
     {
 
 
@@ -98,7 +98,7 @@ namespace Vitaly_Manager.Data
                     }
 
                     // Confirma que no este siendo referenciado en otra parte necesaria de la base de datos
-                    List<Venta> ListaVentas = DataVenta.ListaVentas();
+                    List<Venta> ListaVentas = DatosVenta.ListaVentas();
                     foreach (Venta item in ListaVentas)
                     {
                         if(item.ID_Cliente == id)

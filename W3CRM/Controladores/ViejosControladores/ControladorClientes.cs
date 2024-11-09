@@ -34,7 +34,7 @@ namespace Vitaly_Manager.Controladores.ViejosControladores
                 }
             }
 
-            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-E6EPG51;Initial Catalog=Vitaly Manager;Integrated Security=True;Encrypt=False"))
             {
                 coneccion.Open();
 
@@ -117,7 +117,7 @@ namespace Vitaly_Manager.Controladores.ViejosControladores
 
         public void modificarCliente(ClienteAntiguo modificado)
         {
-            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-E6EPG51;Initial Catalog=Vitaly Manager;Integrated Security=True;Encrypt=False"))
             {
                 coneccion.Open();
                 ClienteAntiguo? antiguo = Listaclientes.FirstOrDefault(c => c.ID == modificado.ID);
@@ -173,7 +173,7 @@ namespace Vitaly_Manager.Controladores.ViejosControladores
         [HttpDelete]
         public IActionResult Eliminar(int id)
         {
-            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-E6EPG51;Initial Catalog=Vitaly Manager;Integrated Security=True;Encrypt=False"))
             {
                 coneccion.Open();
 
@@ -203,7 +203,7 @@ namespace Vitaly_Manager.Controladores.ViejosControladores
 
         public void AgregarDatos(ClienteAntiguo nuevo)
         {
-            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-E6EPG51;Initial Catalog=Vitaly Manager;Integrated Security=True;Encrypt=False"))
             {
                 coneccion.Open();
 
@@ -235,7 +235,7 @@ namespace Vitaly_Manager.Controladores.ViejosControladores
         {
             Listaclientes.Clear();
             ListaMovimiento.Clear();
-            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-E6EPG51;Initial Catalog=Vitaly Manager;Integrated Security=True;Encrypt=False"))
             {
                 coneccion.Open();
 
