@@ -6,7 +6,7 @@ namespace Vitaly_Manager.Controladores
 {
     public class ProductosController : Controller
     {
-        public List<TipoProducto> ListaTipos = DataTipoProducto.ListaTiposProductos(out _, out _);
+        //public List<TipoProducto> ListaTipos = DataTipoProducto.ListaTiposProductos(out _, out _);
 
         public IActionResult AgregarLoteProducto()
         {
@@ -14,6 +14,7 @@ namespace Vitaly_Manager.Controladores
             return View(controlador);
         }
 
+        /*
         [HttpGet("AgregarNuevoLoteProducto")]
         public IActionResult AgregarNuevoLoteProducto(
             int Tipo,
@@ -69,8 +70,8 @@ namespace Vitaly_Manager.Controladores
             {
                 return StatusCode(500, new { message = "Ocurrió un error en el servidor.", error = ex.Message });
             }
-        }
-
+        }*/
+        /*
         [HttpGet]
         [Route("ObtenerProductosPorTipo")]
         public IActionResult ObtenerProductosPorTipo(int tipo)
@@ -84,5 +85,6 @@ namespace Vitaly_Manager.Controladores
                 }
                 return Json(productosDelTipo);
             }
-        }
+        }*/
+    }
 }

@@ -5,7 +5,7 @@ namespace Vitaly_Manager.Data
 {
     public static class DataVenta
     {
-
+        /*
         //Temporal necesita mas revision
         public static List<Venta> ListaVentas()
         {
@@ -37,6 +37,6 @@ namespace Vitaly_Manager.Data
                 lector.Close();
                 return listaVentas;
             }
-        }
+        }*/
     }
 }

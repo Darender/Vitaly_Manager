@@ -4,7 +4,7 @@ using Vitaly_Manager.Entidades;
 namespace Vitaly_Manager.Data
 {
     public class DataIVA
-    {
+    {/*
         /// <summary>
         /// Duelve el ultimo iva de la lista
         /// </summary>
@@ -55,6 +55,6 @@ namespace Vitaly_Manager.Data
                 respuesta = $"Error inesperado: {ex.Message}";
                 return new Parametros();
             }
-        }
+        }*/
     }
 }

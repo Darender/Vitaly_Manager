@@ -6,7 +6,7 @@ namespace Vitaly_Manager.Data
     public static class DataClientes
     {
 
-
+        /*
         /// <summary>
         /// Optiene a todos los clientes de la base de datos y los pone una lista
         /// </summary>
@@ -124,6 +124,6 @@ namespace Vitaly_Manager.Data
                 respuesta = $"Error inesperado (Exception): {ex.Message}";
                 return false;
             }
-        }
+        }*/
     }
 }

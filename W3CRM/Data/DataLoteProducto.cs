@@ -4,7 +4,7 @@ using Vitaly_Manager.Entidades;
 namespace Vitaly_Manager.Data
 {
     public static class DataLoteProducto
-    {
+    {/*
         /// <summary>
         /// Agrega un nuevo lote de producto a la base de datos
         /// </summary>
@@ -54,7 +54,7 @@ namespace Vitaly_Manager.Data
                 mensaje = $"Error inesperado: {ex.Message}";
                 return false;
             }
-        }
+        }*/
 
     }
 }
