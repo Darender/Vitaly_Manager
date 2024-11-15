@@ -5,20 +5,6 @@
 	<div class="deznav-scroll">
 		<ul class="metismenu" id="menu">
 			<li class="menu-title">Vitaly - Beauty & Wellness</li>
-
-			<li>
-				<a href="@Url.Action("Ventas", "w3crm")" class="" aria-expanded="false">
-					<div class="menu-icon">
-						<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<path d="M6.64111 13.5497L9.38482 9.9837L12.5145 12.4421L15.1995 8.97684" stroke="#888888" stroke-linecap="round" stroke-linejoin="round" />
-							<ellipse cx="18.3291" cy="3.85021" rx="1.76201" ry="1.76201" stroke="#888888" stroke-linecap="round" stroke-linejoin="round" />
-							<path d="M13.6808 2.86012H7.01867C4.25818 2.86012 2.54651 4.81512 2.54651 7.57561V14.9845C2.54651 17.7449 4.22462 19.6915 7.01867 19.6915H14.9058C17.6663 19.6915 19.3779 17.7449 19.3779 14.9845V8.53213" stroke="#888888" stroke-linecap="round" stroke-linejoin="round" />
-						</svg>
-					</div>
-					<span class="nav-text">Ventas</span>
-				</a>
-			</li>
-
 			<li>
 				<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
 					<div class="menu-icon">
@@ -32,13 +18,12 @@
 					<span class="nav-text">Productos</span>
 				</a>
 				<ul aria-expanded="false">
-					<li><a href="@Url.Action("ProductosGeneral", "Productos")">General Productos</a></li>
 					<li><a href="@Url.Action("AgregarLoteProducto", "Productos")">Agregar Lote Producto</a></li>
 				</ul>
 			</li>
 
 			<li>
-				<a href="@Url.Action("Clientes", "w3crm")" class="" aria-expanded="false">
+				<a class="has-arrow " href="javascript:void(0);" aria-expanded="false">
 					<div class="menu-icon">
 						<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<path fill-rule="evenodd" clip-rule="evenodd" d="M8.79222 13.9396C12.1738 13.9396 15.0641 14.452 15.0641 16.4989C15.0641 18.5458 12.1931 19.0729 8.79222 19.0729C5.40972 19.0729 2.52039 18.5651 2.52039 16.5172C2.52039 14.4694 5.39047 13.9396 8.79222 13.9396Z" stroke="#888888" stroke-linecap="round" stroke-linejoin="round" />
@@ -49,6 +34,9 @@
 					</div>
 					<span class="nav-text">Clientes</span>
 				</a>
+				<ul aria-expanded="false">
+					<li><a href="@Url.Action("AgregarLoteProducto", "Productos")">Agregar Lote Producto</a></li>
+				</ul>
 			</li>
 
 			<li>
