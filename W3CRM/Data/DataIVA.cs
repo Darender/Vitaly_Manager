@@ -11,9 +11,9 @@ namespace Vitaly_Manager.Data
         /// <param name="respuesta">Mensaje de respuesta</param>
         /// <param name="exito">Booleano de si fue exito o fracaso la consulta</param>
         /// <returns>Debuelve una entidad IVA</returns>
-        public static IVA UltimoIVA(out string respuesta, out bool exito)
+        public static Parametros UltimoIVA(out string respuesta, out bool exito)
         {
-            IVA listaTiposProductos = new();
+            Parametros listaTiposProductos = new();
             try
             {
                 using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
@@ -27,7 +27,7 @@ namespace Vitaly_Manager.Data
                         int idIVA = lector["idIVA"] != DBNull.Value ? Convert.ToInt32(lector["idIVA"]) : 0;
                         decimal porcentaje = Convert.ToInt32(lector["porcentaje"]);
 
-                        IVA nuevo = new IVA
+                        Parametros nuevo = new Parametros
                         {
                             ID_IVA = idIVA,
                             Porcentaje = porcentaje
@@ -41,19 +41,19 @@ namespace Vitaly_Manager.Data
                 }
                 exito = false;
                 respuesta = "Consulta fallida ninguno encontrado";
-                return new IVA();
+                return new Parametros();
             }
             catch (SqlException ex)
             {
                 exito = false;
                 respuesta = $"Error en la base de datos: {ex.Message}";
-                return new IVA();
+                return new Parametros();
             }
             catch (Exception ex)
             {
                 exito = false;
                 respuesta = $"Error inesperado: {ex.Message}";
-                return new IVA();
+                return new Parametros();
             }
         }
     }

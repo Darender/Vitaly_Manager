@@ -6,7 +6,7 @@ namespace Vitaly_Manager.Entidades
 	public class Venta
 	{
 		[Key]
-		public required int Folio { get; set; }
+		public required int FolioVenta { get; set; }
 
 		[Required(ErrorMessage = "El ID del cliente es obligatorio.")]
 		[ForeignKey("Cliente")]

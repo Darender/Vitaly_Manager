@@ -5,10 +5,10 @@ namespace Vitaly_Manager.Entidades
     public class VentaProducto
     {
         [Key]
-        public required string ID_Lote { get; set; }
+        public required int ID_Lote { get; set; }
         [Key]
-        public required string Folio_Venta { get; set; }
+        public required int Folio_Venta { get; set; }
         [Required]
-        public int Cantidad { get; set; }
+        public int Cantidad_Vendida { get; set; }
     }
 }

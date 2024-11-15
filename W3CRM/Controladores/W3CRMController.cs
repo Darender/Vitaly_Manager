@@ -1,83 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using Vitaly_Manager.Controladores.ViejosControladores;
 using Vitaly_Manager.Data;
 using Vitaly_Manager.Entidades;
-using Vitaly_Manager.Entidades.EntidadesAntiguas;
 
 namespace Vitaly_Manager.Controladores
 {
     public class W3CRMController : Controller
-    {
-        public IActionResult Ventas()
-        {
-            ControladorVentas controlador = new ControladorVentas();
-            return View(controlador);
-        }
-
-        public IActionResult Login()
-        {
-            bool exito = false;
-            string respuesta = "";
-            List<TipoProducto> lista = DataTipoProducto.ListaTiposProductos(out respuesta, out exito);
-            ViewBag.Mensaje = lista[0].Tipo;
-            return View();
-        }
-
-        public IActionResult Configuracion()
-        {
-            ControladorConfiguracion controlador = new ControladorConfiguracion();
-            controlador.UnirDatos();
-            return View(controlador);
-        }
-
-        public IActionResult Clientes()
-        {
-            ControladorClientes controlador = new ControladorClientes();
-            return View(controlador);
-        }
-
-        [HttpPost]
-        public ActionResult Clientes(string id, string nombre, string apellido, string telefono, string edad, string genero)
-        {
-            ControladorClientes controlador = new ControladorClientes();
-            int? n_edad;
-            if (edad == null)
-                n_edad = null;
-            else
-                n_edad = int.Parse(edad);
-
-            if (!string.IsNullOrEmpty(id))
-            {
-                controlador.modificarCliente(new ClienteAntiguo
-                {
-                    ID = int.Parse(id),
-                    Nombres = nombre,
-                    Apellidos = apellido,
-                    Telefono = telefono,
-                    Edad = n_edad,
-                    Genero = genero,
-                    Ultima_Conusulta = null,
-                    Ingreso = DateTime.Today
-                });
-            }
-            else
-            {
-                controlador.AgregarDatos(new ClienteAntiguo
-                {
-                    ID = -1,
-                    Nombres = nombre,
-                    Apellidos = apellido,
-                    Telefono = telefono,
-                    Edad = n_edad,
-                    Genero = genero,
-                    Ultima_Conusulta = null,
-                    Ingreso = DateTime.Today
-                });
-            }
-            return View(controlador);
-        }
+    { 
 
         #region Extra Pages
         public IActionResult Profile()

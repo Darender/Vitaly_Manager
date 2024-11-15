@@ -1,4 +1,4 @@
-namespace Vitaly_Manager.Entidades.EntidadesAntiguas
+namespace Vitaly_Manager.Entidades
 {
     public class ErrorViewModel
     {

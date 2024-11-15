@@ -1,5 +1,5 @@
-﻿@using Vitaly_Manager.Controladores.ViejosControladores
-@using Vitaly_Manager.Entidades.EntidadesAntiguas
+﻿@using Vitaly_Manager.Controladores
+@using Vitaly_Manager.Entidades
 <!--**********************************
 	Header start
 ***********************************-->
@@ -35,19 +35,11 @@
 						<div class="dropdown header-profile2">
 							<a class="nav-link" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 								<div class="header-info2 d-flex align-items-center">
-									@{
-										var usuarioActual = ControladorConfiguracion.usuarioActual as Usuario;
-									}
-									<div class="header-media">
-										<img src="~/imagenes/usuarios/imagen_@(usuarioActual.Id).jpg" alt="">
-									</div>
-									<div class="header-info">
-										<p>@usuarioActual.Nombres</p>
-										<p>@usuarioActual.Correo</p>
-									</div>
+
 									
 								</div>
 							</a>
+						</div>
 					</li>
                 </ul>
             </div>

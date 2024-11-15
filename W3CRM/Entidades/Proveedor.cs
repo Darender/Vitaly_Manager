@@ -5,41 +5,26 @@ namespace Vitaly_Manager.Entidades
 	public class Proveedor
 	{
 		[Key]
-		public required int ID { get; set; }
+		public required int ID_Proveedor { get; set; }
 
-		private string _nombre;
-		private int _telefono;
+		private string _nombreProveedor;
 
 		[Required(ErrorMessage = "El nombre es obligatorio.")]
-		[StringLength(40, ErrorMessage = "El nombre no puede exceder los 40 caracteres.")]
-		public required string Nombre
+		[StringLength(80, ErrorMessage = "El nombre no puede exceder los 80 caracteres.")]
+		public required string Nombre_Proveedor
 		{
-			get => _nombre;
+			get => _nombreProveedor;
 			set
 			{
-				if (value.Length > 40)
+				if (value.Length > 80)
 				{
-					throw new ArgumentException("El nombre no puede exceder los 40 caracteres.");
+					throw new ArgumentException("El nombre no puede exceder los 80 caracteres.");
 				}
-				_nombre = value;
+				_nombreProveedor = value;
 			}
 		}
 
-		[Required(ErrorMessage = "El teléfono es obligatorio.")]
-		[StringLength(20, ErrorMessage = "El teléfono no puede exceder los 20 caracteres.")]
-		public int Telefono
-		{
-			get => _telefono;
-			set
-			{
-				if (value.ToString().Length > 20)
-				{
-					throw new ArgumentException("El teléfono no puede exceder los 20 caracteres.");
-				}
-				_telefono = value;
-			}
-		}
-
-		public string? Pagina_Contacto { get; set; }
+        public string? Telefono { get; set; }
+        public string? Pagina_Contacto { get; set; }
 	}
 }

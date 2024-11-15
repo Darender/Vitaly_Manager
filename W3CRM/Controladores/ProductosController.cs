@@ -1,25 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Vitaly_Manager.Controladores.ViejosControladores;
 using Vitaly_Manager.Data;
 using Vitaly_Manager.Entidades;
 
 namespace Vitaly_Manager.Controladores
 {
-    [ApiController]
-    [Route("ProductosController")]
     public class ProductosController : Controller
     {
         public List<TipoProducto> ListaTipos = DataTipoProducto.ListaTiposProductos(out _, out _);
 
-        [HttpGet]
-        public IActionResult ProductosGeneral()
-        {
-            ControladorInventario controlador = new ControladorInventario();
-            return View(controlador);
-        }
-
-        [HttpGet]
-        [Route("AgregarLoteProducto")]
         public IActionResult AgregarLoteProducto()
         {
             ProductosController controlador = new ProductosController();
@@ -39,7 +27,7 @@ namespace Vitaly_Manager.Controladores
         {
             string mensaje;
             bool respuesta;
-            IVA iva;
+            Parametros iva;
 
             try
             {

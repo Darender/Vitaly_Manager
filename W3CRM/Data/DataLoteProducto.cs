@@ -1,5 +1,4 @@
 ﻿using System.Data.SqlClient;
-using Vitaly_Manager.Controladores.ViejosControladores;
 using Vitaly_Manager.Entidades;
 
 namespace Vitaly_Manager.Data

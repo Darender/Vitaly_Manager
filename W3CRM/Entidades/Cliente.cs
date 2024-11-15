@@ -7,28 +7,28 @@ namespace Vitaly_Manager.Entidades
 		[Key]
 		public required int ID_Cliente { get; set; }
 
-		private string _nombre;
+		private string _nombreCliente;
 		private string _apellidoP;
 		private string _apellidoM;
 		private string? _telefono;
 		private string? _genero;
 
 		[Required(ErrorMessage = "El nombre es obligatorio.")]
-		[StringLength(30, ErrorMessage = "El nombre no puede exceder los 30 caracteres.")]
-		public required string Nombre
+		[StringLength(30, ErrorMessage = "El nombre no puede exceder los 50 caracteres.")]
+		public required string Nombre_Cliente
 		{
-			get => _nombre;
+			get => _nombreCliente;
 			set
 			{
 				if (string.IsNullOrWhiteSpace(value))
 				{
 					throw new ArgumentException("El nombre es obligatorio.");
 				}
-				if (value.Length > 30)
+				if (value.Length > 50)
 				{
-					throw new ArgumentException("El nombre no puede exceder los 30 caracteres.");
+					throw new ArgumentException("El nombre no puede exceder los 50 caracteres.");
 				}
-				_nombre = value;
+				_nombreCliente = value;
 			}
 		}
 

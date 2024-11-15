@@ -1,6 +1,5 @@
 ﻿using System.Data.SqlClient;
 using Vitaly_Manager.Entidades;
-using Vitaly_Manager.Entidades.EntidadesAntiguas;
 
 namespace Vitaly_Manager.Data
 {

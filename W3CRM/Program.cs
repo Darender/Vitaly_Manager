@@ -23,6 +23,6 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     //pattern: "{controller=Home}/{action=Index}/{id?}");
-    pattern: "{controller=w3crm}/{action=Login}/{id?}");
+    pattern: "{controller=Productos}/{action=AgregarLoteProducto}/{id?}");
 
 app.Run();
