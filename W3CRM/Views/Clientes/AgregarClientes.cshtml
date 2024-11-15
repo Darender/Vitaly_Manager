@@ -33,89 +33,97 @@
     </div>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Nuevo lote de productos</h4>
+                        <h4 class="card-title">Nuevo Cliente</h4>
                     </div>
                     <div class="card-body">
                         <div class="form-validation">
                         <div class="container-fluid p-0">
-                                <form class="needs-validation w-100" action="/ProductosController/AgregarNuevoLoteProducto" method="post" novalidate id="formulario">
-                                <input type="hidden" id="formulario_id" name="ID" value="0">
-                                <div class="row mb-3">
-                                    <label class="col-md-2 col-form-label" for="formulario_tipo">Tipo</label>
-                                    <div class="col-md-10">
-                                            <select class="wide form-control" id="formulario_tipo" name="Tipo" required onchange="cargarProductos()">
-                                            <option selected disabled value="" id="formulario_tipo_vacio1">Por favor seleccione</option>
-                                            @foreach (var tipo in Model.ListaTipos)
-                                            {
-                                                    <option value="@tipo.ID_TipoProducto">@tipo.Tipo</option>
-                                            }
-                                            </select>
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label class="col-md-2 col-form-label" for="formulario_producto">Producto</label>
-                                    <div class="col-md-10">
-                                        <select class="wide form-control" id="formulario_producto" name="Producto_id" required>
-                                            <option selected disabled value="" id="formulario_producto_vacio">Por favor seleccione</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label class="col-md-2 col-form-label" for="formulario_cantidad">Cantidad</label>
-                                    <div class="col-md-10">
-                                        <input type="number" step="any" class="form-control" id="formulario_cantidad" placeholder="10" name="Cantidad" required>
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label class="col-md-2 col-form-label" for="formulario_costo">Costo/Unidad</label>
-                                    <div class="col-md-10">
-                                        <div class="input-group">
-                                            <div class="input-group-text">$</div>
-                                            <input type="number" step="any" class="form-control" id="formulario_costo" placeholder="65.5" name="Costo" required oninput="calcularMargenYPrecio()">
+                                <form class="needs-validation w-100" method="post" novalidate id="formulario">
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-2 col-form-label" for="nombreCliente">
+                                            Nombre del cliente
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-lg-10">
+                                            <input type="text" class="form-control" id="nombreCliente" placeholder="Inserte nombre.." required>
+                                            <div class="invalid-feedback">
+                                                Porfavor inserte el nombre del cliente.
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label class="col-md-2 col-form-label" for="formulario_vencimiento">Vencimiento</label>
-                                    <div class="col-md-10">
-                                        <input name="Vencimiento" class="datepicker-default form-control" id="formulario_vencimiento">
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <label class="col-md-2 col-form-label" for="formulario_material">Es material</label>
-                                    <div class="col-md-10">
-                                        <input type="checkbox" class="form-check-input" id="formulario_material" name="EsMaterial">
-                                    </div>
-                                </div>
-
-                                <div class="row mb-3">
-                                    <div class="col-md-6 text-center">
-                                        <label for="formulario_margen">Margen de ganancia (%)</label>
-                                        <input type="text" class="form-control text-center" id="formulario_margen" name="MargenGanancia" readonly>
-                                    </div>
-                                    <div class="col-md-6 text-center">
-                                        <label for="formulario_precio">Precio de venta</label>
-                                        <div class="input-group">
-                                            <div class="input-group-text">$</div>
-                                            <input type="text" class="form-control text-center" id="formulario_precio" name="PrecioVenta" readonly>
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-2 col-form-label" for="apellidoPaterno">
+                                            Apellido paterno
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-lg-10">
+                                            <input type="text" class="form-control" id="apellidoPaterno" placeholder="Inserte apellido paterno.." required>
+                                            <div class="invalid-feedback">
+                                                Porfavor inserte el apellido paterno.
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-
-                                <!-- Botón de "Agregar"  -->
-                                <div class="row mb-3">
-                                    <div class="col-md-12">
-                                        <button type="submit" class="btn btn-primary py-2 w-100" id="boton_subir">Agregar Producto</button>
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-2 col-form-label" for="apellidoMaterno">
+                                            Apellido materno
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-lg-10">
+                                            <input type="text" class="form-control" id="apellidoMaterno" placeholder="Inserte apellido materno.." required>
+                                            <div class="invalid-feedback">
+                                                Porfavor inserte el apellido materno.
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-2 col-form-label" for="numeroTelefonico">
+                                            Numero telefonico
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-lg-10">
+                                            <input type="text" class="form-control" id="numeroTelefonico" placeholder="686-999-0000" required>
+                                            <div class="invalid-feedback">
+                                                Porfavor inserte el numero telefonico.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-2 col-form-label" for="genero">
+                                            Genero
+                                        </label>
+                                        <div class="col-lg-10">
+                                                <select class="wide form-control" id="genero" name="genero">
+                                                    <option selected disabled value="" id="Genero_Default">Porfavor seleccione</option>
+                                                    <option value="Hombre" id="Genero_Hombre">Hombre</option>
+                                                    <option value="Mujer" id="Genero_Mujer">Mujer</option>
+                                                    <option value="Otro" id="Genero_Otro">Otro</option>
+                                                </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-2 col-form-label" for="contactoAlternativo">
+                                            Contacto alternativo
+                                        </label>
+                                        <div class="col-lg-10">
+                                            <input type="text" class="form-control" id="contactoAlternativo" placeholder="Inserte cualquier forma de contacto alternativo..">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-2 col-form-label" for="edad">
+                                            Edad
+                                        </label>
+                                        <div class="col-lg-10">
+                                            <input type="number" class="form-control" id="edad" placeholder="Inserte edad del cliente.." step="1" min="0">
+                                        </div>
+                                    </div>
+                                    <div class="mb-12 row">
+                                        <div class="col-lg-12">
+                                            <button type="submit" class="btn btn-primary py-2 w-100" id="boton_agregar">Agregar</button>
+                                        </div>
+                                    </div>
                             </form>
                         </div>
                         </div>
@@ -205,109 +213,110 @@
     </script>
 
     <script>
+        (function () {
+            'use strict';
 
+            var forms = document.querySelectorAll('.needs-validation');
+            const nombreCliente = document.getElementById("nombreCliente");
+            const apellidoPaterno = document.getElementById("apellidoPaterno"); 
+            const apellidoMaterno = document.getElementById("apellidoMaterno");
+            const numeroTelefonico = document.getElementById("numeroTelefonico");
+            const generoCliente = document.getElementById("genero");
+            const contactoAlternativoCliente = document.getElementById("contactoAlternativo");
+            const edadCliente = document.getElementById("edad");
 
-        document.getElementById("formulario").addEventListener("submit", function (event) {
-            event.preventDefault();
-            enviarDatos();
-        });
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault(); // Prevenir el envío normal del formulario
 
-        function enviarDatos() {
-            const tipo = document.getElementById("formulario_tipo").value;
-            const productoId = document.getElementById("formulario_producto").value;
-            const cantidad = document.getElementById("formulario_cantidad").value;
-            const costo = document.getElementById("formulario_costo").value;
-            const vencimiento = document.getElementById("formulario_vencimiento").value;
-            const esMaterial = document.getElementById("formulario_material").checked;
-            const margenGanancia = document.getElementById("formulario_margen").value;
-            const precioVenta = document.getElementById("formulario_precio").value;
+                    // Limpiar las clases de advertencia
+                    nombreCliente.classList.remove('is-invalid');
+                    apellidoPaterno.classList.remove('is-invalid');
+                    apellidoMaterno.classList.remove('is-invalid');
+                    numeroTelefonico.classList.remove('is-invalid');
+                    edadCliente.classList.remove('is-invalid');
 
-            // Verificar que los campos requeridos no estén vacíos
-            if (!tipo || !productoId) {
-                alert("Por favor, selecciona el tipo y el producto antes de enviar.");
-                return;
+                    if (!form.checkValidity()) {
+                        event.stopPropagation();
+                    } else {
+                        $.ajax({
+                            url: '/Clientes/AgregarNuevoCliente',
+                            type: 'POST',
+                            data: { nombre: nombreCliente.value, apellidoP: apellidoPaterno.value, apellidoM: apellidoMaterno.value, telefono: numeroTelefonico.value, genero: generoCliente.value, contactoAlternativo: contactoAlternativoCliente.value, edad: edadCliente.value },
+                            success: function (response) {
+                                if (response.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: '¡Cliente agregado!',
+                                        text: response.message,
+                                        confirmButtonText: 'Aceptar'
+                                    }).then((result) => {
+                                        form.reset();
+                                        form.classList.remove('was-validated');
+                                    });
+                                } else {
+                                    if (response.errores.includes("telefono")) {
+                                        numeroTelefonico.classList.add('is-invalid');
+                                    }
+                                    if (response.errores.includes("nombre")) {
+                                        nombreCliente.classList.add('is-invalid');
+                                    }
+                                    if (response.errores.includes("paterno")) {
+                                        apellidoPaterno.classList.add('is-invalid');
+                                    }
+                                    if (response.errores.includes("materno")) {
+                                        apellidoMaterno.classList.add('is-invalid');
+                                    }
+                                    if (response.errores.includes("edad")) {
+                                        edadCliente.classList.add('is-invalid');
+                                    }
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: response.message,
+                                        confirmButtonText: 'Aceptar'
+                                    });
+                                }
+                            },
+                            error: function (error) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Hubo un error al comunicarse con el servidor.',
+                                    confirmButtonText: 'Aceptar'
+                                });
+                            }
+                        });
+                    }
+
+                    form.classList.add('was-validated'); // Aplicar las clases de validación
+                }, false);
+            });
+        })();
+
+        document.getElementById('numeroTelefonico').addEventListener('input', function (e) {
+            var value = e.target.value.replace(/[^0-9]/g, '');
+
+            if (value.length > 3) {
+                value = value.substring(0, 3) + '-' + value.substring(3);
             }
 
-            // Construir la URL con todos los parámetros
-            const url = `/ProductosController/AgregarNuevoLoteProducto?Tipo=${encodeURIComponent(tipo)}&Producto_id=${encodeURIComponent(productoId)}&Cantidad=${encodeURIComponent(cantidad)}&Costo=${encodeURIComponent(costo)}&Vencimiento=${encodeURIComponent(vencimiento)}&EsMaterial=${esMaterial}&MargenGanancia=${encodeURIComponent(margenGanancia)}&PrecioVenta=${encodeURIComponent(precioVenta)}`;
+            if (value.length > 7) {
+                value = value.substring(0, 7) + '-' + value.substring(7);
+            }
 
-            fetch(url, {
-                method: 'GET'
-            })
-                .then(response => response.json())
-                .then(data => { console.log(data); resetFormulario(); })
-                .catch(error => console.error('Error:', error));
-        }
-        function resetFormulario() {
-            const formulario = document.getElementById("formulario");
-            formulario.reset(); // Reinicia todos los campos del formulario
-
-            // Eliminar marcas de error (si las hay)
-            const inputs = formulario.querySelectorAll("input, select");
-            inputs.forEach(input => {
-                input.classList.remove("error"); // Asegúrate de que la clase 'error' se elimine
-                input.nextElementSibling?.remove(); // Eliminar el mensaje de error (si hay uno)
-            });
-
-            const productoSelect = document.getElementById("formulario_producto");
-            productoSelect.innerHTML = '<option selected disabled value="">Por favor seleccione</option>'; // Resetea el select de productos
-        }
-
-
-
-        function cargarProductos() {
-            return new Promise((resolve, reject) => {
-                var tipoSeleccionado = document.getElementById("formulario_tipo").value;
-
-                fetch('/ProductosController/ObtenerProductosPorTipo?tipo=' + tipoSeleccionado)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Error en la respuesta del servidor');
-                        }
-                        return response.text(); // Obtener la respuesta como texto
-                    })
-                    .then(text => {
-                        if (!text) {
-                            throw new Error('Respuesta vacía');
-                        }
-
-                        try {
-                            var data = JSON.parse(text); // Intentar parsear el texto como JSON
-                        } catch (error) {
-                            throw new Error('Error al parsear JSON');
-                        }
-
-                        var selectProductos = document.getElementById("formulario_producto");
-                        selectProductos.innerHTML = '<option selected disabled value="" id="formulario_vacio">Por favor seleccione</option>';
-
-                        data.forEach(producto => {
-                            var option = document.createElement("option");
-                            option.text = producto.nombre;
-                            option.value = producto.iD_Producto;
-                            selectProductos.appendChild(option);
-                        });
-
-                        resolve();
-                    })
-                    .catch(error => {
-                        console.error('Error al obtener productos:', error);
-                        reject(error);
-                    });
-            });
-        }
-
-
-
-        function calcularMargenYPrecio() {
-            const costo = parseFloat(document.getElementById("formulario_costo").value) || 0;
-            const margenPorcentaje = 20;  // Margen de ganancia predeterminado en %
-
-            const margen = (costo * margenPorcentaje) / 100;
-            const precioVenta = costo + margen;
-
-            document.getElementById("formulario_margen").value = margenPorcentaje.toFixed(2);
-            document.getElementById("formulario_precio").value = precioVenta.toFixed(2);
-        }
+            if (value.length >= 13) {
+                value = value.replace(/[-+]/g, '');
+                var ultimos4 = value.substring(value.length - 4);
+                value = value.substring(0, value.length - 4);
+                var ultimos3 = value.substring(value.length - 3);
+                value = value.substring(0, value.length - 3);
+                var primeros3 = value.substring(value.length - 3);
+                value = value.substring(0, value.length - 3);
+                value = "+" + value + " " + primeros3 + "-" + ultimos3 + "-" + ultimos4;
+            }
+            e.target.value = value;
+        });
     </script>
 
 

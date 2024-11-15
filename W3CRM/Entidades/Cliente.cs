@@ -5,7 +5,7 @@ namespace Vitaly_Manager.Entidades
 	public class Cliente
 	{
 		[Key]
-		public required int ID_Cliente { get; set; }
+		public int ID_Cliente { get; set; }
 
 		private string _nombreCliente;
 		private string _apellidoP;
@@ -14,8 +14,8 @@ namespace Vitaly_Manager.Entidades
 		private string? _genero;
 
 		[Required(ErrorMessage = "El nombre es obligatorio.")]
-		[StringLength(30, ErrorMessage = "El nombre no puede exceder los 50 caracteres.")]
-		public required string Nombre_Cliente
+		[StringLength(50, ErrorMessage = "El nombre no puede exceder los 50 caracteres.")]
+		public required string NombreCliente
 		{
 			get => _nombreCliente;
 			set
@@ -98,10 +98,10 @@ namespace Vitaly_Manager.Entidades
 			}
 		}
 
-		public string? ContractoAlternativo { get; set; }
+		public string? ContactoAlternativo { get; set; }
 		public int? Edad { get; set; }
 
 		[Required]
-		public required DateOnly FechaRegistro { get; set; }
+		public required DateTime FechaRegistro { get; set; }
 	}
 }
