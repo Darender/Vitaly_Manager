@@ -6,9 +6,15 @@ namespace Vitaly_Manager.Controladores
 {
     public class ClientesController : Controller
     {
-        List<Cliente> listaClientes = DataClientes.ListaClientes(out _, out _);
+        public List<Cliente> listaClientes = DataClientes.ListaClientes(out _, out _);
 
         public IActionResult AgregarClientes()
+        {
+            ClientesController controlador = new ClientesController();
+            return View(controlador);
+        }
+
+        public IActionResult ConsultaClientes()
         {
             ClientesController controlador = new ClientesController();
             return View(controlador);
@@ -89,6 +95,14 @@ namespace Vitaly_Manager.Controladores
                     mensaje = "El telefono debe tener entre 10 y 20 caracteres.";
                     fallidos.Add("telefono");
                 }
+                foreach (Cliente item in listaClientes)
+                {
+                    if (item.Telefono == telefono)
+                    {
+                        fallidos.Add("telefono");
+                        mensaje = "Numero de telefono ya existente en la base de datos";
+                    }
+                }
 
                 // Validación de edad
                 if (!string.IsNullOrWhiteSpace(edad))
@@ -105,22 +119,10 @@ namespace Vitaly_Manager.Controladores
                         fallidos.Add("edad");
                     }
                 }
-
                 
+
                 if (fallidos.Count == 0)
                 {
-                    bool repetido = false;
-
-                    foreach (Cliente item in listaClientes) {
-                        if (item.Telefono == telefono)
-                        {
-                            repetido = true;
-                            mensaje = "Numero de telefono ya existente en la base de datos";
-                        }
-                    }
-
-                    if (!repetido)
-                    {
                         Cliente nuevo = new Cliente
                         {
                             NombreCliente = nombre,
@@ -136,7 +138,6 @@ namespace Vitaly_Manager.Controladores
                         };
 
                         resultado = DataClientes.Agregar(nuevo, out mensaje);
-                    }
                 }
             }
             catch (Exception ex)

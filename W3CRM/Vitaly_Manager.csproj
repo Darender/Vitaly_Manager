@@ -27,4 +27,11 @@
     <PackageReference Include="System.Drawing.Common" Version="8.0.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Views\Clientes\ConsultaClientes.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
