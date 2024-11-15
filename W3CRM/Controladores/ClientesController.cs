@@ -6,9 +6,15 @@ namespace Vitaly_Manager.Controladores
 {
     public class ClientesController : Controller
     {
-        List<Cliente> listaClientes = DataClientes.ListaClientes(out _, out _);
+        public List<Cliente> listaClientes = DataClientes.ListaClientes(out _, out _);
 
         public IActionResult AgregarClientes()
+        {
+            ClientesController controlador = new ClientesController();
+            return View(controlador);
+        }
+
+        public IActionResult ConsultaClientes()
         {
             ClientesController controlador = new ClientesController();
             return View(controlador);
@@ -89,12 +95,20 @@ namespace Vitaly_Manager.Controladores
                     mensaje = "El telefono debe tener entre 10 y 20 caracteres.";
                     fallidos.Add("telefono");
                 }
-
+                foreach (Cliente item in listaClientes)
+                {
+                    if (item.Telefono == telefono)
+                    {
+                        fallidos.Add("telefono");
+                        mensaje = "Numero de telefono ya existente en la base de datos";
+                    }
+                }
+                int? edadNumerica = null;
                 // Validación de edad
                 if (!string.IsNullOrWhiteSpace(edad))
                 {
-                    int edadNumerica;
-                    if (!int.TryParse(edad, out edadNumerica))
+                    int temp;
+                    if (!int.TryParse(edad, out temp))
                     {
                         mensaje = "La edad debe ser un número válido.";
                         fallidos.Add("edad");
@@ -104,23 +118,12 @@ namespace Vitaly_Manager.Controladores
                         mensaje = "La edad debe estar entre 0 y 140 años.";
                         fallidos.Add("edad");
                     }
+                    edadNumerica = temp;
                 }
-
                 
+
                 if (fallidos.Count == 0)
                 {
-                    bool repetido = false;
-
-                    foreach (Cliente item in listaClientes) {
-                        if (item.Telefono == telefono)
-                        {
-                            repetido = true;
-                            mensaje = "Numero de telefono ya existente en la base de datos";
-                        }
-                    }
-
-                    if (!repetido)
-                    {
                         Cliente nuevo = new Cliente
                         {
                             NombreCliente = nombre,
@@ -130,13 +133,12 @@ namespace Vitaly_Manager.Controladores
                             Genero = genero,
                             ContactoAlternativo = contactoAlternativo,
                             #pragma warning disable CS8604
-                            Edad = int.Parse(edad),
+                            Edad = edadNumerica,
                             #pragma warning restore CS8604
                             FechaRegistro = DateTime.Now
                         };
 
                         resultado = DataClientes.Agregar(nuevo, out mensaje);
-                    }
                 }
             }
             catch (Exception ex)
