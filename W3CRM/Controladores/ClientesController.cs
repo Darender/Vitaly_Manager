@@ -103,12 +103,12 @@ namespace Vitaly_Manager.Controladores
                         mensaje = "Numero de telefono ya existente en la base de datos";
                     }
                 }
-
+                int? edadNumerica = null;
                 // Validación de edad
                 if (!string.IsNullOrWhiteSpace(edad))
                 {
-                    int edadNumerica;
-                    if (!int.TryParse(edad, out edadNumerica))
+                    int temp;
+                    if (!int.TryParse(edad, out temp))
                     {
                         mensaje = "La edad debe ser un número válido.";
                         fallidos.Add("edad");
@@ -118,6 +118,7 @@ namespace Vitaly_Manager.Controladores
                         mensaje = "La edad debe estar entre 0 y 140 años.";
                         fallidos.Add("edad");
                     }
+                    edadNumerica = temp;
                 }
                 
 
@@ -132,7 +133,7 @@ namespace Vitaly_Manager.Controladores
                             Genero = genero,
                             ContactoAlternativo = contactoAlternativo,
                             #pragma warning disable CS8604
-                            Edad = int.Parse(edad),
+                            Edad = edadNumerica,
                             #pragma warning restore CS8604
                             FechaRegistro = DateTime.Now
                         };

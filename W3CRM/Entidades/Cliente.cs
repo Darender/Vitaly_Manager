@@ -10,7 +10,7 @@ namespace Vitaly_Manager.Entidades
 		private string _nombreCliente;
 		private string _apellidoP;
 		private string _apellidoM;
-		private string? _telefono;
+		private string _telefono;
 		private string? _genero;
 
 		[Required(ErrorMessage = "El nombre es obligatorio.")]
@@ -71,7 +71,7 @@ namespace Vitaly_Manager.Entidades
 		}
 
 		[StringLength(20, ErrorMessage = "El teléfono no puede exceder los 20 caracteres.")]
-		public string? Telefono
+		public string Telefono
 		{
 			get => _telefono;
 			set
