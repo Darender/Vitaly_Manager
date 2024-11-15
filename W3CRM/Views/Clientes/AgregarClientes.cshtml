@@ -41,7 +41,7 @@
                     <div class="card-body">
                         <div class="form-validation">
                         <div class="container-fluid p-0">
-                                <form class="needs-validation w-100" action="/ProductosController/AgregarNuevoLoteProducto" method="post" novalidate id="formulario">
+                                <form class="needs-validation w-100" method="post" novalidate id="formulario">
                                     <div class="mb-3 row">
                                         <label class="col-lg-2 col-form-label" for="nombreCliente">
                                             Nombre del cliente
@@ -99,6 +99,7 @@
                                                     <option selected disabled value="" id="Genero_Default">Porfavor seleccione</option>
                                                     <option value="Hombre" id="Genero_Hombre">Hombre</option>
                                                     <option value="Mujer" id="Genero_Mujer">Mujer</option>
+                                                    <option value="Otro" id="Genero_Otro">Otro</option>
                                                 </select>
                                         </div>
                                     </div>
@@ -212,6 +213,87 @@
     </script>
 
     <script>
+        (function () {
+            'use strict';
+
+            var forms = document.querySelectorAll('.needs-validation');
+            const nombreCliente = document.getElementById("nombreCliente");
+            const apellidoPaterno = document.getElementById("apellidoPaterno"); 
+            const apellidoMaterno = document.getElementById("apellidoMaterno");
+            const numeroTelefonico = document.getElementById("numeroTelefonico");
+            const generoCliente = document.getElementById("genero");
+            const contactoAlternativoCliente = document.getElementById("contactoAlternativo");
+            const edadCliente = document.getElementById("edad");
+
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault(); // Prevenir el envío normal del formulario
+
+                    // Limpiar las clases de advertencia
+                    nombreCliente.classList.remove('is-invalid');
+                    apellidoPaterno.classList.remove('is-invalid');
+                    apellidoMaterno.classList.remove('is-invalid');
+                    numeroTelefonico.classList.remove('is-invalid');
+                    edadCliente.classList.remove('is-invalid');
+
+                    if (!form.checkValidity()) {
+                        event.stopPropagation();
+                    } else {
+                        $.ajax({
+                            url: '/Clientes/AgregarNuevoCliente',
+                            type: 'POST',
+                            data: { nombre: nombreCliente.value, apellidoP: apellidoPaterno.value, apellidoM: apellidoMaterno.value, telefono: numeroTelefonico.value, genero: generoCliente.value, contactoAlternativo: contactoAlternativoCliente.value, edad: edadCliente.value },
+                            success: function (response) {
+                                if (response.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: '¡Cliente agregado!',
+                                        text: response.message,
+                                        confirmButtonText: 'Aceptar'
+                                    }).then((result) => {
+                                        form.reset();
+                                        form.classList.remove('was-validated');
+                                    });
+                                } else {
+                                    if (response.errores.includes("telefono")) {
+                                        numeroTelefonico.classList.add('is-invalid');
+                                    }
+                                    if (response.errores.includes("nombre")) {
+                                        nombreCliente.classList.add('is-invalid');
+                                    }
+                                    if (response.errores.includes("paterno")) {
+                                        apellidoPaterno.classList.add('is-invalid');
+                                    }
+                                    if (response.errores.includes("materno")) {
+                                        apellidoMaterno.classList.add('is-invalid');
+                                    }
+                                    if (response.errores.includes("edad")) {
+                                        edadCliente.classList.add('is-invalid');
+                                    }
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: response.message,
+                                        confirmButtonText: 'Aceptar'
+                                    });
+                                }
+                            },
+                            error: function (error) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Hubo un error al comunicarse con el servidor.',
+                                    confirmButtonText: 'Aceptar'
+                                });
+                            }
+                        });
+                    }
+
+                    form.classList.add('was-validated'); // Aplicar las clases de validación
+                }, false);
+            });
+        })();
+
         document.getElementById('numeroTelefonico').addEventListener('input', function (e) {
             var value = e.target.value.replace(/[^0-9]/g, '');
 

@@ -5,8 +5,56 @@ namespace Vitaly_Manager.Data
 {
     public static class DataClientes
     {
+        /// <summary>
+        /// Agrega un nuevo cliente a la base de datos
+        /// </summary>
+        /// <param name="nuevo">Entidad de cliente que se agregara</param>
+        /// <param name="mensaje">Mensaje de respuesta</param>
+        /// <returns>Un booleano de si fue exito o fracaso la operacion</returns>
+        public static bool Agregar(Cliente nuevo, out string mensaje)
+        {
+            try
+            {
+                using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
+                {
+                    conexion.Open();
 
-        /*
+                    string query = @"INSERT INTO Cliente 
+                            (nombreCliente, apellidoP, apellidoM, telefono, genero, contactoAlternativo, edad, fechaRegistro) 
+                            VALUES (@NombreCliente, @ApellidoP, @ApellidoM, @Telefono, @Genero, @Contacto_Alternativo, @Edad, @Fecha_Registro)";
+
+                    using (SqlCommand comando = new SqlCommand(query, conexion))
+                    {
+                        comando.Parameters.AddWithValue("@NombreCliente", nuevo.NombreCliente);
+                        comando.Parameters.AddWithValue("@ApellidoP", nuevo.ApellidoP);
+                        comando.Parameters.AddWithValue("@ApellidoM", nuevo.ApellidoM);
+                        comando.Parameters.AddWithValue("@Telefono", nuevo.Telefono);
+                        comando.Parameters.AddWithValue("@Genero", nuevo.Genero ?? (object)DBNull.Value);
+                        comando.Parameters.AddWithValue("@Contacto_Alternativo", nuevo.ContactoAlternativo ?? (object)DBNull.Value);
+                        comando.Parameters.AddWithValue("@Edad", nuevo.Edad.HasValue ? (object)nuevo.Edad.Value : DBNull.Value);
+                        comando.Parameters.AddWithValue("@Fecha_Registro", nuevo.FechaRegistro);
+
+                        comando.ExecuteNonQuery();
+                    }
+
+                    conexion.Close();
+                }
+                mensaje = $"El cliente {nuevo.NombreCliente} ha sido agregado exitosamente.";
+                return true;
+            }
+            catch (SqlException ex)
+            {
+                mensaje = $"Error en la base de datos: {ex.Message}";
+                return false;
+            }
+            catch (Exception ex)
+            {
+                mensaje = $"Error inesperado: {ex.Message}";
+                return false;
+            }
+        }
+
+        
         /// <summary>
         /// Optiene a todos los clientes de la base de datos y los pone una lista
         /// </summary>
@@ -21,30 +69,30 @@ namespace Vitaly_Manager.Data
                 using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
                 {
                     conexion.Open();
-                    SqlCommand comando = new SqlCommand("SELECT * FROM cliente", conexion);
+                    SqlCommand comando = new SqlCommand("SELECT * FROM Cliente", conexion);
                     SqlDataReader lector = comando.ExecuteReader();
 
                     while (lector.Read())
                     {
                         int idCliente = lector["idCliente"] != DBNull.Value ? Convert.ToInt32(lector["idCliente"]) : 0;
-                        string nombre = lector["nombre"] != DBNull.Value ? Convert.ToString(lector["nombre"])! : "N/A";
+                        string nombre = lector["nombreCliente"] != DBNull.Value ? Convert.ToString(lector["nombreCliente"])! : "N/A";
                         string apellidoP = lector["apellidoP"] != DBNull.Value ? Convert.ToString(lector["apellidoP"])! : "N/A";
                         string apellidoM = lector["apellidoM"] != DBNull.Value ? Convert.ToString(lector["apellidoM"])! : "N/A";
                         string? telefono = lector["telefono"] != DBNull.Value ? Convert.ToString(lector["telefono"]) : null;
                         string? genero = lector["genero"] != DBNull.Value ? Convert.ToString(lector["genero"]) : null;
                         string? contactoAlternativo = lector["contactoAlternativo"] != DBNull.Value ? Convert.ToString(lector["contactoAlternativo"]) : null;
                         int? edad = lector["edad"] != DBNull.Value ? Convert.ToInt32(lector["edad"]) : null;
-                        DateOnly fechaRegistro = lector["fechaRegistro"] != DBNull.Value ? DateOnly.FromDateTime(Convert.ToDateTime(lector["fechaRegistro"])) : DateOnly.MinValue;
+                        DateTime fechaRegistro = Convert.ToDateTime(lector["fechaRegistro"]);
 
                         Cliente nuevo = new Cliente
                         {
                             ID_Cliente = idCliente,
-                            Nombre = nombre,
+                            NombreCliente = nombre,
                             ApellidoP = apellidoP,
                             ApellidoM = apellidoM,
                             Telefono = telefono,
                             Genero = genero,
-                            ContractoAlternativo = contactoAlternativo,
+                            ContactoAlternativo = contactoAlternativo,
                             Edad = edad,
                             FechaRegistro = fechaRegistro
                         };
@@ -71,7 +119,7 @@ namespace Vitaly_Manager.Data
                 return new List<Cliente>();
             }
         }
-
+        /*
 
         /// <summary>
         /// Elimina un cliente de la base de datos
