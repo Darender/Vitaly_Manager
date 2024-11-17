@@ -14,6 +14,11 @@ namespace Vitaly_Manager.Controladores
             return View(controlador);
         }
 
+        public IActionResult AgregarProveedores()
+        {
+            ProductosController controlador = new ProductosController();
+            return View(controlador);
+        }
         /*
         [HttpGet("AgregarNuevoLoteProducto")]
         public IActionResult AgregarNuevoLoteProducto(
