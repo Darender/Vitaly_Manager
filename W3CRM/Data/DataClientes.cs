@@ -6,6 +6,62 @@ namespace Vitaly_Manager.Data
     public static class DataClientes
     {
         /// <summary>
+        /// Modifica un cliente existente en la base de datos
+        /// </summary>
+        /// <param name="clienteModificado">Entidad de cliente que será modificada</param>
+        /// <param name="mensaje">Mensaje de respuesta</param>
+        /// <returns>Un booleano indicando si la operación fue exitosa o fallida</returns>
+        public static bool Modificar(Cliente clienteModificado, out string mensaje)
+        {
+            try
+            {
+                using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
+                {
+                    conexion.Open();
+
+                    string query = @"UPDATE Cliente 
+                             SET nombreCliente = @NombreCliente, 
+                                 apellidoP = @ApellidoP, 
+                                 apellidoM = @ApellidoM, 
+                                 telefono = @Telefono, 
+                                 genero = @Genero, 
+                                 contactoAlternativo = @Contacto_Alternativo, 
+                                 edad = @Edad
+                             WHERE idCliente = @IdCliente";
+
+                    using (SqlCommand comando = new SqlCommand(query, conexion))
+                    {
+                        comando.Parameters.AddWithValue("@NombreCliente", clienteModificado.NombreCliente);
+                        comando.Parameters.AddWithValue("@ApellidoP", clienteModificado.ApellidoP);
+                        comando.Parameters.AddWithValue("@ApellidoM", clienteModificado.ApellidoM);
+                        comando.Parameters.AddWithValue("@Telefono", clienteModificado.Telefono);
+                        comando.Parameters.AddWithValue("@Genero", clienteModificado.Genero ?? (object)DBNull.Value);
+                        comando.Parameters.AddWithValue("@Contacto_Alternativo", clienteModificado.ContactoAlternativo ?? (object)DBNull.Value);
+                        comando.Parameters.AddWithValue("@Edad", clienteModificado.Edad.HasValue ? (object)clienteModificado.Edad.Value : DBNull.Value);
+                        comando.Parameters.AddWithValue("@IdCliente", clienteModificado.ID_Cliente); // Asegúrate de tener el Id del cliente
+
+                        comando.ExecuteNonQuery();
+                    }
+
+                    conexion.Close();
+                }
+                mensaje = $"El cliente {clienteModificado.NombreCliente} ha sido modificado exitosamente.";
+                return true;
+            }
+            catch (SqlException ex)
+            {
+                mensaje = $"Error en la base de datos: {ex.Message}";
+                return false;
+            }
+            catch (Exception ex)
+            {
+                mensaje = $"Error inesperado: {ex.Message}";
+                return false;
+            }
+        }
+
+
+        /// <summary>
         /// Agrega un nuevo cliente a la base de datos
         /// </summary>
         /// <param name="nuevo">Entidad de cliente que se agregara</param>
