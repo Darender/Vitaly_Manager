@@ -4,7 +4,7 @@ using Vitaly_Manager.Entidades.EntidadesAntiguas;
 
 namespace Vitaly_Manager.Data
 {
-    public static class DatosVenta
+    public static class DataVenta
     {
 
         //Temporal necesita mas revision

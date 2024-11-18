@@ -9,7 +9,7 @@ namespace Vitaly_Manager.Controladores
     [Route("ProductosController")]
     public class ProductosController : Controller
     {
-        public List<TipoProducto> ListaTipos = DatosTipoProducto.ListaTiposProductos(out _, out _);
+        public List<TipoProducto> ListaTipos = DataTipoProducto.ListaTiposProductos(out _, out _);
 
         [HttpGet]
         public IActionResult ProductosGeneral()
@@ -43,7 +43,7 @@ namespace Vitaly_Manager.Controladores
 
             try
             {
-                iva = DatosIVA.UltimoIVA(out mensaje, out respuesta);
+                iva = DataIVA.UltimoIVA(out mensaje, out respuesta);
 
                 if (!respuesta)
                 {
@@ -68,7 +68,7 @@ namespace Vitaly_Manager.Controladores
                     ID_IVA = iva.ID_IVA,
                 };
 
-                if (DatosLoteProducto.Agregar(nuevo, out mensaje))
+                if (DataLoteProducto.Agregar(nuevo, out mensaje))
                 {
                     return Ok(new { message = "Lote agregado exitosamente." });
                 }

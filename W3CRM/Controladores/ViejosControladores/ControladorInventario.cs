@@ -31,7 +31,7 @@ namespace Vitaly_Manager.Controladores.ViejosControladores
                 }
             }
 
-            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-E6EPG51;Initial Catalog=Vitaly Manager;Integrated Security=True;Encrypt=False"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False"))
             {
                 coneccion.Open();
 
@@ -280,7 +280,7 @@ namespace Vitaly_Manager.Controladores.ViejosControladores
 
         public void modificarInstancia(Inventario_Instancia modificado)
         {
-            using (SqlConnection conexion = new SqlConnection("Data Source=DESKTOP-E6EPG51;Initial Catalog=Vitaly Manager;Integrated Security=True;Encrypt=False"))
+            using (SqlConnection conexion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False"))
             {
                 conexion.Open();
 
@@ -339,7 +339,7 @@ namespace Vitaly_Manager.Controladores.ViejosControladores
         [HttpDelete]
         public IActionResult Eliminar(int id)
         {
-            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-E6EPG51;Initial Catalog=Vitaly Manager;Integrated Security=True;Encrypt=False"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False"))
             {
                 coneccion.Open();
 
@@ -443,7 +443,7 @@ namespace Vitaly_Manager.Controladores.ViejosControladores
 
         public void agregarInstancia(Inventario_Instancia objeto)
         {
-            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-E6EPG51;Initial Catalog=Vitaly Manager;Integrated Security=True;Encrypt=False"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False"))
             {
                 coneccion.Open();
                 DateTime? vencimiento = objeto.Vencimiento;
@@ -519,7 +519,7 @@ namespace Vitaly_Manager.Controladores.ViejosControladores
 
         public void agregarProducto(Inventario_Producto nuevo)
         {
-            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-E6EPG51;Initial Catalog=Vitaly Manager;Integrated Security=True;Encrypt=False"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False"))
             {
                 coneccion.Open();
 
@@ -558,7 +558,7 @@ namespace Vitaly_Manager.Controladores.ViejosControladores
             ListaInstancias.Clear();
             ListaProductos.Clear();
             ListaMovimientos.Clear();
-            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-E6EPG51;Initial Catalog=Vitaly Manager;Integrated Security=True;Encrypt=False"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False"))
             {
                 coneccion.Open();
 

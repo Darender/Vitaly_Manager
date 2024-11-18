@@ -72,7 +72,7 @@ namespace Vitaly_Manager.Controladores.ViejosControladores
                 Console.WriteLine($"Ocurrió un error al limpiar la carpeta: {ex.Message}");
             }
 
-            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-E6EPG51;Initial Catalog=Vitaly Manager;Integrated Security=True;Encrypt=False"))
+            using (SqlConnection coneccion = new SqlConnection("Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False"))
             {
                 coneccion.Open();
 
@@ -137,7 +137,7 @@ namespace Vitaly_Manager.Controladores.ViejosControladores
 
         public void InsertarUsuario(Usuario usuario)
         {
-            string connectionString = "Data Source=DESKTOP-E6EPG51;Initial Catalog=Vitaly Manager;Integrated Security=True;Encrypt=False";
+            string connectionString = "Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=Vitaly Data;Integrated Security=True;Encrypt=False";
 
             string query = "INSERT INTO Usuarios (Nombres, Apellidos, Password, Correo, Telefono, AreaDeTrabajo, Genero, FotoPerfil, Activo, Ingreso) " +
                            "VALUES (@Nombres, @Apellidos, @Password, @Correo, @Telefono, @AreaDeTrabajo, @Genero, @FotoPerfil, @Activo, @Ingreso)";
