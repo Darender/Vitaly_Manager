@@ -2,15 +2,15 @@
 @using Vitaly_Manager.Entidades
 @using W3CRM.Controllers
 @{
-    ViewData["Title"] = "ConsultaClientes";
+    ViewData["Title"] = "AgregarLoteProducto";
 }
 <!--**********************************
-Inicio del cuerpo del contenido
+	Content body start
 ***********************************-->
 
 <style>
     .small-margin-bottom {
-        margin-bottom: -30px; 
+        margin-bottom: -30px; /* Ajusta el valor según sea necesario */
     }
 </style>
 
@@ -79,19 +79,17 @@ Inicio del cuerpo del contenido
     </div>
 </div>
 <!--**********************************
-	Fin del cuerpo del contenido
+	Content body end
 ***********************************-->
-
-
 @section w3crm_style
 	{
     <link href="~/w3crm/vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
 	<link href="~/w3crm/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
 
-        <!--  Selector de rango de fechas -->
+        <!-- Daterange picker -->
     <link href="~/w3crm/vendor/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
 
-    <!-- Elegir fecha -->
+    <!-- Pick date -->
     <link rel="stylesheet" href="~/w3crm/vendor/pickadate/themes/default.css">
     <link rel="stylesheet" href="~/w3crm/vendor/pickadate/themes/default.date.css">
 }
@@ -106,32 +104,32 @@ Inicio del cuerpo del contenido
     <script src="~/w3crm/js/plugins-init/sweetalert.init.js"></script>
     <script src="~/w3crm/js/styleSwitcher.js"></script>
 
-    <!-- Proveedores requeridos -->
+    <!-- Required vendors -->
     <script src="~/w3crm/vendor/global/global.min.js"></script>
 	<script src="~/w3crm/vendor/chart.js/Chart.bundle.min.js"></script>
 	<script src="~/w3crm/vendor/tagify/dist/tagify.min.js"></script>
 
-	<!-- Gráfico de Apex -->
+	<!-- Apex Chart -->
 	<script src="~/w3crm/vendor/apexchart/apexchart.js"></script>
 
-	<!-- Tabla de datos -->
+	<!-- Datatable -->
 	<script src="~/w3crm/vendor/datatables/js/jquery.dataTables.min.js"></script>
 	<script src="~/w3crm/js/plugins-init/datatables.init.js"></script>
 	<script src="~/w3crm/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
 
-     <!-- código resaltado -->
+     <!-- code-highlight -->
     <script src="~/w3crm/js/highlight.min.js"></script>
 
-    <!-- momento en que js es imprescindible -->
+    <!-- momment js is must -->
     <script src="~/w3crm/vendor/moment/moment.min.js"></script>
     <script src="~/w3crm/vendor/bootstrap-daterangepicker/daterangepicker.js"></script>
 
-    <!-- fecha de selección -->
+    <!-- pickdate -->
     <script src="~/w3crm/vendor/pickadate/picker.js"></script>
     <script src="~/w3crm/vendor/pickadate/picker.time.js"></script>
     <script src="~/w3crm/vendor/pickadate/picker.date.js"></script>
 
-     <!-- fecha de selección -->
+     <!-- Pickdate -->
     <script src="~/w3crm/js/plugins-init/pickadate-init.js"></script>
     <script src="~/w3crm/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
     <script src="~/w3crm/js/custom.js"></script>
@@ -168,10 +166,10 @@ Inicio del cuerpo del contenido
         (function () {
           'use strict'
 
-        // Obtener todos los formularios a los que queremos aplicar estilos de validación de Bootstrap personalizados
+          // Fetch all the forms we want to apply custom Bootstrap validation styles to
           var forms = document.querySelectorAll('.needs-validation')
 
-          // Bucle sobre ellos y evitar la presentación
+          // Loop over them and prevent submission
           Array.prototype.slice.call(forms)
             .forEach(function (form) {
               form.addEventListener('submit', function (event) {
