@@ -1,0 +1,105 @@
+﻿<div class="modal fade" id="modificarCliente" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-center">
+		<div class="modal-content">
+			<div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Modificar Cliente</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-xl-12">
+                        <div class="form-validation">
+                            <div class="container-fluid p-0">
+                                <form class="needs-validation w-100" method="post" novalidate id="formularioModificarCliete">
+                                    <input type="number" class="form-control" id="idClienteModificar" style="visibility: hidden; display: none;">
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-5 col-form-label" for="nombreClienteModificar">
+                                            Nombre del cliente
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-lg-7">
+                                            <input type="text" class="form-control" id="nombreClienteModificar" placeholder="Inserte nombre.."  required>
+                                            <div class="invalid-feedback">
+                                                Porfavor inserte el nombre del cliente.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-5 col-form-label" for="apellidoPaternoModificar">
+                                            Apellido paterno
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-lg-7">
+                                            <input type="text" class="form-control" id="apellidoPaternoModificar" placeholder="Inserte apellido paterno.." required>
+                                            <div class="invalid-feedback">
+                                                Porfavor inserte el apellido paterno.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-5 col-form-label" for="apellidoMaternoModificar">
+                                            Apellido materno
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-lg-7">
+                                            <input type="text" class="form-control" id="apellidoMaternoModificar" placeholder="Inserte apellido materno.." required>
+                                            <div class="invalid-feedback">
+                                                Porfavor inserte el apellido materno.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-5 col-form-label" for="numeroTelefonicoModificar">
+                                            Numero telefonico
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-lg-7">
+                                            <input type="text" class="form-control" id="numeroTelefonicoModificar" placeholder="686-999-0000" required>
+                                            <div class="invalid-feedback">
+                                                Porfavor inserte el numero telefonico.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-5 col-form-label" for="generoModificar">
+                                            Genero
+                                        </label>
+                                        <div class="col-lg-7">
+                                            <select class="wide form-control" id="generoModificar" name="genero">
+                                                <option selected disabled value="" id="Genero_DefaultModificar">Porfavor seleccione</option>
+                                                <option value="Hombre" id="Genero_HombreModificar">Hombre</option>
+                                                <option value="Mujer" id="Genero_MujerModificar">Mujer</option>
+                                                <option value="Otro" id="Genero_OtroModificar">Otro</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-5 col-form-label" for="contactoAlternativoModificar">
+                                            Contacto alternativo
+                                        </label>
+                                        <div class="col-lg-7">
+                                            <input type="text" class="form-control" id="contactoAlternativoModificar" placeholder="Inserte cualquier contacto..">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-5 col-form-label" for="edadModificar">
+                                            Edad
+                                        </label>
+                                        <div class="col-lg-7">
+                                            <input type="number" class="form-control" id="edadModificar" placeholder="Inserte edad del cliente.." step="1" min="0">
+                                        </div>
+                                    </div>
+                                    <div class="mb-12 row">
+                                        <div class="col-lg-12">
+                                            <button type="submit" class="btn btn-primary py-2 w-100" id="boton_agregar">Modificar</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>    
