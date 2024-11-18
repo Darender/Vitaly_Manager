@@ -7,6 +7,16 @@ namespace Vitaly_Manager.Controladores
     public class ProductosController : Controller
     {
         //public List<TipoProducto> ListaTipos = DataTipoProducto.ListaTiposProductos(out _, out _);
+        public List<Proveedor> listaProveedores = DataProveedores.ListaProveedores(out _, out _);
+
+        public IActionResult ConsultaProveedores()
+        {
+            var listaProveedores = DataProveedores.ListaProveedores(out _, out _);
+
+            // Pasar la lista a la vista
+            return View(listaProveedores);
+        }
+
 
         public IActionResult AgregarLoteProducto()
         {
