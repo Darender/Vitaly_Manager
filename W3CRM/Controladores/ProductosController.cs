@@ -11,10 +11,9 @@ namespace Vitaly_Manager.Controladores
 
         public IActionResult ConsultaProveedores()
         {
-            var listaProveedores = DataProveedores.ListaProveedores(out _, out _);
-
+            ProductosController model = new ProductosController();
             // Pasar la lista a la vista
-            return View(listaProveedores);
+            return View(model);
         }
 
 
