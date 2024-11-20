@@ -227,6 +227,59 @@
             }
         });
     }
+
+        function eliminarCliente(idCliente) {
+            //Se crea un modulo de confirmacion para confirmar la eliminacion
+            Swal.fire({
+                title: '¿Estás seguro de que quieres eliminar a este cliente?',
+                text: "Esta acción no se puede deshacer.",
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Aceptar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => { 
+                
+        if (result) { //Al presionar aceptar, se procede a la eliminacion
+            console.log('Respuesta de boton recibida');
+            $.ajax({
+                url: '/Clientes/EliminarCliente', 
+                type: 'POST',
+                data: { id: idCliente },
+                success: function(response) {
+                    if (response.success) {
+                        console.log('Respuesta de ajax exitosa');
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Cliente eliminado!',
+                            text: 'El cliente ha sido eliminado exitosamente.',
+                            confirmButtonText: 'Aceptar'
+                        }).then((result) => {
+                            
+                                recargarTablaClientes();
+                            });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message || 'No se pudo eliminar el cliente.'
+                        });
+                    }
+                },
+                error: function (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Hubo un error al comunicarse con el servidor.',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
+            });
+        }
+    });
+}
+
+
 (function () {
     'use strict';
 

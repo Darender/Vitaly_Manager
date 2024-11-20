@@ -305,11 +305,22 @@ namespace Vitaly_Manager.Controladores
             return Json(new { success = resultado, message = mensaje, errores = fallidos });
         }
 
+        [HttpPost]
+        public JsonResult EliminarCliente(int id)
+        {
+            bool resultado = true;
+            string mensaje = "Se ha eliminado el cliente.";
+            return Json(new { success = resultado, message = mensaje});
+        }
+
+
         [HttpGet]
         public JsonResult ObtenerClientesActualizados()
         {
             return Json(new { success = true, data = listaClientes });
         }
+
+       
 
     }
 }

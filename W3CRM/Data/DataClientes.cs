@@ -175,8 +175,7 @@ namespace Vitaly_Manager.Data
                 return new List<Cliente>();
             }
         }
-        /*
-
+      
         /// <summary>
         /// Elimina un cliente de la base de datos
         /// </summary>
@@ -202,7 +201,7 @@ namespace Vitaly_Manager.Data
                     }
 
                     // Confirma que no este siendo referenciado en otra parte necesaria de la base de datos
-                    List<Venta> ListaVentas = DataVenta.ListaVentas();
+                    /*List<Venta> ListaVentas = DataVenta.ListaVentas();
                     foreach (Venta item in ListaVentas)
                     {
                         if(item.ID_Cliente == id)
@@ -210,7 +209,7 @@ namespace Vitaly_Manager.Data
                             respuesta = "No se puede eliminar un cliente que tenga una venta";
                             return false;
                         }
-                    }
+                    }*/
 
                     string queryEliminar = $"DELETE FROM cliente WHERE ID = {id}";
                     new SqlCommand(queryEliminar, conexion).ExecuteNonQuery();
@@ -228,6 +227,6 @@ namespace Vitaly_Manager.Data
                 respuesta = $"Error inesperado (Exception): {ex.Message}";
                 return false;
             }
-        }*/
+        }
     }
 }
