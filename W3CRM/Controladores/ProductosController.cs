@@ -19,77 +19,67 @@ namespace Vitaly_Manager.Controladores
             ProductosController controlador = new ProductosController();
             return View(controlador);
         }
-        /*
-        [HttpGet("AgregarNuevoLoteProducto")]
-        public IActionResult AgregarNuevoLoteProducto(
-            int Tipo,
-            int Producto_id,
-            int Cantidad,
-            decimal Costo,
-            string Vencimiento,
-            bool EsMaterial,
-            decimal MargenGanancia,
-            decimal PrecioVenta)
+
+        [HttpPost]
+        public JsonResult AgregarNuevoProveedores(string nombre, string? telefono, string? contactoAlternativo)
         {
-            string mensaje;
-            bool respuesta;
-            Parametros iva;
+            bool resultado = false;
+            string mensaje = "Hubo un problema al agregar al Proveedor.";
+            List<string> fallidos = new List<string>();
 
             try
             {
-                iva = DataIVA.UltimoIVA(out mensaje, out respuesta);
+                var regex = new System.Text.RegularExpressions.Regex("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$");
 
-                if (!respuesta)
+                // Validación del nombre
+                if (string.IsNullOrWhiteSpace(nombre))
                 {
-                    return StatusCode(500, new { message = "Ocurrió un error(145).", error = mensaje });
+                    mensaje = "El nombre no puede estar vacío.";
+                    fallidos.Add("nombre");
+                }
+                nombre = nombre.Trim();
+                if (!regex.IsMatch(nombre))
+                {
+                    mensaje = "El nombre solo puede contener letras y espacios.";
+                    fallidos.Add("nombre");
+                }
+                else if (nombre.Length < 3 || nombre.Length > 50)
+                {
+                    mensaje = "El nombre debe tener entre 3 y 50 caracteres.";
+                    fallidos.Add("nombre");
                 }
 
-                if (!DateTime.TryParse(Vencimiento, out DateTime fechaVencimiento))
+                // Validación del numero telefonico
+                if (string.IsNullOrWhiteSpace(telefono))
                 {
-                    return BadRequest(new { message = "Formato de fecha de vencimiento inválido." });
+                    mensaje = "El número de teléfono no puede estar vacío.";
+                    fallidos.Add("telefono");
                 }
-
-                LoteProducto nuevo = new LoteProducto()
+                else if (telefono.Length < 12 || telefono.Length > 20)
                 {
-                    ID_CatalogoProducto = Producto_id,
-                    Cantidad = Cantidad,
-                    EsMaterial = EsMaterial,
-                    Fecha_Ingreso = DateTime.Now,
-                    Fecha_Vencimiento = fechaVencimiento,
-                    Precio_Compra = Costo,
-                    Precio_Venta = PrecioVenta,
-                    Margen_Ganancia = MargenGanancia,
-                    ID_IVA = iva.ID_IVA,
-                };
-
-                if (DataLoteProducto.Agregar(nuevo, out mensaje))
-                {
-                    return Ok(new { message = "Lote agregado exitosamente." });
+                    mensaje = "El telefono debe tener entre 10 y 20 caracteres.";
+                    fallidos.Add("telefono");
                 }
-                else
+                
+                if (fallidos.Count == 0)
                 {
-                    return StatusCode(500, new { message = "Ocurrió un error(143). ", error = mensaje });
+                     Proveedor nuevo = new Proveedor
+                    {
+                        Nombre_Proveedor = nombre,
+                         Telefono = telefono,
+                         Pagina_Contacto = contactoAlternativo
+                     };
+
+                    resultado = DataProveedores.Agregar(nuevo, out mensaje);
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Ocurrió un error en el servidor.", error = ex.Message });
+                resultado = false;
+                mensaje = $"Error al agregar el Proveedor: {ex.Message}";
             }
-        }*/
-        /*
-        [HttpGet]
-        [Route("ObtenerProductosPorTipo")]
-        public IActionResult ObtenerProductosPorTipo(int tipo)
-        {
-            List<CatalogoProducto> productosDelTipo = new List<CatalogoProducto>();
 
-                foreach (CatalogoProducto valor in DataCatalogoProducto.ListaCatalogoProductos(out _, out _))
-                {
-                    if (valor.ID_TipoProducto == tipo)
-                        productosDelTipo.Add(valor);
-                }
-                return Json(productosDelTipo);
-            }
-        }*/
+            return Json(new { success = resultado, message = mensaje, errores = fallidos });
+        }
     }
 }

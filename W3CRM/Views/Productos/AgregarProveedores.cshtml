@@ -76,7 +76,7 @@
                                     <div class="row">
                                         <!-- Formulario de Nuevo Proveedor -->
                                         <div class="col-12">
-                                            <form class="needs-validation" action="/ProductosController/AgregarNuevoLoteProducto" method="post" novalidate id="formulario">
+                                            <form class="needs-validation" action="/ProductosController/AgregarNuevoLoteProducto" method="post" novalidate id="formularioz">
                                                 <h2 class="text-center mb-4">NUEVO PROVEEDOR</h2>
 
                                                 <input type="hidden" id="formulario_id" name="ID" value="0">
@@ -90,13 +90,13 @@
                                                 <!-- Campo Teléfono -->
                                                 <div class="mb-3">
                                                     <label class="form-label" for="formulario_telefono">Teléfono <span class="text-danger">*</span></label>
-                                                    <input type="tel" class="form-control" id="formulario_telefono" placeholder="+52 686-999-999" name="Telefono" required>
+                                                    <input type="tel" class="form-control" id="formulario_telefono" placeholder="+52 686-999-999" name="Telefono">
                                                 </div>
 
                                                 <!-- Campo Otro medio de contacto -->
                                                 <div class="mb-3">
                                                     <label class="form-label" for="formulario_contacto">Otro medio de contacto <span class="text-danger">*</span></label>
-                                                    <input type="text" class="form-control" id="formulario_contacto" placeholder="Link o usuario" name="MedioContacto" required>
+                                                    <input type="text" class="form-control" id="formulario_contacto" placeholder="Link o usuario" name="MedioContacto">
                                                 </div>
 
                                                 <!-- Botón Guardar -->
@@ -107,8 +107,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-
 
                         </div>
                         </div>
@@ -199,111 +197,75 @@
 
     <script>
 
+            (function () {
+                'use strict';
 
-        document.getElementById("formulario").addEventListener("submit", function (event) {
-            event.preventDefault();
-            enviarDatos();
-        });
+                var forms = document.querySelectorAll('.needs-validation');
 
-        function enviarDatos() {
-            const tipo = document.getElementById("formulario_tipo").value;
-            const productoId = document.getElementById("formulario_producto").value;
-            const cantidad = document.getElementById("formulario_cantidad").value;
-            const costo = document.getElementById("formulario_costo").value;
-            const vencimiento = document.getElementById("formulario_vencimiento").value;
-            const esMaterial = document.getElementById("formulario_material").checked;
-            const margenGanancia = document.getElementById("formulario_margen").value;
-            const precioVenta = document.getElementById("formulario_precio").value;
+                const nombreProveedor = document.getElementById("formulario_nombres").value;
+                const telefono = document.getElementById("formulario_telefono").value;
+                const Altercontacto = document.getElementById("formulario_contacto").value;
 
-            // Verificar que los campos requeridos no estén vacíos
-            if (!tipo || !productoId) {
-                alert("Por favor, selecciona el tipo y el producto antes de enviar.");
-                return;
-            }
+                Array.prototype.slice.call(forms).forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        event.preventDefault(); // Prevenir el envío normal del formulario
 
-            // Construir la URL con todos los parámetros
-            const url = `/ProductosController/AgregarNuevoLoteProducto?Tipo=${encodeURIComponent(tipo)}&Producto_id=${encodeURIComponent(productoId)}&Cantidad=${encodeURIComponent(cantidad)}&Costo=${encodeURIComponent(costo)}&Vencimiento=${encodeURIComponent(vencimiento)}&EsMaterial=${esMaterial}&MargenGanancia=${encodeURIComponent(margenGanancia)}&PrecioVenta=${encodeURIComponent(precioVenta)}`;
+                        // Limpiar las clases de advertencia
+                        nombreProveedor.classList.remove('is-invalid');
+                        telefono.classList.remove('is-invalid');
+                        Altercontacto.classList.remove('is-invalid');
 
-            fetch(url, {
-                method: 'GET'
-            })
-                .then(response => response.json())
-                .then(data => { console.log(data); resetFormulario(); })
-                .catch(error => console.error('Error:', error));
-        }
-        function resetFormulario() {
-            const formulario = document.getElementById("formulario");
-            formulario.reset(); // Reinicia todos los campos del formulario
-
-            // Eliminar marcas de error (si las hay)
-            const inputs = formulario.querySelectorAll("input, select");
-            inputs.forEach(input => {
-                input.classList.remove("error"); // Asegúrate de que la clase 'error' se elimine
-                input.nextElementSibling?.remove(); // Eliminar el mensaje de error (si hay uno)
-            });
-
-            const productoSelect = document.getElementById("formulario_producto");
-            productoSelect.innerHTML = '<option selected disabled value="">Por favor seleccione</option>'; // Resetea el select de productos
-        }
-
-
-
-        function cargarProductos() {
-            return new Promise((resolve, reject) => {
-                var tipoSeleccionado = document.getElementById("formulario_tipo").value;
-
-                fetch('/ProductosController/ObtenerProductosPorTipo?tipo=' + tipoSeleccionado)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Error en la respuesta del servidor');
-                        }
-                        return response.text(); // Obtener la respuesta como texto
-                    })
-                    .then(text => {
-                        if (!text) {
-                            throw new Error('Respuesta vacía');
+                        if (!form.checkValidity()) {
+                            event.stopPropagation();
+                        } else {
+                            $.ajax({
+                            url: '/Productos/AgregarNuevoProveedores',
+                                type: 'POST',
+                            data: { nombre: nombreProveedor.value, telefono: telefono.value, contactoAlternativo: Altercontacto.value },
+                                success: function (response) {
+                                    if (response.success) {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: '¡Proveedor agregado!',
+                                            text: response.message,
+                                            confirmButtonText: 'Aceptar'
+                                        }).then((result) => {
+                                            form.reset();
+                                            form.classList.remove('was-validated');
+                                        });
+                                    } else {
+                                        if (response.errores.includes("telefono")) {
+                                            numeroTelefonico.classList.add('is-invalid');
+                                        }
+                                        if (response.errores.includes("nombre")) {
+                                            nombreCliente.classList.add('is-invalid');
+                                        }
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Error',
+                                            text: response.message,
+                                            confirmButtonText: 'Aceptar'
+                                        });
+                                    }
+                                },
+                                error: function (error) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'Hubo un error al comunicarse con el servidor.',
+                                        confirmButtonText: 'Aceptar'
+                                    });
+                                }
+                            });
                         }
 
-                        try {
-                            var data = JSON.parse(text); // Intentar parsear el texto como JSON
-                        } catch (error) {
-                            throw new Error('Error al parsear JSON');
-                        }
+                        form.classList.add('was-validated'); // Aplicar las clases de validación
+                    }, false);
+                });
+            })();
+            
 
-                        var selectProductos = document.getElementById("formulario_producto");
-                        selectProductos.innerHTML = '<option selected disabled value="" id="formulario_vacio">Por favor seleccione</option>';
-
-                        data.forEach(producto => {
-                            var option = document.createElement("option");
-                            option.text = producto.nombre;
-                            option.value = producto.iD_Producto;
-                            selectProductos.appendChild(option);
-                        });
-
-                        resolve();
-                    })
-                    .catch(error => {
-                        console.error('Error al obtener productos:', error);
-                        reject(error);
-                    });
-            });
-        }
-
-
-
-        function calcularMargenYPrecio() {
-            const costo = parseFloat(document.getElementById("formulario_costo").value) || 0;
-            const margenPorcentaje = 20;  // Margen de ganancia predeterminado en %
-
-            const margen = (costo * margenPorcentaje) / 100;
-            const precioVenta = costo + margen;
-
-            document.getElementById("formulario_margen").value = margenPorcentaje.toFixed(2);
-            document.getElementById("formulario_precio").value = precioVenta.toFixed(2);
-        }
-    </script>
-
-
+        </script>
     <script>
         (function () {
           'use strict'
