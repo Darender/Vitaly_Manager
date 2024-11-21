@@ -22,6 +22,14 @@ namespace Vitaly_Manager.Controladores
             ProductosController controlador = new ProductosController();
             return View(controlador);
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken] // Esto es para que el Anti-Forgery Tokens (NO QUITAR)
+        public JsonResult EliminarProveedor([FromBody] int idProveedor)
+        {
+            bool exito = DataProveedores.EliminarProveedor(idProveedor, out string respuesta);
+
+            return Json(new { success = exito, message = respuesta });
+        }
 
         /*
         [HttpGet("AgregarNuevoLoteProducto")]

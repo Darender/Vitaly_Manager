@@ -1,11 +1,13 @@
 ﻿@using System.Globalization
 @using Vitaly_Manager.Entidades
 @using W3CRM.Controllers
+@model Vitaly_Manager.Controladores.ProductosController
+
 @{
     ViewData["Title"] = "Consulta de Proveedores";
 }
 <!--**********************************
-	Content body start
+    Content body start
 ***********************************-->
 
 <style>
@@ -35,141 +37,190 @@
         <div class="tab-content" id="myTabContent-2">
             <div class="tab-pane fade show active" id="withoutSpace" role="tabpanel" aria-labelledby="home-tab-2">
                 <div class="card-body pt-0">
-		            <div class="table-responsive">
-						<table id="example3" class="display table" style="min-width: 845px">
+                    <div class="table-responsive">
+                        <table id="example3" class="display table" style="min-width: 845px">
                             <thead>
                                 <tr>
                                     <th>Nombre del Proveedor</th>
                                     <th>Teléfono</th>
                                     <th>Página de Contacto</th>
+                                    <th>Acciones</th> <!-- Agregado para las acciones -->
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var Proveedor in Model.listaProveedores)
+                                @foreach (var proveedor in Model.listaProveedores)
                                 {
-                                    <tr id="@Proveedor.ID_Proveedor">
-                                        <td>@Proveedor.Nombre_Proveedor</td>
-                                        <td><a href="javascript:void(0);"><strong>@Proveedor.Telefono</strong></a></td>
-                                        <td>@Proveedor.Pagina_Contacto</td>
-                                        <td>
-                                            <div class="d-flex">
-                                                <a href="#" class="btn btn-primary shadow btn-xs sharp me-1" onclick="modificarClientes('@Proveedor.ID_Proveedor')"><i class="fas fa-pencil-alt"></i></a>
-                                                <a href="#" class="btn btn-danger shadow btn-xs sharp" onclick="eliminarCliente('@Proveedor.ID_Proveedor')"><i class="fa fa-trash"></i></a>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                        <tr id="@proveedor-@proveedor.ID_Proveedor">
+                                            <td>@proveedor.Nombre_Proveedor</td>
+                                            <td><a href="javascript:void(0);"><strong>@proveedor.Telefono</strong></a></td>
+                                            <td>@proveedor.Pagina_Contacto</td>
+                                            <td>
+                                                <div class="d-flex">
+                                                    <a href="#" class="btn btn-primary shadow btn-xs sharp me-1" onclick="modificarProveedor('@proveedor.ID_Proveedor')">
+                                                        <i class="fas fa-pencil-alt"></i>
+                                                    </a>
+                                                    <a href="javascript:void(0);" class="btn btn-danger shadow btn-xs sharp" onclick="eliminarProveedor('@proveedor.ID_Proveedor')">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
                                 }
                             </tbody>
                         </table>
-		            </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 <!--**********************************
-	Content body end
+    Content body end
 ***********************************-->
-@section w3crm_style
-	{
-    <link href="~/w3crm/vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
-	<link href="~/w3crm/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+
+@section w3crm_style {
+        <link href="~/w3crm/vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+        <link href="~/w3crm/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
 
         <!-- Daterange picker -->
-    <link href="~/w3crm/vendor/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+        <link href="~/w3crm/vendor/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
 
-    <!-- Pick date -->
-    <link rel="stylesheet" href="~/w3crm/vendor/pickadate/themes/default.css">
-    <link rel="stylesheet" href="~/w3crm/vendor/pickadate/themes/default.date.css">
+        <!-- Pick date -->
+        <link rel="stylesheet" href="~/w3crm/vendor/pickadate/themes/default.css">
+        <link rel="stylesheet" href="~/w3crm/vendor/pickadate/themes/default.date.css">
 }
 
-@section w3crm_script
-	{
-	<!--**********************************
-		Scripts
-	***********************************-->
+@section w3crm_script {
+        <!--**********************************
+            Scripts
+        ***********************************-->
 
-    <script src="~/w3crm/vendor/sweetalert2/dist/sweetalert2.min.js"></script>
-    <script src="~/w3crm/js/plugins-init/sweetalert.init.js"></script>
-    <script src="~/w3crm/js/styleSwitcher.js"></script>
+        <script src="~/w3crm/vendor/sweetalert2/dist/sweetalert2.min.js"></script>
+        <script src="~/w3crm/js/plugins-init/sweetalert.init.js"></script>
+        <script src="~/w3crm/js/styleSwitcher.js"></script>
 
-    <!-- Required vendors -->
-    <script src="~/w3crm/vendor/global/global.min.js"></script>
-	<script src="~/w3crm/vendor/chart.js/Chart.bundle.min.js"></script>
-	<script src="~/w3crm/vendor/tagify/dist/tagify.min.js"></script>
+        <!-- Required vendors -->
+        <script src="~/w3crm/vendor/global/global.min.js"></script>
+        <script src="~/w3crm/vendor/chart.js/Chart.bundle.min.js"></script>
+        <script src="~/w3crm/vendor/tagify/dist/tagify.min.js"></script>
 
-	<!-- Apex Chart -->
-	<script src="~/w3crm/vendor/apexchart/apexchart.js"></script>
+        <!-- Apex Chart -->
+        <script src="~/w3crm/vendor/apexchart/apexchart.js"></script>
 
-	<!-- Datatable -->
-	<script src="~/w3crm/vendor/datatables/js/jquery.dataTables.min.js"></script>
-	<script src="~/w3crm/js/plugins-init/datatables.init.js"></script>
-	<script src="~/w3crm/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+        <!-- Datatable -->
+        <script src="~/w3crm/vendor/datatables/js/jquery.dataTables.min.js"></script>
+        <script src="~/w3crm/js/plugins-init/datatables.init.js"></script>
+        <script src="~/w3crm/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
 
-     <!-- code-highlight -->
-    <script src="~/w3crm/js/highlight.min.js"></script>
+        <!-- code-highlight -->
+        <script src="~/w3crm/js/highlight.min.js"></script>
 
-    <!-- momment js is must -->
-    <script src="~/w3crm/vendor/moment/moment.min.js"></script>
-    <script src="~/w3crm/vendor/bootstrap-daterangepicker/daterangepicker.js"></script>
+        <!-- moment js is must -->
+        <script src="~/w3crm/vendor/moment/moment.min.js"></script>
+        <script src="~/w3crm/vendor/bootstrap-daterangepicker/daterangepicker.js"></script>
 
-    <!-- pickdate -->
-    <script src="~/w3crm/vendor/pickadate/picker.js"></script>
-    <script src="~/w3crm/vendor/pickadate/picker.time.js"></script>
-    <script src="~/w3crm/vendor/pickadate/picker.date.js"></script>
+        <!-- pickdate -->
+        <script src="~/w3crm/vendor/pickadate/picker.js"></script>
+        <script src="~/w3crm/vendor/pickadate/picker.time.js"></script>
+        <script src="~/w3crm/vendor/pickadate/picker.date.js"></script>
 
-     <!-- Pickdate -->
-    <script src="~/w3crm/js/plugins-init/pickadate-init.js"></script>
-    <script src="~/w3crm/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
-    <script src="~/w3crm/js/custom.js"></script>
-    <script src="~/w3crm/js/deznav-init.js"></script>
-    <script src="~/w3crm/js/demo.js"></script>
-    <script src="~/w3crm/js/styleSwitcher.js"></script>
+        <!-- Pickdate Init -->
+        <script src="~/w3crm/js/plugins-init/pickadate-init.js"></script>
+        <script src="~/w3crm/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+        <script src="~/w3crm/js/custom.js"></script>
+        <script src="~/w3crm/js/deznav-init.js"></script>
+        <script src="~/w3crm/js/demo.js"></script>
+        <script src="~/w3crm/js/styleSwitcher.js"></script>
 
-    <script src="~/w3crm/js/custom.js"></script>
-    <script src="~/w3crm/js/deznav-init.js"></script>
-    <script src="~/w3crm/js/demo.js"></script>
+        <script src="~/w3crm/js/custom.js"></script>
+        <script src="~/w3crm/js/deznav-init.js"></script>
+        <script src="~/w3crm/js/demo.js"></script>
 
-    
+        <script>
+            hljs.highlightAll();
+            hljs.configure({ ignoreUnescapedHTML: true });
+        </script>
 
-    <script>
-        hljs.highlightAll();
-        hljs.configure({ ignoreUnescapedHTML: true })
-
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-            document.querySelectorAll('pre code').forEach((el) => {
-                hljs.highlightElement(el);
+        <script>
+            document.addEventListener('DOMContentLoaded', (event) => {
+                document.querySelectorAll('pre code').forEach((el) => {
+                    hljs.highlightElement(el);
+                });
             });
+        </script>
+
+        <script>
+            (function () {
+                'use strict'
+
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.querySelectorAll('.needs-validation')
+
+                // Loop over them and prevent submission
+                Array.prototype.slice.call(forms)
+                    .forEach(function (form) {
+                        form.addEventListener('submit', function (event) {
+                            if (!form.checkValidity()) {
+                                event.preventDefault()
+                                event.stopPropagation()
+                            }
+
+                            form.classList.add('was-validated')
+                        }, false)
+                    })
+            })()
+        </script>
+
+        <!-- Funciones JavaScript para eliminar proveedores -->
+       @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+
+<script>
+    const antiforgeryToken = '@Antiforgery.GetAndStoreTokens(Context).RequestToken';
+
+    function eliminarProveedor(idProveedor) {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "No podrás revertir esto",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/Productos/EliminarProveedor', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': antiforgeryToken
+                    },
+                    body: JSON.stringify({ idProveedor: parseInt(idProveedor) }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire(
+                            'Eliminado',
+                            data.message,
+                            'success'
+                        );
+                        const fila = document.getElementById('proveedor-' + idProveedor);
+                        if (fila) {
+                            fila.remove();
+                        }
+                    } else {
+                        Swal.fire('Error', data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire('Error', 'Hubo un problema al procesar la solicitud.', 'error');
+                });
+            }
         });
-    </script>
+    }
+</script>
 
-    <script>
-        
-    </script>
-
-
-    <script>
-        (function () {
-          'use strict'
-
-          // Fetch all the forms we want to apply custom Bootstrap validation styles to
-          var forms = document.querySelectorAll('.needs-validation')
-
-          // Loop over them and prevent submission
-          Array.prototype.slice.call(forms)
-            .forEach(function (form) {
-              form.addEventListener('submit', function (event) {
-                if (!form.checkValidity()) {
-                  event.preventDefault()
-                  event.stopPropagation()
-                }
-
-                form.classList.add('was-validated')
-              }, false)
-            })
-        })()
-    </script>
 }
+
