@@ -23,7 +23,7 @@ namespace Vitaly_Manager.Controladores
             return View(controlador);
         }
         [HttpPost]
-        [ValidateAntiForgeryToken] // Esto es para que el Anti-Forgery Tokens (NO QUITAR)
+        [ValidateAntiForgeryToken] // Esto es para que el funcione Anti-Forgery Tokens (NO QUITAR)
         public JsonResult EliminarProveedor([FromBody] int idProveedor)
         {
             bool exito = DataProveedores.EliminarProveedor(idProveedor, out string respuesta);
