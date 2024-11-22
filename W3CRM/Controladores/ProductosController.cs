@@ -20,15 +20,32 @@ namespace Vitaly_Manager.Controladores
             return View(controlador);
         }
 
+        /// <summary>
+        /// Un metodo encargado de la logica para agregar nuevos proveedores al sistema
+        /// </summary>
+        /// <param name="nombre">Nombre del nuevo proveedor</param>
+        /// <param name="telefono">Numero telefonico del nuevo proveedor</param>
+        /// <param name="contactoAlternativo">Cualquier contacto alternativo que tenga el proveedor</param>
+        /// <returns>Devuelve un booleado de si fue exitoso, un mensaje de que fue lo que paso y una lista de casillas que fueron fallidas</returns>
         [HttpPost]
         public JsonResult AgregarNuevoProveedores(string nombre, string? telefono, string? contactoAlternativo)
         {
             bool resultado = false;
             string mensaje = "Hubo un problema al agregar al Proveedor.";
+
+            // lista de todas las casillas que terminaron como fallido
             List<string> fallidos = new List<string>();
 
             try
             {
+                // El telefono y el contacto alternativo no pueden ser nulos al mismo tiempo
+                if (telefono == null && contactoAlternativo == null) {
+                    mensaje = "Telefono y contacto alternativo no pueden estar vacios al mismo tiempo";
+                    fallidos.Add("telefono");
+                    fallidos.Add("alternativo");
+                    return Json(new { success = resultado, message = mensaje, errores = fallidos });
+                }
+
                 var regex = new System.Text.RegularExpressions.Regex("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$");
 
                 // Validación del nombre
@@ -70,6 +87,7 @@ namespace Vitaly_Manager.Controladores
                          Pagina_Contacto = contactoAlternativo
                      };
 
+                    // Envio del nuevo profesor a data para que se envie a la base de datos
                     resultado = DataProveedores.Agregar(nuevo, out mensaje);
                 }
             }

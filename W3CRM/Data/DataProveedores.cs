@@ -19,21 +19,42 @@ namespace Vitaly_Manager.Data
                 {
                     conexion.Open();
 
-                    string query = @"INSERT INTO Proveedor 
-                            (nombreProvedor, telefono, paginaContacto) 
-                            VALUES (@NombreProvedor, @Telefono, @PaginaContacto)";
+                    // Verificar si el nombre o el teléfono ya existen
+                    string verificarQuery = @"SELECT COUNT(*) FROM Proveedor 
+                                      WHERE nombreProvedor = @NombreProvedor 
+                                      OR telefono = @Telefono";
 
-                    using (SqlCommand comando = new SqlCommand(query, conexion))
+                    using (SqlCommand verificarComando = new SqlCommand(verificarQuery, conexion))
                     {
-                        comando.Parameters.AddWithValue("@NombreProvedor", nuevo.Nombre_Proveedor);
-                        comando.Parameters.AddWithValue("@Telefono", nuevo.Telefono);
-                        comando.Parameters.AddWithValue("@Contacto_Alternativo", nuevo.Pagina_Contacto ?? (object)DBNull.Value);
-                        
-                        comando.ExecuteNonQuery();
+                        verificarComando.Parameters.AddWithValue("@NombreProvedor", nuevo.Nombre_Proveedor);
+                        verificarComando.Parameters.AddWithValue("@Telefono", nuevo.Telefono);
+
+                        int count = (int)verificarComando.ExecuteScalar(); // Obtiene el número de registros coincidentes
+
+                        if (count > 0)
+                        {
+                            mensaje = "El nombre del proveedor o el teléfono ya existen en la base de datos.";
+                            return false;
+                        }
+                    }
+
+                    // Si no existen, proceder con la inserción
+                    string insertarQuery = @"INSERT INTO Proveedor 
+                                     (nombreProvedor, telefono, paginaContacto) 
+                                     VALUES (@NombreProvedor, @Telefono, @PaginaContacto)";
+
+                    using (SqlCommand insertarComando = new SqlCommand(insertarQuery, conexion))
+                    {
+                        insertarComando.Parameters.AddWithValue("@NombreProvedor", nuevo.Nombre_Proveedor);
+                        insertarComando.Parameters.AddWithValue("@Telefono", nuevo.Telefono);
+                        insertarComando.Parameters.AddWithValue("@PaginaContacto", nuevo.Pagina_Contacto ?? (object)DBNull.Value);
+
+                        insertarComando.ExecuteNonQuery();
                     }
 
                     conexion.Close();
                 }
+
                 mensaje = $"El Proveedor {nuevo.Nombre_Proveedor} ha sido agregado exitosamente.";
                 return true;
             }
@@ -48,6 +69,7 @@ namespace Vitaly_Manager.Data
                 return false;
             }
         }
+
     }
 }
 

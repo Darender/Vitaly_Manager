@@ -43,48 +43,17 @@
                         <div class="container-fluid p-0">
                                 
                             <!--MODIFICAR DESDE AQUI-->
-                                <div class="container my-4">
-                                    <div class="row">
-                                        <!-- Recuadro de Proveedores Totales -->
-                                        <div class="col-md-4 mb-3">
-                                            <div class="card p-3 text-center">
-                                                <h5>Proveedores Totales</h5>
-                                                <p class="fs-3">4</p>
-                                                <p class="text-muted">+0.00%</p>
-                                            </div>
-                                        </div>
-
-                                        <!-- Recuadro de Activos en los Últimos 30 Días -->
-                                        <div class="col-md-4 mb-3">
-                                            <div class="card p-3 text-center">
-                                                <h5>Activos en los Últimos 30 Días</h5>
-                                                <p class="fs-3">0</p>
-                                                <p class="text-muted">+0.00%</p>
-                                            </div>
-                                        </div>
-
-                                        <!-- Recuadro de Último Proveedor Agregado -->
-                                        <div class="col-md-4 mb-3">
-                                            <div class="card p-3 text-center">
-                                                <h5>Último Proveedor Agregado</h5>
-                                                <p class="fs-3">Johan Rodríguez</p>
-                                                <p class="text-muted">2024-10-19</p>
-                                            </div>
-                                        </div>
-                                    </div>
 
                                     <div class="row">
                                         <!-- Formulario de Nuevo Proveedor -->
                                         <div class="col-12">
                                             <form class="needs-validation" action="/ProductosController/AgregarNuevoLoteProducto" method="post" novalidate id="formularioz">
-                                                <h2 class="text-center mb-4">NUEVO PROVEEDOR</h2>
-
                                                 <input type="hidden" id="formulario_id" name="ID" value="0">
 
                                                 <!-- Campo Nombres -->
                                                 <div class="mb-3">
-                                                    <label class="form-label" for="formulario_nombres">Nombre(s) <span class="text-danger">*</span></label>
-                                                    <input type="text" class="form-control" id="formulario_nombres" placeholder="Nombre completo del proveedor" name="Nombres" required>
+                                                <label class="form-label" for="formulario_nombres">Nombre(s) <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" id="formulario_nombres" placeholder="Nombre completo del proveedor" name="Nombres" required>
                                                 </div>
 
                                                 <!-- Campo Teléfono -->
@@ -197,74 +166,99 @@
 
     <script>
 
-            (function () {
-                'use strict';
+        (function () {
+            'use strict';
 
-                var forms = document.querySelectorAll('.needs-validation');
+            var forms = document.querySelectorAll('.needs-validation');
 
-                const nombreProveedor = document.getElementById("formulario_nombres").value;
-                const telefono = document.getElementById("formulario_telefono").value;
-                const Altercontacto = document.getElementById("formulario_contacto").value;
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault(); // Prevenir el envío normal del formulario
 
-                Array.prototype.slice.call(forms).forEach(function (form) {
-                    form.addEventListener('submit', function (event) {
-                        event.preventDefault(); // Prevenir el envío normal del formulario
+                    // Obtener los valores dentro del evento submit
+                    const nombreProveedor = document.getElementById("formulario_nombres");
+                    const telefono = document.getElementById("formulario_telefono");
+                    const Altercontacto = document.getElementById("formulario_contacto");
 
-                        // Limpiar las clases de advertencia
-                        nombreProveedor.classList.remove('is-invalid');
-                        telefono.classList.remove('is-invalid');
-                        Altercontacto.classList.remove('is-invalid');
-
-                        if (!form.checkValidity()) {
-                            event.stopPropagation();
-                        } else {
-                            $.ajax({
+                    if (!form.checkValidity()) {
+                        event.stopPropagation();
+                    } else {
+                        $.ajax({
                             url: '/Productos/AgregarNuevoProveedores',
-                                type: 'POST',
-                            data: { nombre: nombreProveedor.value, telefono: telefono.value, contactoAlternativo: Altercontacto.value },
-                                success: function (response) {
-                                    if (response.success) {
-                                        Swal.fire({
-                                            icon: 'success',
-                                            title: '¡Proveedor agregado!',
-                                            text: response.message,
-                                            confirmButtonText: 'Aceptar'
-                                        }).then((result) => {
-                                            form.reset();
-                                            form.classList.remove('was-validated');
-                                        });
-                                    } else {
-                                        if (response.errores.includes("telefono")) {
-                                            numeroTelefonico.classList.add('is-invalid');
-                                        }
-                                        if (response.errores.includes("nombre")) {
-                                            nombreCliente.classList.add('is-invalid');
-                                        }
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Error',
-                                            text: response.message,
-                                            confirmButtonText: 'Aceptar'
-                                        });
+                            type: 'POST',
+                            data: {
+                                nombre: nombreProveedor.value,
+                                telefono: telefono.value,
+                                contactoAlternativo: Altercontacto.value
+                            },
+                            success: function (response) {
+                                if (response.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: '¡Proveedor agregado!',
+                                        text: response.message,
+                                        confirmButtonText: 'Aceptar'
+                                    }).then((result) => {
+                                        form.reset();
+                                        form.classList.remove('was-validated');
+                                    });
+                                } else {
+                                    if (response.errores.includes("telefono")) {
+                                        telefono.classList.add('is-invalid');
                                     }
-                                },
-                                error: function (error) {
+                                    if (response.errores.includes("nombre")) {
+                                        nombreProveedor.classList.add('is-invalid');
+                                    }
+                                    if (response.errores.includes("alternativo")) {
+                                        Altercontacto.classList.add('is-invalid');
+                                    }
                                     Swal.fire({
                                         icon: 'error',
                                         title: 'Error',
-                                        text: 'Hubo un error al comunicarse con el servidor.',
+                                        text: response.message,
                                         confirmButtonText: 'Aceptar'
                                     });
                                 }
-                            });
-                        }
+                            },
+                            error: function (error) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Hubo un error al comunicarse con el servidor.',
+                                    confirmButtonText: 'Aceptar'
+                                });
+                            }
+                        });
+                    }
 
-                        form.classList.add('was-validated'); // Aplicar las clases de validación
-                    }, false);
-                });
-            })();
-            
+                    form.classList.add('was-validated'); // Aplicar las clases de validación
+                }, false);
+            });
+        })();
 
+        document.getElementById('formulario_telefono').addEventListener('input', function (e) {
+            var value = e.target.value.replace(/[^0-9]/g, '');
+
+            if (value.length > 3) {
+                value = value.substring(0, 3) + '-' + value.substring(3);
+            }
+
+            if (value.length > 7) {
+                value = value.substring(0, 7) + '-' + value.substring(7);
+            }
+
+            if (value.length >= 13) {
+                value = value.replace(/[-+]/g, '');
+                var ultimos4 = value.substring(value.length - 4);
+                value = value.substring(0, value.length - 4);
+                var ultimos3 = value.substring(value.length - 3);
+                value = value.substring(0, value.length - 3);
+                var primeros3 = value.substring(value.length - 3);
+                value = value.substring(0, value.length - 3);
+                value = "+" + value + " " + primeros3 + "-" + ultimos3 + "-" + ultimos4;
+            }
+            e.target.value = value;
+        });
         </script>
     <script>
         (function () {
