@@ -5,7 +5,6 @@ namespace Vitaly_Manager.Data
 {
     public class DataProveedores
     {
-
         public static List<Proveedor> ListaProveedores(out string respuesta, out bool exito)
         {
             List<Proveedor> listaProveedores = new List<Proveedor>();
@@ -54,5 +53,7 @@ namespace Vitaly_Manager.Data
                 return new List<Proveedor>();
             }
         }
+
+
     }
 }

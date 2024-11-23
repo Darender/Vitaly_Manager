@@ -16,7 +16,6 @@ namespace Vitaly_Manager.Controladores
             return View(model);
         }
 
-
         public IActionResult AgregarLoteProducto()
         {
             ProductosController controlador = new ProductosController();
