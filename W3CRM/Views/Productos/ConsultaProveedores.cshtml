@@ -6,10 +6,11 @@
 ViewData["Title"] = "Consulta de Proveedores";
 }
     <!--**********************************
-        Content body start
+        Inicio del cuerpo del contenido
     ***********************************-->
 
     <style>
+        /* Se define un estilo de reducción de margen para los elementos */
         .small-margin-bottom {
             margin-bottom: -30px;
         }
@@ -18,7 +19,9 @@ ViewData["Title"] = "Consulta de Proveedores";
     <div class="content-body">
         <div class="page-titles">
             <ol class="breadcrumb">
+            <!-- Título principal -->
                 <li><h5 class="bc-title">Proveedores</h5></li>
+            <!-- Ruta de navegación hacia la página de inicio. -->
                 <li class="breadcrumb-item">
                     <a href="@Url.Action("Index", "w3crm")">
                         <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -28,16 +31,18 @@ ViewData["Title"] = "Consulta de Proveedores";
                         Inicio
                     </a>
                 </li>
+            <!-- Ruta actual/Página actual -->
                 <li class="breadcrumb-item active"><a href="javascript:void(0)">Consulta de Proveedores</a></li>
             </ol>
             <a class="text-primary fs-13" data-bs-toggle="offcanvas" href="#offcanvasExample1" role="button" aria-controls="offcanvasExample1">+ Add Task</a>
         </div>
-
+    <!-- Mensaje de error si existe un problema desde el controlador -->
         @if (ViewData["Error"] != null)
     {
         <div class="alert alert-danger">@ViewData["Error"]</div>
     }
 
+    <!-- Contenedor principal de la página -->
         <div class="container-fluid">
             <div class="tab-content" id="myTabContent-2">
                 <div class="tab-pane fade show active" id="withoutSpace" role="tabpanel" aria-labelledby="home-tab-2">
@@ -46,6 +51,7 @@ ViewData["Title"] = "Consulta de Proveedores";
                             <table id="example3" class="display table" style="min-width: 845px">
                                 <thead>
                                     <tr>
+                                    <!-- Encabezados de la tabla de proveedores -->
                                         <th>Nombre del Proveedor</th>
                                         <th>Teléfono</th>
                                         <th>Página de Contacto</th>
@@ -53,11 +59,13 @@ ViewData["Title"] = "Consulta de Proveedores";
                                     </tr>
                                 </thead>
                                 <tbody>
+                                <!-- Cruza la lista de proveedores al model -->
                                     @foreach (var proveedor in Model)
                                 {
                                     <tr id="@proveedor.ID_Proveedor">
                                         <td>@proveedor.Nombre_Proveedor</td>
                                         <td>
+                                            <!-- Si no se registra un telefono, indica "No disponible". -->
                                             @if (!string.IsNullOrEmpty(proveedor.Telefono))
                                             {
                                             <a href="javascript:void(0);"><strong>@proveedor.Telefono</strong></a>
@@ -79,10 +87,12 @@ ViewData["Title"] = "Consulta de Proveedores";
                                         </td>
                                         <td>
                                             <div class="d-flex">
-                                                <a href="#" class="btn btn-primary shadow btn-xs sharp me-1" onclick="modificarClientes('@proveedor.ID_Proveedor')">
+                                                <!-- Boton de modificar  proveedores -->
+                                                <a href="#" class="btn btn-primary shadow btn-xs sharp me-1" onclick="modificarProveedores('@proveedor.ID_Proveedor')">
                                                     <i class="fas fa-pencil-alt"></i>
                                                 </a>
-                                                <a href="#" class="btn btn-danger shadow btn-xs sharp" onclick="eliminarCliente('@proveedor.ID_Proveedor')">
+                                                <!-- Boton de eliminar  proveedores -->
+                                                <a href="#" class="btn btn-danger shadow btn-xs sharp" onclick="eliminarProveedores('@proveedor.ID_Proveedor')">
                                                     <i class="fa fa-trash"></i>
                                                 </a>
                                             </div>
@@ -98,17 +108,18 @@ ViewData["Title"] = "Consulta de Proveedores";
         </div>
     </div>
     <!--**********************************
-        Content body end
+        Final del contenido del cuerpo
     ***********************************-->
+<!-- Sección de estilos personalizados. -->
     @section w3crm_style
 {
         <link href="~/w3crm/vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
         <link href="~/w3crm/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
 
-        <!-- Daterange picker -->
+    <!-- Selector de intervalo de fechas -->
         <link href="~/w3crm/vendor/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
 
-        <!-- Pick date -->
+    <!-- Fecha de elección -->
         <link rel="stylesheet" href="~/w3crm/vendor/pickadate/themes/default.css">
         <link rel="stylesheet" href="~/w3crm/vendor/pickadate/themes/default.date.css">
     }
@@ -123,32 +134,32 @@ ViewData["Title"] = "Consulta de Proveedores";
      <script src="~/w3crm/js/plugins-init/sweetalert.init.js"></script>
      <script src="~/w3crm/js/styleSwitcher.js"></script>
 
-     <!-- Required vendors -->
+    <!-- Proveedores requeridos -->
      <script src="~/w3crm/vendor/global/global.min.js"></script>
      <script src="~/w3crm/vendor/chart.js/Chart.bundle.min.js"></script>
      <script src="~/w3crm/vendor/tagify/dist/tagify.min.js"></script>
 
-     <!-- Apex Chart -->
+    <!-- Gráfico de vértice -->
      <script src="~/w3crm/vendor/apexchart/apexchart.js"></script>
 
-     <!-- Datatable -->
+    <!-- Tabla de datos -->
      <script src="~/w3crm/vendor/datatables/js/jquery.dataTables.min.js"></script>
      <script src="~/w3crm/js/plugins-init/datatables.init.js"></script>
      <script src="~/w3crm/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
 
-     <!-- code-highlight -->
+    <!-- código -luz alta -->
      <script src="~/w3crm/js/highlight.min.js"></script>
 
-     <!-- momment js is must -->
+    <!-- momento js es imprescindible -->
      <script src="~/w3crm/vendor/moment/moment.min.js"></script>
      <script src="~/w3crm/vendor/bootstrap-daterangepicker/daterangepicker.js"></script>
 
-     <!-- pickdate -->
+    <!-- Fecha de elección -->
      <script src="~/w3crm/vendor/pickadate/picker.js"></script>
      <script src="~/w3crm/vendor/pickadate/picker.time.js"></script>
      <script src="~/w3crm/vendor/pickadate/picker.date.js"></script>
 
-     <!-- Pickdate -->
+    <!-- Fecha de elección -->
      <script src="~/w3crm/js/plugins-init/pickadate-init.js"></script>
      <script src="~/w3crm/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
      <script src="~/w3crm/js/custom.js"></script>
@@ -185,10 +196,10 @@ ViewData["Title"] = "Consulta de Proveedores";
          (function () {
              'use strict'
 
-            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+           // Obtener todos los formularios a los que queremos aplicar estilos de validación de Bootstrap personalizados
             var forms = document.querySelectorAll('.needs-validation')
 
-            // Loop over them and prevent submission
+           //Bucle sobre ellos y evitar la sumisión
             Array.prototype.slice.call(forms)
                 .forEach(function (form) {
                     form.addEventListener('submit', function (event) {
