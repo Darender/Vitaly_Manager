@@ -19,7 +19,7 @@ namespace Vitaly_Manager.Data
                     while (lector.Read())
                     {
                         int idProveedor = lector["idProveedor"] != DBNull.Value ? Convert.ToInt32(lector["idProveedor"]) : 0;
-                        string nombreProveedor = lector["nombreProveedor"] != DBNull.Value ? Convert.ToString(lector["nombreProveedor"])! : "N/A";
+                        string nombreProveedor = lector["nombreProvedor"] != DBNull.Value ? Convert.ToString(lector["nombreProvedor"])! : "N/A";
                         string? telefono = lector["telefono"] != DBNull.Value ? Convert.ToString(lector["telefono"]) : null;
                         string? paginaContacto = lector["PaginaContacto"] != DBNull.Value ? Convert.ToString(lector["PaginaContacto"]) : null;
 
