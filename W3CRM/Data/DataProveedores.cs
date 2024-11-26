@@ -72,6 +72,42 @@ namespace Vitaly_Manager.Data
             }
         }
 
+        public static void EliminarProveedor(int idProveedor, out string respuesta, out bool exito)
+        {
+            try
+            {
+                Console.WriteLine($"Intentando eliminar proveedor con ID: {idProveedor}");
+                using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
+                {
+                    conexion.Open();
+                    SqlCommand comando = new SqlCommand("DELETE FROM Proveedor WHERE idProveedor = @idProveedor", conexion);
+                    comando.Parameters.AddWithValue("@idProveedor", idProveedor);
+
+                    int filasAfectadas = comando.ExecuteNonQuery();
+
+                    if (filasAfectadas > 0)
+                    {
+                        exito = true;
+                        respuesta = "Proveedor eliminado correctamente.";
+                    }
+                    else
+                    {
+                        exito = false;
+                        respuesta = "No se encontró el proveedor.";
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                exito = false;
+                respuesta = $"Error en la base de datos: {ex.Message}";
+            }
+            catch (Exception ex)
+            {
+                exito = false;
+                respuesta = $"Error inesperado: {ex.Message}";
+            }
+        }
 
     }
 }

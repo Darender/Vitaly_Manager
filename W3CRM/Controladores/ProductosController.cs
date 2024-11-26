@@ -34,6 +34,18 @@ namespace Vitaly_Manager.Controladores
             return View(controlador);
         }
 
+        public ActionResult EliminarProveedor(int idProveedor)
+        {
+            string respuesta;
+            bool exito;
+
+            // Llamamos al método estático EliminarProveedor de la clase DataProveedores
+            DataProveedores.EliminarProveedor(idProveedor, out respuesta, out exito);
+
+            // Retornamos una respuesta JSON basada en el resultado de la eliminación
+            return Json(new { success = exito, message = respuesta });
+        }
+
         /*
         [HttpGet("AgregarNuevoLoteProducto")]
         public IActionResult AgregarNuevoLoteProducto(

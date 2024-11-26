@@ -43,24 +43,24 @@ ViewData["Title"] = "Consulta de Proveedores";
     }
 
     <!-- Contenedor principal de la página -->
-        <div class="container-fluid">
-            <div class="tab-content" id="myTabContent-2">
-                <div class="tab-pane fade show active" id="withoutSpace" role="tabpanel" aria-labelledby="home-tab-2">
-                    <div class="card-body pt-0">
-                        <div class="table-responsive">
-                            <table id="example3" class="display table" style="min-width: 845px">
-                                <thead>
-                                    <tr>
+    <div class="container-fluid">
+        <div class="tab-content" id="myTabContent-2">
+            <div class="tab-pane fade show active" id="withoutSpace" role="tabpanel" aria-labelledby="home-tab-2">
+                <div class="card-body pt-0">
+                    <div class="table-responsive">
+                        <table id="example3" class="display table" style="min-width: 845px">
+                            <thead>
+                                <tr>
                                     <!-- Encabezados de la tabla de proveedores -->
-                                        <th>Nombre del Proveedor</th>
-                                        <th>Teléfono</th>
-                                        <th>Página de Contacto</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                                    <th>Nombre del Proveedor</th>
+                                    <th>Teléfono</th>
+                                    <th>Página de Contacto</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                                 <!-- Cruza la lista de proveedores al model -->
-                                    @foreach (var proveedor in Model)
+                                @foreach (var proveedor in Model)
                                 {
                                     <tr id="@proveedor.ID_Proveedor">
                                         <td>@proveedor.Nombre_Proveedor</td>
@@ -68,21 +68,21 @@ ViewData["Title"] = "Consulta de Proveedores";
                                             <!-- Si no se registra un telefono, indica "No disponible". -->
                                             @if (!string.IsNullOrEmpty(proveedor.Telefono))
                                             {
-                                            <a href="javascript:void(0);"><strong>@proveedor.Telefono</strong></a>
+                                                <a href="javascript:void(0);"><strong>@proveedor.Telefono</strong></a>
                                             }
                                             else
                                             {
-                                            <span class="text-muted">No disponible</span>
+                                                <span class="text-muted">No disponible</span>
                                             }
                                         </td>
                                         <td>
                                             @if (!string.IsNullOrEmpty(proveedor.Pagina_Contacto))
                                             {
-                                            <a href="@proveedor.Pagina_Contacto" target="_blank">@proveedor.Pagina_Contacto</a>
+                                                <a href="@proveedor.Pagina_Contacto" target="_blank">@proveedor.Pagina_Contacto</a>
                                             }
                                             else
                                             {
-                                            <span class="text-muted">No disponible</span>
+                                                <span class="text-muted">No disponible</span>
                                             }
                                         </td>
                                         <td>
@@ -92,21 +92,21 @@ ViewData["Title"] = "Consulta de Proveedores";
                                                     <i class="fas fa-pencil-alt"></i>
                                                 </a>
                                                 <!-- Boton de eliminar  proveedores -->
-                                                <a href="#" class="btn btn-danger shadow btn-xs sharp" onclick="eliminarProveedores('@proveedor.ID_Proveedor')">
+                                                <a href="#" class="btn btn-danger shadow btn-xs sharp" onclick="confirmarEliminar('@proveedor.ID_Proveedor')">
                                                     <i class="fa fa-trash"></i>
                                                 </a>
                                             </div>
                                         </td>
                                     </tr>
                                 }
-                                </tbody>
-                            </table>
-                        </div>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
     <!--**********************************
         Final del contenido del cuerpo
     ***********************************-->
@@ -213,6 +213,63 @@ ViewData["Title"] = "Consulta de Proveedores";
                 })
         })()
      </script>
+    <script>
+        async function confirmarEliminar(idProveedor) {
+            try {
+                console.log('ID Proveedor recibido para eliminar:', idProveedor);
+
+                const result = await Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "No podrás revertir esto.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                });
+
+                console.log(result); // Muestra el resultado de la ventana de confirmación
+                if (result.isConfirmed === true) {
+                    eliminarProveedor(idProveedor); // Llamada a eliminarProveedor con el id
+                }
+            } catch (error) {
+                console.error('Error al mostrar la ventana de confirmación:', error);
+            }
+        }
+
+
+
+        function eliminarProveedor(idProveedor) {
+            console.log('Iniciando eliminación para el proveedor con ID:', idProveedor); // Verifica que la función se está ejecutando y el ID es correcto
+
+            // Verifica que la URL de la solicitud sea correcta
+            console.log('@Url.Action("EliminarProveedor", "Productos")');
+
+                    console.log('Realizando solicitud AJAX para eliminar proveedor...');
+        $.ajax({
+            url: '@Url.Action("EliminarProveedor", "Productos")',
+            type: 'POST',
+            data: { idProveedor: idProveedor },
+            dataType: 'json',
+            success: function (response) {
+                console.log('Respuesta del servidor:', response);
+                if (response.success) {
+                    Swal.fire('Eliminado', response.message, 'success');
+                    $(`#${idProveedor}`).remove(); // Elimina la fila del proveedor
+                } else {
+                    Swal.fire('Error', response.message, 'error');
+                }
+            },
+            error: function () {
+                console.log('Error en la solicitud AJAX'); // Para ver si la solicitud falla
+                Swal.fire('Error', 'No se pudo eliminar el proveedor.', 'error');
+            }
+        });
+
+        }
+    </script>
+
 }
 
 
