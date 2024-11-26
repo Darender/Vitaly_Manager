@@ -11,9 +11,20 @@ namespace Vitaly_Manager.Controladores
 
         public IActionResult ConsultaProveedores()
         {
-            ProductosController model = new ProductosController();
-            // Pasar la lista a la vista
-            return View(model);
+            // Cargar la lista de proveedores
+            string respuesta;
+            bool exito;
+            var listaProveedores = DataProveedores.ListaProveedores(out respuesta, out exito);
+
+            // Verificar si la consulta fue exitosa
+            if (!exito)
+            {
+                ViewData["Error"] = respuesta;
+                return View(new List<Proveedor>());
+            }
+
+            // Pasar los proveedores a la vista
+            return View(listaProveedores);
         }
 
 
@@ -21,14 +32,6 @@ namespace Vitaly_Manager.Controladores
         {
             ProductosController controlador = new ProductosController();
             return View(controlador);
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken] // Esto es para que el funcione Anti-Forgery Tokens (NO QUITAR)
-        public JsonResult EliminarProveedor([FromBody] int idProveedor)
-        {
-            bool exito = DataProveedores.EliminarProveedor(idProveedor, out string respuesta);
-
-            return Json(new { success = exito, message = respuesta });
         }
 
         /*
