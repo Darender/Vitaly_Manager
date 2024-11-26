@@ -33,7 +33,7 @@ namespace Vitaly_Manager.Controladores
             ProductosController controlador = new ProductosController();
             return View(controlador);
         }
-
+        [HttpPost]
         public ActionResult EliminarProveedor(int idProveedor)
         {
             string respuesta;
@@ -45,6 +45,7 @@ namespace Vitaly_Manager.Controladores
             // Retornamos una respuesta JSON basada en el resultado de la eliminación
             return Json(new { success = exito, message = respuesta });
         }
+
 
         /*
         [HttpGet("AgregarNuevoLoteProducto")]

@@ -62,42 +62,45 @@ ViewData["Title"] = "Consulta de Proveedores";
                                 <!-- Cruza la lista de proveedores al model -->
                                 @foreach (var proveedor in Model)
                                 {
-                                    <tr id="@proveedor.ID_Proveedor">
-                                        <td>@proveedor.Nombre_Proveedor</td>
-                                        <td>
+                                    if (proveedor.ID_Proveedor != null)
+                                    {
+                                        <tr id="@proveedor.ID_Proveedor">
+                                            <td>@proveedor.Nombre_Proveedor</td>
+                                            <td>
                                             <!-- Si no se registra un telefono, indica "No disponible". -->
-                                            @if (!string.IsNullOrEmpty(proveedor.Telefono))
-                                            {
-                                                <a href="javascript:void(0);"><strong>@proveedor.Telefono</strong></a>
-                                            }
-                                            else
-                                            {
-                                                <span class="text-muted">No disponible</span>
-                                            }
-                                        </td>
-                                        <td>
-                                            @if (!string.IsNullOrEmpty(proveedor.Pagina_Contacto))
-                                            {
-                                                <a href="@proveedor.Pagina_Contacto" target="_blank">@proveedor.Pagina_Contacto</a>
-                                            }
-                                            else
-                                            {
-                                                <span class="text-muted">No disponible</span>
-                                            }
-                                        </td>
-                                        <td>
-                                            <div class="d-flex">
-                                                <!-- Boton de modificar  proveedores -->
-                                                <a href="#" class="btn btn-primary shadow btn-xs sharp me-1" onclick="modificarProveedores('@proveedor.ID_Proveedor')">
-                                                    <i class="fas fa-pencil-alt"></i>
-                                                </a>
-                                                <!-- Boton de eliminar  proveedores -->
-                                                <a href="#" class="btn btn-danger shadow btn-xs sharp" onclick="confirmarEliminar('@proveedor.ID_Proveedor')">
-                                                    <i class="fa fa-trash"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                                @if (!string.IsNullOrEmpty(proveedor.Telefono))
+                                                {
+                                                    <a href="javascript:void(0);"><strong>@proveedor.Telefono</strong></a>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">No disponible</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(proveedor.Pagina_Contacto))
+                                                {
+                                                    <a href="@proveedor.Pagina_Contacto" target="_blank">@proveedor.Pagina_Contacto</a>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">No disponible</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="d-flex">
+                                                    <!-- Botón de modificar -->
+                                                    <a href="#" class="btn btn-primary shadow btn-xs sharp me-1 btn-modificar">
+                                                        <i class="fas fa-pencil-alt"></i>
+                                                    </a>
+                                                    <!-- Botón de eliminar -->
+                                                    <a href="#" class="btn btn-danger shadow btn-xs sharp btn-eliminar">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
                                 }
                             </tbody>
                         </table>
@@ -214,6 +217,32 @@ ViewData["Title"] = "Consulta de Proveedores";
         })()
      </script>
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("DOM completamente cargado y listo.");
+
+            // Delegación para el botón de eliminar
+            document.addEventListener("click", function (event) {
+                const btnEliminar = event.target.closest(".btn-eliminar");
+                if (btnEliminar) {
+                    const row = btnEliminar.closest("tr");
+                    if (row && row.id) {
+                        confirmarEliminar(row.id);
+                    }
+                }
+            });
+
+            // Delegación para el botón de modificar
+            document.addEventListener("click", function (event) {
+                const btnModificar = event.target.closest(".btn-modificar");
+                if (btnModificar) {
+                    const row = btnModificar.closest("tr");
+                    if (row && row.id) {
+                        modificarProveedores(row.id);
+                    }
+                }
+            });
+        });
+
         async function confirmarEliminar(idProveedor) {
             try {
                 console.log('ID Proveedor recibido para eliminar:', idProveedor);
@@ -229,46 +258,45 @@ ViewData["Title"] = "Consulta de Proveedores";
                     cancelButtonText: 'Cancelar'
                 });
 
-                console.log(result); // Muestra el resultado de la ventana de confirmación
-                if (result.isConfirmed === true) {
-                    eliminarProveedor(idProveedor); // Llamada a eliminarProveedor con el id
+                if (result.isConfirmed) {
+                    eliminarProveedor(idProveedor);
                 }
             } catch (error) {
                 console.error('Error al mostrar la ventana de confirmación:', error);
             }
         }
 
-
-
         function eliminarProveedor(idProveedor) {
-            console.log('Iniciando eliminación para el proveedor con ID:', idProveedor); // Verifica que la función se está ejecutando y el ID es correcto
-
-            // Verifica que la URL de la solicitud sea correcta
-            console.log('@Url.Action("EliminarProveedor", "Productos")');
-
-                    console.log('Realizando solicitud AJAX para eliminar proveedor...');
-        $.ajax({
-            url: '@Url.Action("EliminarProveedor", "Productos")',
-            type: 'POST',
-            data: { idProveedor: idProveedor },
-            dataType: 'json',
-            success: function (response) {
-                console.log('Respuesta del servidor:', response);
-                if (response.success) {
-                    Swal.fire('Eliminado', response.message, 'success');
-                    $(`#${idProveedor}`).remove(); // Elimina la fila del proveedor
-                } else {
-                    Swal.fire('Error', response.message, 'error');
+            const eliminarProveedorUrl = '@Url.Action("EliminarProveedor", "Productos")';
+            $.ajax({
+                url: eliminarProveedorUrl,
+                type: 'POST',
+                data: { idProveedor: idProveedor },
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire('Eliminado', response.message, 'success');
+                        $(`#${idProveedor}`).remove();
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                },
+                error: function () {
+                    console.log('Error en la solicitud AJAX');
+                    Swal.fire('Error', 'No se pudo eliminar el proveedor.', 'error');
                 }
-            },
-            error: function () {
-                console.log('Error en la solicitud AJAX'); // Para ver si la solicitud falla
-                Swal.fire('Error', 'No se pudo eliminar el proveedor.', 'error');
-            }
-        });
+            });
+        }
 
+        function modificarProveedores(idProveedor) {
+            // Aquí puedes implementar la lógica para modificar proveedores
+            console.log(`Modificando proveedor con ID: ${idProveedor}`);
+            // Por ejemplo, podrías redirigir a una página de edición:
+            // window.location.href = `/Productos/ModificarProveedor/${idProveedor}`;
         }
     </script>
+
+
 
 }
 
