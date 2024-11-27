@@ -5,7 +5,7 @@ namespace Vitaly_Manager.Data
 {
     public static class DataCatalogoProducto
     {
-        /*
+        
         /// <summary>
         /// Optiene todos los productos de la base de datos y los pone una lista
         /// </summary>
@@ -35,9 +35,9 @@ namespace Vitaly_Manager.Data
 
                         CatalogoProducto nuevo = new CatalogoProducto
                         {
-                            ID_Producto = idProducto,
-                            Nombre = nombreProducto,
-                            Unidades = unidades,
+                            ID_CatalogoProducto = idProducto,
+                            Nombre_Producto = nombreProducto,
+                            Cantidad_Unidades = unidades,
                             Pagina_Producto = paginaProducto,
                             ID_Proveedor = idProveedor,
                             ID_TipoUnidad = idTipoUnidad,
@@ -65,7 +65,7 @@ namespace Vitaly_Manager.Data
                 respuesta = $"Error inesperado: {ex.Message}";
                 return new List<CatalogoProducto>();
             }
-        }*/
+        }
 
     }
 }

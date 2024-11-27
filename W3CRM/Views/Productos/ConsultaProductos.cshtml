@@ -1,0 +1,181 @@
+﻿@using System.Globalization
+@using Vitaly_Manager.Entidades
+@using W3CRM.Controllers
+
+@{
+    ViewData["Title"] = "Consulta de Productos";
+}
+
+<!--**********************************
+        Inicio del cuerpo del contenido
+***********************************-->
+
+<style>
+    /* Define un estilo de reducción de margen para los elementos o eso creo */
+    .small-margin-bottom {
+        margin-bottom: -30px;
+    }
+</style>
+
+<div class="content-body">
+    <div class="page-titles">
+        <ol class="breadcrumb">
+            <li><h5 class="bc-title">Productos</h5></li>
+            <!-- Ruta de navegación (enlace al inicio) -->
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Index", "w3crm")">
+                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2.125 6.375L8.5 1.41667L14.875 6.375V14.1667C14.875 14.5424 14.7257 14.9027 14.4601 15.1684C14.1944 15.4341 13.8341 15.5833 13.4583 15.5833H3.54167C3.16594 15.5833 2.80561 15.4341 2.53993 15.1684C2.27426 14.9027 2.125 14.5424 2.125 14.1667V6.375Z" stroke="#2C2C2C" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M6.375 15.5833V8.5H10.625V15.5833" stroke="#2C2C2C" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Inicio
+                </a>
+            </li>
+
+            <!-- Ruta actual, osea "Consulta de Productos" -->
+            <li class="breadcrumb-item active"><a href="javascript:void(0)">Consulta de Productos</a></li>
+        </ol>
+
+        <a class="text-primary fs-13" data-bs-toggle="offcanvas" href="#offcanvasExample1" role="button" aria-controls="offcanvasExample1">+ Add Task</a>
+    </div>
+
+    <!-- Mensaje de error si existe un problema desde el controlador -->
+    @if (ViewData["Error"] != null)
+    {
+        <div class="alert alert-danger">@ViewData["Error"]</div> 
+    }
+
+    <!-- Contenedor principal de la página -->
+    <div class="container-fluid">
+        <div class="tab-content" id="myTabContent-2">
+            <div class="tab-pane fade show active" id="withoutSpace" role="tabpanel" aria-labelledby="home-tab-2">
+                <div class="card-body pt-0">
+                    <div class="table-responsive">
+                        <!-- Tabla de los productos -->
+                        <table id="example3" class="display table" style="min-width: 845px">
+                            <thead>
+                                <tr>
+                                    <!-- Encabezados de la tabla -->
+                                    <th>Nombre del Producto</th>
+                                    <th>Proveedor</th>
+                                    <th>Página del producto</th>
+                                    <th>Tipo de unidades</th>
+                                    <th>Tipo de producto</th>
+                                    <th>Cantidad unitaria</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Itera sobre el modelo (lista de productos que se encuentra en el controlador) para mostrar cada uno en la tabla -->
+                                @foreach (var item in Model)
+                                {
+                                    <tr id="@item.ID_CatalogoProducto">
+                                        <!-- los datos de los productos en la tabla -->
+                                        <td>@item.Nombre_Producto</td>
+                                        <td>@item.Cantidad_Unidades</td>
+                                        <td>@item.TipoProducto</td>
+                                        <td>@item.Proveedor</td> 
+                                        <td>
+                                            <!-- Muestra la página del producto si está disponible -->
+                                            @if (!string.IsNullOrEmpty(item.Pagina_Producto))
+                                            {
+                                                <a href="@item.Pagina_Producto" target="_blank">@item.Pagina_Producto</a> 
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">No disponible</span> <!-- Mensaje si no hay página del producto -->
+                                            }
+                                        </td>
+                                        <td>
+                                            <!-- Botones de acción para modificar o eliminar el producto -->
+                                            <div class="d-flex">
+                                                <a href="#" class="btn btn-primary shadow btn-xs sharp me-1" onclick="modificarProducto('@item.ID_CatalogoProducto')">
+                                                    <i class="fas fa-pencil-alt"></i> >
+                                                </a>
+                                                <a href="#" class="btn btn-danger shadow btn-xs sharp" onclick="eliminarProducto('@item.ID_CatalogoProducto')">
+                                                    <i class="fa fa-trash"></i> 
+                                            </div>
+                                        </td>
+                                    </tr>
+                                } <!-- Cierre del foreach -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--**********************************
+        Final del contenido del cuerpo
+***********************************-->
+<!-- Sección de estilos personalizados -->
+@section w3crm_style
+{
+    <!-- Enlaza hojas de estilo para elementos como SweetAlert, tablas, y fechas -->
+    <link href="~/w3crm/vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+    <link href="~/w3crm/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="~/w3crm/vendor/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/w3crm/vendor/pickadate/themes/default.css">
+    <link rel="stylesheet" href="~/w3crm/vendor/pickadate/themes/default.date.css">
+}
+
+@section w3crm_script
+{
+    <!-- Sección para cargar scripts -->
+    <script src="~/w3crm/vendor/sweetalert2/dist/sweetalert2.min.js"></script>
+    <script src="~/w3crm/js/plugins-init/sweetalert.init.js"></script>
+    <script src="~/w3crm/js/styleSwitcher.js"></script>
+    <script src="~/w3crm/vendor/global/global.min.js"></script>
+    <script src="~/w3crm/vendor/chart.js/Chart.bundle.min.js"></script>
+    <script src="~/w3crm/vendor/tagify/dist/tagify.min.js"></script>
+    <script src="~/w3crm/vendor/apexchart/apexchart.js"></script>
+    <script src="~/w3crm/vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/w3crm/js/plugins-init/datatables.init.js"></script>
+    <script src="~/w3crm/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+    <script src="~/w3crm/js/highlight.min.js"></script>
+    <script src="~/w3crm/vendor/moment/moment.min.js"></script>
+    <script src="~/w3crm/vendor/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script src="~/w3crm/vendor/pickadate/picker.js"></script>
+    <script src="~/w3crm/vendor/pickadate/picker.time.js"></script>
+    <script src="~/w3crm/vendor/pickadate/picker.date.js"></script>
+    <script src="~/w3crm/js/plugins-init/pickadate-init.js"></script>
+    <script src="~/w3crm/js/custom.js"></script>
+    <script src="~/w3crm/js/deznav-init.js"></script>
+    <script src="~/w3crm/js/demo.js"></script>
+    <script src="~/w3crm/js/styleSwitcher.js"></script>
+
+    <!-- Código para inicialización de Highlight.js -->
+    <script>
+        hljs.highlightAll();
+        hljs.configure({ ignoreUnescapedHTML: true })
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('pre code').forEach((el) => {
+                hljs.highlightElement(el); // Resalta los bloques de código
+            });
+        });
+    </script>
+
+    <script>
+        (function () {
+            'use strict'
+
+            // Validación de formularios con estilos personalizados
+            var forms = document.querySelectorAll('.needs-validation')
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+    </script>
+}

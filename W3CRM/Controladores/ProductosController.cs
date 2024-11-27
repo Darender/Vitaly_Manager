@@ -8,6 +8,46 @@ namespace Vitaly_Manager.Controladores
     {
         //public List<TipoProducto> ListaTipos = DataTipoProducto.ListaTiposProductos(out _, out _);
 
+        public ActionResult ConsultaProductos()
+        {
+            
+            string respuesta;
+            bool exito;
+
+            // Llama al método 'ListaCatalogoProductos' que obtiene los productos del catálogo desde la capa de Data
+            // El método retorna una lista de productos (listaCatalogoProductos) 
+            var listaCatalogoProductos = DataCatalogoProducto.ListaCatalogoProductos(out respuesta, out exito);
+
+            // Llama al método 'ListaTiposProductos' que obtiene la lista de tipos de productos disponibles
+            var listaTipoProductos = DataTipoProducto.ListaTiposProductos(out respuesta, out exito);
+
+            // var listaProveedores = DataProveedores.ListaProveedores(out respuesta, out exito) !!Aun no esta en uso; 
+
+            // Combina las listas: listaCatalogoProductos y listaTipoProducto
+            var productos = from cp in listaCatalogoProductos
+
+                         // join p in listaProveedores on cp.ID_Proveedor equals p.ID_Proveedor
+
+                            // Este join asocia los productos del catálogo con los tipos de producto a través de 'ID_TipoProducto'
+                            join tp in listaTipoProductos on cp.ID_TipoProducto equals tp.ID_TipoProducto
+                            select new
+                            {
+                                // Se seleccionan las propiedades de cada producto para enviarlas a la vista en View
+                                ID_CatalogoProducto = cp.ID_CatalogoProducto,  
+                                Nombre_Producto = cp.Nombre_Producto,          
+                                Cantidad_Unidades = cp.Cantidad_Unidades,    
+                                Pagina_Producto = cp.Pagina_Producto,        
+                             // Proveedor = p.Nombre_Proveedor,
+                                TipoProducto = tp.Nombre_Tipo_Producto
+                            };
+
+            // Se devuelve la vista, pasando la lista combinada (productos) a la vista .
+            //Convierte la lista a una lista de objetos (ToList()) para poderla utilizar en la vista de ConsultAProductos.
+            return View(productos.ToList());
+        }
+
+
+
         public IActionResult AgregarLoteProducto()
         {
             ProductosController controlador = new ProductosController();
@@ -39,7 +79,8 @@ namespace Vitaly_Manager.Controladores
             try
             {
                 // El telefono y el contacto alternativo no pueden ser nulos al mismo tiempo
-                if (telefono == null && contactoAlternativo == null) {
+                if (telefono == null && contactoAlternativo == null)
+                {
                     mensaje = "Telefono y contacto alternativo no pueden estar vacios al mismo tiempo";
                     fallidos.Add("telefono");
                     fallidos.Add("alternativo");
@@ -77,15 +118,15 @@ namespace Vitaly_Manager.Controladores
                     mensaje = "El telefono debe tener entre 10 y 20 caracteres.";
                     fallidos.Add("telefono");
                 }
-                
+
                 if (fallidos.Count == 0)
                 {
-                     Proveedor nuevo = new Proveedor
+                    Proveedor nuevo = new Proveedor
                     {
                         Nombre_Proveedor = nombre,
-                         Telefono = telefono,
-                         Pagina_Contacto = contactoAlternativo
-                     };
+                        Telefono = telefono,
+                        Pagina_Contacto = contactoAlternativo
+                    };
 
                     // Envio del nuevo profesor a data para que se envie a la base de datos
                     resultado = DataProveedores.Agregar(nuevo, out mensaje);
@@ -100,4 +141,7 @@ namespace Vitaly_Manager.Controladores
             return Json(new { success = resultado, message = mensaje, errores = fallidos });
         }
     }
+
 }
+
+
