@@ -47,77 +47,90 @@ namespace Vitaly_Manager.Controladores
         }
 
 
-        /*
-        [HttpGet("AgregarNuevoLoteProducto")]
-        public IActionResult AgregarNuevoLoteProducto(
-            int Tipo,
-            int Producto_id,
-            int Cantidad,
-            decimal Costo,
-            string Vencimiento,
-            bool EsMaterial,
-            decimal MargenGanancia,
-            decimal PrecioVenta)
+        public IActionResult AgregarProveedores()
         {
-            string mensaje;
-            bool respuesta;
-            Parametros iva;
+            ProductosController controlador = new ProductosController();
+            return View(controlador);
+        }
+
+        /// <summary>
+        /// Un metodo encargado de la logica para agregar nuevos proveedores al sistema
+        /// </summary>
+        /// <param name="nombre">Nombre del nuevo proveedor</param>
+        /// <param name="telefono">Numero telefonico del nuevo proveedor</param>
+        /// <param name="contactoAlternativo">Cualquier contacto alternativo que tenga el proveedor</param>
+        /// <returns>Devuelve un booleado de si fue exitoso, un mensaje de que fue lo que paso y una lista de casillas que fueron fallidas</returns>
+        [HttpPost]
+        public JsonResult AgregarNuevoProveedores(string nombre, string? telefono, string? contactoAlternativo)
+        {
+            bool resultado = false;
+            string mensaje = "Hubo un problema al agregar al Proveedor.";
+
+            // lista de todas las casillas que terminaron como fallido
+            List<string> fallidos = new List<string>();
 
             try
             {
-                iva = DataIVA.UltimoIVA(out mensaje, out respuesta);
-
-                if (!respuesta)
-                {
-                    return StatusCode(500, new { message = "Ocurrió un error(145).", error = mensaje });
+                // El telefono y el contacto alternativo no pueden ser nulos al mismo tiempo
+                if (telefono == null && contactoAlternativo == null) {
+                    mensaje = "Telefono y contacto alternativo no pueden estar vacios al mismo tiempo";
+                    fallidos.Add("telefono");
+                    fallidos.Add("alternativo");
+                    return Json(new { success = resultado, message = mensaje, errores = fallidos });
                 }
 
-                if (!DateTime.TryParse(Vencimiento, out DateTime fechaVencimiento))
+                var regex = new System.Text.RegularExpressions.Regex("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$");
+
+                // Validación del nombre
+                if (string.IsNullOrWhiteSpace(nombre))
                 {
-                    return BadRequest(new { message = "Formato de fecha de vencimiento inválido." });
+                    mensaje = "El nombre no puede estar vacío.";
+                    fallidos.Add("nombre");
+                }
+                nombre = nombre.Trim();
+                if (!regex.IsMatch(nombre))
+                {
+                    mensaje = "El nombre solo puede contener letras y espacios.";
+                    fallidos.Add("nombre");
+                }
+                else if (nombre.Length < 3 || nombre.Length > 50)
+                {
+                    mensaje = "El nombre debe tener entre 3 y 50 caracteres.";
+                    fallidos.Add("nombre");
                 }
 
-                LoteProducto nuevo = new LoteProducto()
+                // Validación del numero telefonico
+                if (string.IsNullOrWhiteSpace(telefono))
                 {
-                    ID_CatalogoProducto = Producto_id,
-                    Cantidad = Cantidad,
-                    EsMaterial = EsMaterial,
-                    Fecha_Ingreso = DateTime.Now,
-                    Fecha_Vencimiento = fechaVencimiento,
-                    Precio_Compra = Costo,
-                    Precio_Venta = PrecioVenta,
-                    Margen_Ganancia = MargenGanancia,
-                    ID_IVA = iva.ID_IVA,
-                };
-
-                if (DataLoteProducto.Agregar(nuevo, out mensaje))
-                {
-                    return Ok(new { message = "Lote agregado exitosamente." });
+                    mensaje = "El número de teléfono no puede estar vacío.";
+                    fallidos.Add("telefono");
                 }
-                else
+                else if (telefono.Length < 12 || telefono.Length > 20)
                 {
-                    return StatusCode(500, new { message = "Ocurrió un error(143). ", error = mensaje });
+                    mensaje = "El telefono debe tener entre 10 y 20 caracteres.";
+                    fallidos.Add("telefono");
+                }
+                
+                if (fallidos.Count == 0)
+                {
+                     Proveedor nuevo = new Proveedor
+                    {
+                        Nombre_Proveedor = nombre,
+                         Telefono = telefono,
+                         Pagina_Contacto = contactoAlternativo
+                     };
+
+                    // Envio del nuevo profesor a data para que se envie a la base de datos
+                    resultado = DataProveedores.Agregar(nuevo, out mensaje);
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Ocurrió un error en el servidor.", error = ex.Message });
+                resultado = false;
+                mensaje = $"Error al agregar el Proveedor: {ex.Message}";
             }
-        }*/
-        /*
-        [HttpGet]
-        [Route("ObtenerProductosPorTipo")]
-        public IActionResult ObtenerProductosPorTipo(int tipo)
-        {
-            List<CatalogoProducto> productosDelTipo = new List<CatalogoProducto>();
 
-                foreach (CatalogoProducto valor in DataCatalogoProducto.ListaCatalogoProductos(out _, out _))
-                {
-                    if (valor.ID_TipoProducto == tipo)
-                        productosDelTipo.Add(valor);
-                }
-                return Json(productosDelTipo);
-            }
-        }*/
+            return Json(new { success = resultado, message = mensaje, errores = fallidos });
+        }
     }
 }

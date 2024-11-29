@@ -5,7 +5,7 @@ namespace Vitaly_Manager.Entidades
 	public class Proveedor
 	{
 		[Key]
-		public required int ID_Proveedor { get; set; }
+		public int ID_Proveedor { get; set; }
 
 		private string _nombreProveedor;
 
