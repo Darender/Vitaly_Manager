@@ -2,8 +2,7 @@
 {
     public static class MainServidor
     {
-        public static string Servidor = "Data Source=DESKTOP-7NSJEG7\\SQLEXPRESS;Initial Catalog=VitalyBD;Integrated Security=True;Encrypt=False";
+        public static string Servidor = "Data Source= DESKTOP-GFO28QN\\MSSQLSERVER01;Initial Catalog=VitalyBD;Integrated Security=True;Encrypt=False";
+    }
 
-
-	}
 }
