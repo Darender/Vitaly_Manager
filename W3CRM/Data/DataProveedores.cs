@@ -71,7 +71,49 @@ namespace Vitaly_Manager.Data
                 return new List<Proveedor>();
             }
         }
-      
+
+
+        public static bool Modificar(Proveedor proveedorModificado, out string mensaje)
+        {
+            try
+            {
+                using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
+                {
+                    conexion.Open();
+
+                    string query = @"UPDATE Proveedor 
+                             SET nombreProvedor = @NombreProveedor, 
+                                 telefono = @Telefono, 
+                                 paginaContacto = @Contacto_Alternativo 
+                             WHERE idProveedor = @IdProveedor";
+
+                    using (SqlCommand comando = new SqlCommand(query, conexion))
+                    {
+                        comando.Parameters.AddWithValue("@NombreProveedor", proveedorModificado.Nombre_Proveedor);
+                        comando.Parameters.AddWithValue("@Telefono", proveedorModificado.Telefono);
+                        comando.Parameters.AddWithValue("@Contacto_Alternativo", proveedorModificado.Pagina_Contacto ?? (object)DBNull.Value);
+                        comando.Parameters.AddWithValue("@IdProveedor", proveedorModificado.ID_Proveedor); // Asegúrate de tener el Id del cliente
+
+                        comando.ExecuteNonQuery();
+                    }
+
+                    conexion.Close();
+                }
+                mensaje = $"El cliente {proveedorModificado.Nombre_Proveedor} ha sido modificado exitosamente.";
+                return true;
+            }
+            catch (SqlException ex)
+            {
+                mensaje = $"Error en la base de datos: {ex.Message}";
+                return false;
+            }
+            catch (Exception ex)
+            {
+                mensaje = $"Error inesperado: {ex.Message}";
+                return false;
+            }
+        }
+
         public static void EliminarProveedor(int idProveedor, out string respuesta, out bool exito)
         {
             try

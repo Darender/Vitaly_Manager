@@ -132,5 +132,102 @@ namespace Vitaly_Manager.Controladores
 
             return Json(new { success = resultado, message = mensaje, errores = fallidos });
         }
+
+        [HttpGet]
+        public IActionResult SeleccionarProveedorModificar(int id)
+        {
+            Proveedor proveedor = listaProveedores[0];
+            foreach (Proveedor valor in listaProveedores)
+            {
+                if (valor.ID_Proveedor == id)
+                {
+                    proveedor = valor;
+                    break;
+                }
+            }
+
+            return Json(proveedor);
+        }
+
+
+        [HttpPost]
+        public JsonResult ModificarProveedor(string nombre, string telefono, string? contactoAlternativo, int proveedorSeleccionado)
+        {
+            bool resultado = false;
+            string mensaje = "Hubo un problema al modificar el proveedor.";
+            List<string> fallidos = new List<string>();
+
+            try
+            {
+                var regex = new System.Text.RegularExpressions.Regex("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$");
+
+                // Validación del nombre
+                if (string.IsNullOrWhiteSpace(nombre))
+                {
+                    mensaje = "El nombre no puede estar vacío.";
+                    fallidos.Add("nombre");
+                }
+                nombre = nombre.Trim();
+                if (!regex.IsMatch(nombre))
+                {
+                    mensaje = "El nombre solo puede contener letras y espacios.";
+                    fallidos.Add("nombre");
+                }
+
+                else if (nombre.Length < 3 || nombre.Length > 50)
+                {
+                    mensaje = "El nombre debe tener entre 3 y 50 caracteres.";
+                    fallidos.Add("nombre");
+                }
+
+                // Validación del numero telefonico
+                if (string.IsNullOrWhiteSpace(telefono))
+                {
+                    mensaje = "El número de teléfono no puede estar vacío.";
+                    fallidos.Add("telefono");
+                }
+                else if (telefono.Length < 12 || telefono.Length > 20)
+                {
+                    mensaje = "El telefono debe tener entre 10 y 20 caracteres.";
+                    fallidos.Add("telefono");
+                }
+
+                foreach (Proveedor item in listaProveedores)
+                {
+                    if (item.Telefono == telefono && item.ID_Proveedor != proveedorSeleccionado)
+                    {
+                        fallidos.Add("telefono");
+                        mensaje = "Numero de telefono ya existente en la base de datos";
+                    }
+                }
+
+                if (fallidos.Count == 0)
+                {
+                    Proveedor modificado = new Proveedor
+                    {
+                        ID_Proveedor = proveedorSeleccionado,
+                        Nombre_Proveedor = nombre,
+                        Telefono = telefono,
+                        Pagina_Contacto = contactoAlternativo
+
+                    };
+
+                    resultado = DataProveedores.Modificar(modificado, out mensaje);
+                }
+            }
+            catch (Exception ex)
+            {
+                resultado = false;
+                mensaje = $"Error al modificar el cliente: {ex.Message}";
+            }
+
+            return Json(new { success = resultado, message = mensaje, errores = fallidos });
+        }
+
+        [HttpGet]
+        public JsonResult ObtenerProveedoresActualizados()
+        {
+            return Json(new { success = true, data = listaProveedores });
+        }
     }
 }
