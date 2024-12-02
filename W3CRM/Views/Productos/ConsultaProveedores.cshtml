@@ -221,21 +221,43 @@ ViewData["Title"] = "Consulta de Proveedores";
         });
 
         function confirmarEliminar(idProveedor) {
-        Swal.fire({
-            title: '¿Estás seguro?',
-            text: "Esta acción no se puede deshacer.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-         if (result.value) {
-                eliminarProveedor(idProveedor);
-            }
-        });
-}
+            const tieneProductosUrl = '@Url.Action("tieneProductos", "Productos")';
+
+            $.ajax({
+                url: tieneProductosUrl, // método de verificación en el controlador
+                type: 'POST',
+                data: { id: idProveedor },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Error',
+                            text: response.message,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Aceptar',
+                        });
+                    } else {
+                        Swal.fire({
+                            title: '¿Estás seguro?',
+                            text: "Esta acción no se puede deshacer.",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Sí, eliminar',
+                            cancelButtonText: 'Cancelar'
+                        }).then((result) => {
+                            if (result.value) {
+                                eliminarProveedor(idProveedor);
+                            }
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error en la solicitud AJAX:", status, error);
+                }
+            });
+        }
+
 
                 function eliminarProveedor(idProveedor) {
             console.log("Iniciando proceso de eliminación para ID:", idProveedor);
