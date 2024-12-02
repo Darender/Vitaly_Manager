@@ -151,6 +151,26 @@ namespace Vitaly_Manager.Data
 
     }
 }
+        //Toma el id del proveedor, verifica si tiene algun producto relacionado. Si es asi devuelve true,
+        //de lo contrario devuelve false.
+        public static bool tieneProductos(int id)
+        {
+            using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
+            {
+                conexion.Open();
+                SqlCommand comando = new SqlCommand($"SELECT * FROM CatalogoProducto WHERE idProveedor = {id}", conexion);
+                SqlDataReader lector = comando.ExecuteReader();
+                if (lector.HasRows)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+        }
         /// Agrega un nuevo cliente a la base de datos
         /// </summary>
         /// <param name="nuevo">Entidad de cliente que se agregara</param>
