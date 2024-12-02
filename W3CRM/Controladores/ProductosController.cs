@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Data.SqlClient;
 using Vitaly_Manager.Data;
 using Vitaly_Manager.Entidades;
 
@@ -45,6 +46,35 @@ namespace Vitaly_Manager.Controladores
             // Retornamos una respuesta JSON basada en el resultado de la eliminación
             return Json(new { success = exito, message = respuesta });
         }
+
+        //Toma el id del proveedor, verifica si tiene algun producto relacionado. Si es asi devuelve true,
+        //de lo contrario devuelve false.
+        public JsonResult tieneProductos(int id)
+        {
+            bool resultado;
+            string mensaje;
+            try
+            {
+                if (DataProveedores.tieneProductos(id))
+                {
+                    resultado = true;
+                    mensaje = $"El proveedor no puede ser eliminado ya que cuenta con productos relacionadas.";
+                }
+                else
+                {
+                    resultado = false;
+                    mensaje = "";
+                }
+            }
+            catch (Exception ex)
+            {
+                resultado = false;
+                mensaje = $"Error al eliminar el proveedor: {ex.Message}";
+            }
+            return Json(new { success = resultado, message = mensaje });
+
+        }
+
 
 
         public IActionResult AgregarProveedores()

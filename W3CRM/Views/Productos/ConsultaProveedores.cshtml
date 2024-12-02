@@ -221,17 +221,45 @@ ViewData["Title"] = "Consulta de Proveedores";
         });
 
         function confirmarEliminar(idProveedor) {
-            // Confirmación nativa del navegador
-            const userConfirmed = confirm("¿Estás seguro de que deseas eliminar este proveedor? Esta acción no se puede deshacer.");
+            const tieneProductosUrl = '@Url.Action("tieneProductos", "Productos")';
 
-            if (userConfirmed) {
-                eliminarProveedor(idProveedor);
-            } else {
-                console.log("El usuario canceló la eliminación.");
-            }
+            $.ajax({
+                url: tieneProductosUrl, // método de verificación en el controlador
+                type: 'POST',
+                data: { id: idProveedor },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Error',
+                            text: response.message,
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Aceptar',
+                        });
+                    } else {
+                        Swal.fire({
+                            title: '¿Estás seguro?',
+                            text: "Esta acción no se puede deshacer.",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Sí, eliminar',
+                            cancelButtonText: 'Cancelar'
+                        }).then((result) => {
+                            if (result.value) {
+                                eliminarProveedor(idProveedor);
+                            }
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error en la solicitud AJAX:", status, error);
+                }
+            });
         }
 
-        function eliminarProveedor(idProveedor) {
+
+                function eliminarProveedor(idProveedor) {
             console.log("Iniciando proceso de eliminación para ID:", idProveedor);
             const eliminarProveedorUrl = '@Url.Action("EliminarProveedor", "Productos")';
 
@@ -244,17 +272,41 @@ ViewData["Title"] = "Consulta de Proveedores";
                 success: function (response) {
                     console.log("Respuesta del servidor:", response);
                     if (response.success) {
-                        alert("Proveedor eliminado exitosamente.");
-                        document.getElementById(idProveedor).remove(); // Elimina la fila
+                        // Mostrar mensaje de éxito con SweetAlert2
+                        Swal.fire({
+                            title: '¡Eliminado!',
+                            text: 'El proveedor ha sido eliminado exitosamente.',
+                            icon: 'success',
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: 'Aceptar'
+                        }).then(() => {
+                            // Eliminar la fila de la tabla
+                            document.getElementById(idProveedor).remove();
+                        });
                     } else {
-                        alert("Error al eliminar el proveedor: " + response.message);
+                        // Mostrar mensaje de error si la eliminación falla
+                        Swal.fire({
+                            title: 'Error',
+                            text: response.message || 'No se pudo eliminar el proveedor.',
+                            icon: 'error',
+                            confirmButtonColor: '#d33',
+                            confirmButtonText: 'Aceptar'
+                        });
                     }
                 },
                 error: function () {
-                    alert("Hubo un error en el proceso de eliminación. Intenta de nuevo.");
+                    // Mensaje de error en caso de fallo de la solicitud AJAX
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un error en el proceso de eliminación. Intenta de nuevo.',
+                        icon: 'error',
+                        confirmButtonColor: '#d33',
+                        confirmButtonText: 'Aceptar'
+                    });
                 }
             });
         }
+
 
         function modificarProveedor(idProveedor) {
 
