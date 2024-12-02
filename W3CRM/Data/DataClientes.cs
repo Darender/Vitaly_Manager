@@ -110,7 +110,7 @@ namespace Vitaly_Manager.Data
             }
         }
 
-        
+
         /// <summary>
         /// Optiene a todos los clientes de la base de datos y los pone una lista
         /// </summary>
@@ -175,7 +175,6 @@ namespace Vitaly_Manager.Data
                 return new List<Cliente>();
             }
         }
-        /*
 
         /// <summary>
         /// Elimina un cliente de la base de datos
@@ -191,7 +190,7 @@ namespace Vitaly_Manager.Data
                     conexion.Open();
 
                     // Confirma que exista el id en la base de datos
-                    string queryExiste = $"SELECT COUNT(1) FROM cliente WHERE ID = {id}";
+                    string queryExiste = $"SELECT COUNT(1) FROM cliente WHERE IdCliente = {id}";
                     SqlCommand cmdExiste = new SqlCommand(queryExiste, conexion);
                     int existe = (int)cmdExiste.ExecuteScalar();
 
@@ -201,19 +200,9 @@ namespace Vitaly_Manager.Data
                         return false;
                     }
 
-                    // Confirma que no este siendo referenciado en otra parte necesaria de la base de datos
-                    List<Venta> ListaVentas = DataVenta.ListaVentas();
-                    foreach (Venta item in ListaVentas)
-                    {
-                        if(item.ID_Cliente == id)
-                        {
-                            respuesta = "No se puede eliminar un cliente que tenga una venta";
-                            return false;
-                        }
-                    }
-
-                    string queryEliminar = $"DELETE FROM cliente WHERE ID = {id}";
+                    string queryEliminar = $"DELETE FROM cliente WHERE IdCliente = {id}";
                     new SqlCommand(queryEliminar, conexion).ExecuteNonQuery();
+                    conexion.Close();
                 }
                 respuesta = "Se elimino exitosamente el cliente";
                 return true;
@@ -228,6 +217,27 @@ namespace Vitaly_Manager.Data
                 respuesta = $"Error inesperado (Exception): {ex.Message}";
                 return false;
             }
-        }*/
+        }
+
+        public static bool tieneVentas(int id)
+        {
+            using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
+            {
+                conexion.Open();
+                SqlCommand comando = new SqlCommand($"SELECT * FROM Venta WHERE idCliente = {id}", conexion);
+                SqlDataReader lector = comando.ExecuteReader();
+                if (lector.HasRows)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+
+
+        }
     }
 }

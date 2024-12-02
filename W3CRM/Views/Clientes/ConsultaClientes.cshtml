@@ -228,6 +228,79 @@
             }
         });
     }
+
+        function eliminarCliente(idCliente) {
+            //primero se verifica si hay alguna venta relacionada con el cliente
+    $.ajax({
+        url: '/Clientes/tieneVentas', //metodo de verificacion en la clase controlador
+        type: 'POST',
+        data: { id: idCliente },
+        success: function (response) {
+            //Si hay ventas relacionadas, se abre un modulo notificandoselo y cancelando la eliminacion
+            if (response.success) {  
+                Swal.fire({
+                    title: 'Error',
+                    text: response.message,
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Aceptar',
+                });        
+            } else {
+                // si no hay ventas relacionadas se crea un módulo de confirmación 
+                // para confirmar la eliminación.
+        
+                Swal.fire({
+                    title: '¿Estás seguro de que quieres eliminar a este cliente?',
+                    text: "Esta acción no se puede deshacer.",
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Aceptar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                        
+                    if (result.value) { // Al presionar aceptar, se procede a la eliminación
+                        console.log('Respuesta de botón recibida');
+                        $.ajax({
+                            url: '/Clientes/EliminarCliente', //Metodo de eliminacion en la clase controlador
+                            type: 'POST',
+                            data: { id: idCliente },
+                            success: function (response) { 
+                                if (response.success) { //Si no hubo algun problema en la eliminacion, se muestra un mensaje de exito
+                                    console.log('Respuesta de AJAX exitosa');
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Cliente eliminado',
+                                        text: response.message,
+                                        confirmButtonText: 'Aceptar'
+                                    }).then(() => {
+                                        recargarTablaClientes(); //recargar tabla con datos actualizados
+                                    });
+                                } else { //Notificacion de error con el proceso de eliminacion
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: response.message || 'No se pudo eliminar el cliente.'
+                                    });
+                                }
+                            },
+                            error: function () { //Notificacion de error con la conexion con el servidor
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Hubo un error al comunicarse con el servidor.',
+                                    confirmButtonText: 'Aceptar'
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    });
+}
+
+
+
 (function () {
     'use strict';
 

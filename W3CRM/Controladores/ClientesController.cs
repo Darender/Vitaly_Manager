@@ -305,11 +305,60 @@ namespace Vitaly_Manager.Controladores
             return Json(new { success = resultado, message = mensaje, errores = fallidos });
         }
 
+        [HttpPost]
+        public JsonResult EliminarCliente(int id)
+        {
+            bool resultado = true;
+            string mensaje = "Se ha eliminado el cliente.";
+            try
+            {
+                
+                resultado = DataClientes.Eliminar(id,out mensaje);
+            }
+            catch (Exception ex)
+            {
+                resultado = false;
+                mensaje = $"Error al eliminar el cliente: {ex.Message}";
+            }
+
+
+            return Json(new { success = resultado, message = mensaje});
+        }
+
+        public JsonResult tieneVentas(int id)
+        {
+            bool resultado;
+            string mensaje;
+            try
+            {
+                if (DataClientes.tieneVentas(id))
+                {
+                    resultado = true;
+                    mensaje = $"El cliente no puede ser eliminado ya que cuenta con ventas relacionadas.";
+                }
+                else
+                {
+                    resultado = false;
+                    mensaje = "";
+                }
+            }
+            catch (Exception ex)
+            {
+                resultado = false;
+                mensaje = $"Error al eliminar el cliente: {ex.Message}";
+            }
+            return Json(new { success = resultado, message = mensaje });
+
+        }
+
+
         [HttpGet]
         public JsonResult ObtenerClientesActualizados()
         {
             return Json(new { success = true, data = listaClientes });
         }
+
+       
 
     }
 }
