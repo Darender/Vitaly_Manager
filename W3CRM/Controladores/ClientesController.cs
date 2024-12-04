@@ -9,8 +9,7 @@ namespace Vitaly_Manager.Controladores
         public List<Cliente> listaClientes = DataClientes.ListaClientes(out _, out _);
         public IActionResult AgregarClientes()
         {
-            ClientesController controlador = new ClientesController();
-            return View(controlador);
+            return View(this);
         }
 
         public IActionResult ConsultaClientes()
