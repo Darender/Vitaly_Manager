@@ -5,7 +5,7 @@ using Vitaly_Manager.Entidades;
 
 namespace Vitaly_Manager.Controladores
 {
-    public class ProductosController : Controller
+    public class ProveedoresController : Controller
     {
         //public List<TipoProducto> ListaTipos = DataTipoProducto.ListaTiposProductos(out _, out _);
         public List<Proveedor> listaProveedores = DataProveedores.ListaProveedores(out _, out _);
@@ -31,7 +31,7 @@ namespace Vitaly_Manager.Controladores
 
         public IActionResult AgregarLoteProducto()
         {
-            ProductosController controlador = new ProductosController();
+            ProveedoresController controlador = new ProveedoresController();
             return View(controlador);
         }
         [HttpPost]
@@ -79,7 +79,7 @@ namespace Vitaly_Manager.Controladores
 
         public IActionResult AgregarProveedores()
         {
-            ProductosController controlador = new ProductosController();
+            ProveedoresController controlador = new ProveedoresController();
             return View(controlador);
         }
 

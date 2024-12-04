@@ -2,7 +2,7 @@
 @using Vitaly_Manager.Entidades
 @using W3CRM.Controllers
 @{
-    ViewData["Title"] = "AgregarLoteProducto";
+    ViewData["Title"] = "Agregar Proveedores";
 }
 <!--**********************************
 	Content body start
@@ -17,7 +17,7 @@
 <div class="content-body">
     <div class="page-titles">
         <ol class="breadcrumb">
-            <li><h5 class="bc-title">Productos</h5></li>
+            <li><h5 class="bc-title">Proveedores</h5></li>
             <li class="breadcrumb-item">
                 <a href="@Url.Action("Index", "w3crm")">
                     <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -47,7 +47,7 @@
                                     <div class="row">
                                         <!-- Formulario de Nuevo Proveedor -->
                                         <div class="col-12">
-                                            <form class="needs-validation" action="/ProductosController/AgregarNuevoLoteProducto" method="post" novalidate id="formularioz">
+                                        <form class="needs-validation" method="post" novalidate id="formularioz">
                                                 <input type="hidden" id="formulario_id" name="ID" value="0">
 
                                                 <!-- Campo Nombres -->
@@ -184,7 +184,7 @@
                         event.stopPropagation();
                     } else {
                         $.ajax({
-                            url: '/Productos/AgregarNuevoProveedores',
+                            url: '/Proveedores/AgregarNuevoProveedores',
                             type: 'POST',
                             data: {
                                 nombre: nombreProveedor.value,

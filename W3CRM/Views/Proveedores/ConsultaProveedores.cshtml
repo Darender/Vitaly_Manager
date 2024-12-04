@@ -210,7 +210,7 @@ ViewData["Title"] = "Consulta de Proveedores";
 
         function recargarTablaProveedor() {
             $.ajax({
-                url: '/Productos/ObtenerProveedoresActualizados',
+                url: '/Proveedores/ObtenerProveedoresActualizados',
                 type: 'GET',
                 success: function (response) {
                     if (response.success) {
@@ -247,7 +247,7 @@ ViewData["Title"] = "Consulta de Proveedores";
 
         function modificarProveedor(idProveedor) {
             $.ajax({
-                url: '/Productos/SeleccionarProveedorModificar',
+                url: '/Proveedores/SeleccionarProveedorModificar',
                 type: 'GET',
                 data: { id: idProveedor },
                 success: function (response) {
@@ -285,7 +285,7 @@ ViewData["Title"] = "Consulta de Proveedores";
                         form.classList.add('was-validated');
                     } else {
                         $.ajax({
-                            url: '/Productos/ModificarProveedor',
+                            url: '/Proveedores/ModificarProveedor',
                             type: 'POST',
                             data: {
                                 nombre: nombreProveedor.value,
@@ -373,7 +373,7 @@ ViewData["Title"] = "Consulta de Proveedores";
         });
 
         function confirmarEliminar(idProveedor) {
-            const tieneProductosUrl = '@Url.Action("tieneProductos", "Productos")';
+            const tieneProductosUrl = '@Url.Action("tieneProductos", "Proveedores")';
 
             $.ajax({
                 url: tieneProductosUrl, // método de verificación en el controlador
@@ -413,7 +413,7 @@ ViewData["Title"] = "Consulta de Proveedores";
 
                 function eliminarProveedor(idProveedor) {
             console.log("Iniciando proceso de eliminación para ID:", idProveedor);
-            const eliminarProveedorUrl = '@Url.Action("EliminarProveedor", "Productos")';
+            const eliminarProveedorUrl = '@Url.Action("EliminarProveedor", "Proveedores")';
 
             // Solicitud AJAX para eliminar el proveedor
             $.ajax({
