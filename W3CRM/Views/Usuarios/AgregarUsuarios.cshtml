@@ -89,7 +89,6 @@
                                             <select class="form-select" id="usuario_rol" name="Rol" required>
                                                 <option value="" disabled selected>Seleccione un rol</option>
                                                 <option value="Administrador">Administrador</option>
-                                                <option value="Usuario">Usuario</option>
                                                 <option value="Cliente">Cliente</option>
                                             </select>
                                             <div class="invalid-feedback">Por favor, seleccione un rol.</div>
@@ -98,11 +97,6 @@
                                         <!-- Botón Guardar -->
                                         <div class="text-center mt-4">
                                             <button type="submit" class="btn btn-primary w-100 py-2" id="guardar_usuario">GUARDAR USUARIO</button>
-                                        </div>
-
-                                        <!-- Botón Cancelar -->
-                                        <div class="text-center mt-2">
-                                            <button type="button" class="btn btn-secondary w-100 py-2" id="cancelar_usuario">CANCELAR</button>
                                         </div>
 
                                         <!-- Mensaje de Éxito -->
@@ -213,94 +207,83 @@
 
             var forms = document.querySelectorAll('.needs-validation');
 
-            Array.prototype.slice.call(forms).forEach(function (form) {
-                form.addEventListener('submit', function (event) {
-                    event.preventDefault(); // Prevenir el envío normal del formulario
+                Array.prototype.slice.call(forms).forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        event.preventDefault(); // Prevenir el envío normal del formulario
 
-                    // Obtener los valores dentro del evento submit
-                    const nombreProveedor = document.getElementById("formulario_nombres");
-                    const telefono = document.getElementById("formulario_telefono");
-                    const Altercontacto = document.getElementById("formulario_contacto");
+                        // Obtener los valores dentro del evento submit
+                        const nombreUsuario = document.getElementById("usuario_nombre");
+                        const apellidoPaterno = document.getElementById("usuario_apellido_paterno");
+                        const apellidoMaterno = document.getElementById("usuario_apellido_materno");
+                        const correo = document.getElementById("usuario_correo");
+                        const contraseña = document.getElementById("usuario_contraseña");
+                        const rol = document.getElementById("usuario_rol");
 
-                    if (!form.checkValidity()) {
-                        event.stopPropagation();
-                    } else {
-                        $.ajax({
-                            url: '/Proveedores/AgregarNuevoProveedores',
-                            type: 'POST',
-                            data: {
-                                nombre: nombreProveedor.value,
-                                telefono: telefono.value,
-                                contactoAlternativo: Altercontacto.value
-                            },
-                            success: function (response) {
-                                if (response.success) {
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: '¡Proveedor agregado!',
-                                        text: response.message,
-                                        confirmButtonText: 'Aceptar'
-                                    }).then((result) => {
-                                        form.reset();
-                                        form.classList.remove('was-validated');
-                                    });
-                                } else {
-                                    if (response.errores.includes("telefono")) {
-                                        telefono.classList.add('is-invalid');
-                                    }
-                                    if (response.errores.includes("nombre")) {
-                                        nombreProveedor.classList.add('is-invalid');
-                                    }
-                                    if (response.errores.includes("alternativo")) {
-                                        Altercontacto.classList.add('is-invalid');
-                                    }
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error',
-                                        text: response.message,
-                                        confirmButtonText: 'Aceptar'
-                                    });
-                                }
-                            },
-                            error: function (error) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: 'Hubo un error al comunicarse con el servidor.',
-                                    confirmButtonText: 'Aceptar'
-                                });
+            if (!form.checkValidity()) {
+                event.stopPropagation();
+            } else {
+                $.ajax({
+                            url: '/Usuarios/CrearUsuario',
+                    type: 'POST',
+                    data: {
+                        nombre: nombreUsuario.value,
+                        apellidoPaterno: apellidoPaterno.value,
+                        apellidoMaterno: apellidoMaterno.value,
+                        correo: correo.value,
+                        contraseña: contraseña.value,
+                        rol: rol.value
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '¡Usuario agregado!',
+                                text: response.message,
+                                confirmButtonText: 'Aceptar'
+                            }).then((result) => {
+                                form.reset();
+                                form.classList.remove('was-validated');
+                            });
+                        } else {
+                            // Manejar errores específicos por campo
+                            if (response.errores.includes("nombre")) {
+                                nombreUsuario.classList.add('is-invalid');
                             }
+                            if (response.errores.includes("apellidoPaterno")) {
+                                apellidoPaterno.classList.add('is-invalid');
+                            }
+                            if (response.errores.includes("correo")) {
+                                correo.classList.add('is-invalid');
+                            }
+                            if (response.errores.includes("contraseña")) {
+                                contraseña.classList.add('is-invalid');
+                            }
+                            if (response.errores.includes("rol")) {
+                                rol.classList.add('is-invalid');
+                            }
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.message,
+                                confirmButtonText: 'Aceptar'
+                            });
+                        }
+                    },
+                    error: function (error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Hubo un error al comunicarse con el servidor.',
+                            confirmButtonText: 'Aceptar'
                         });
                     }
-
-                    form.classList.add('was-validated'); // Aplicar las clases de validación
-                }, false);
-            });
-        })();
-
-        document.getElementById('formulario_telefono').addEventListener('input', function (e) {
-            var value = e.target.value.replace(/[^0-9]/g, '');
-
-            if (value.length > 3) {
-                value = value.substring(0, 3) + '-' + value.substring(3);
+                });
             }
 
-            if (value.length > 7) {
-                value = value.substring(0, 7) + '-' + value.substring(7);
-            }
-
-            if (value.length >= 13) {
-                value = value.replace(/[-+]/g, '');
-                var ultimos4 = value.substring(value.length - 4);
-                value = value.substring(0, value.length - 4);
-                var ultimos3 = value.substring(value.length - 3);
-                value = value.substring(0, value.length - 3);
-                var primeros3 = value.substring(value.length - 3);
-                value = value.substring(0, value.length - 3);
-                value = "+" + value + " " + primeros3 + "-" + ultimos3 + "-" + ultimos4;
-            }
-            e.target.value = value;
-        });
+            form.classList.add('was-validated'); // Aplicar las clases de validación
+        }, false);
+    });
+})();
         </script>
 
     <script>

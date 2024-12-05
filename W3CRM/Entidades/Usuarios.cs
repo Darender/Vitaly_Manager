@@ -4,6 +4,18 @@ namespace Vitaly_Manager.Entidades
 {
     public class Usuario
     {
+        public int ID_Usuario { get; set; } // ID del usuario, opcional en la creación
+        public string Nombre_Usuario { get; set; } // Nombre del usuario
+        public string Apellido_Paterno { get; set; } // Primer apellido
+        public string Apellido_Materno { get; set; } // Segundo apellido
+        public string Email { get; set; } // Correo electrónico
+        public string Contraseña { get; set; } // Contraseña
+        public string Rol { get; set; } // Rol del usuario (e.g., Administrador, Usuario, etc.)
+    }
+
+
+    public class Usuarios
+    {
         [Key]
         public required int ID_Usuario { get; set; }
 
