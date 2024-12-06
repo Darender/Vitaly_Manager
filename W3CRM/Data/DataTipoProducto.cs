@@ -5,7 +5,7 @@ namespace Vitaly_Manager.Data
 {
     public static class DataTipoProducto
     {
-        /*
+
         /// <summary>
         /// Obtiene una lista de los tipos de productos que hay en la base de datos
         /// </summary>
@@ -20,18 +20,23 @@ namespace Vitaly_Manager.Data
                 using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
                 {
                     conexion.Open();
-                    SqlCommand comando = new SqlCommand("SELECT * FROM tipoProducto", conexion);
+                    SqlCommand comando = new SqlCommand("SELECT * FROM TipoProducto", conexion);
                     SqlDataReader lector = comando.ExecuteReader();
 
                     while (lector.Read())
                     {
-                        int idTipoProducto = lector["idTipoProducto"] != DBNull.Value ? Convert.ToInt32(lector["idTipoProducto"]) : 0;
-                        string tipo = lector["tipo"] != DBNull.Value ? Convert.ToString(lector["tipo"])! : "N/A";
-                       
+                        int idTipoProducto = lector["idTipoProducto"] != DBNull.Value
+                            ? Convert.ToInt32(lector["idTipoProducto"])
+                            : 0;
+
+                        string nombreTipoProducto = lector["NombreTipoProducto"] != DBNull.Value
+                            ? Convert.ToString(lector["NombreTipoProducto"])!
+                            : "N/A";
+
                         TipoProducto nuevo = new TipoProducto
                         {
                             ID_TipoProducto = idTipoProducto,
-                            Tipo = tipo,
+                            Nombre_Tipo_Producto = nombreTipoProducto, 
                         };
 
                         listaTiposProductos.Add(nuevo);
@@ -55,6 +60,7 @@ namespace Vitaly_Manager.Data
                 respuesta = $"Error inesperado: {ex.Message}";
                 return new List<TipoProducto>();
             }
-        }*/
+        }
+
     }
 }

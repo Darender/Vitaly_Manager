@@ -9,17 +9,22 @@
 ***********************************-->
 
 <style>
+    <!-- Clase para ajustar el margen, pero si la seccion es grande no se nota mucho -->
     .small-margin-bottom {
         margin-bottom: -30px; /* Ajusta el valor según sea necesario */
     }
 </style>
 
 <div class="content-body">
+    <!-- Barra de navegación -->
     <div class="page-titles">
         <ol class="breadcrumb">
-            <li><h5 class="bc-title">Productos</h5></li>
+            <!-- Título de la sección -->
+            <li><h5 class="bc-title">Compras</h5></li>
+            <!-- Enlace al inicio -->
             <li class="breadcrumb-item">
                 <a href="@Url.Action("Index", "w3crm")">
+                    <!-- Icono de casa, la que esta en la barra superior -->
                     <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M2.125 6.375L8.5 1.41667L14.875 6.375V14.1667C14.875 14.5424 14.7257 14.9027 14.4601 15.1684C14.1944 15.4341 13.8341 15.5833 13.4583 15.5833H3.54167C3.16594 15.5833 2.80561 15.4341 2.53993 15.1684C2.27426 14.9027 2.125 14.5424 2.125 14.1667V6.375Z" stroke="#2C2C2C" stroke-linecap="round" stroke-linejoin="round" />
                         <path d="M6.375 15.5833V8.5H10.625V15.5833" stroke="#2C2C2C" stroke-linecap="round" stroke-linejoin="round" />
@@ -27,19 +32,28 @@
                     Inicio
                 </a>
             </li>
+            <!-- Página actual -->
             <li class="breadcrumb-item active"><a href="javascript:void(0)">Agregar Lote Producto</a></li>
         </ol>
+        <!-- Enlace para agregar tareas, es parte de la plantilla -->
         <a class="text-primary fs-13" data-bs-toggle="offcanvas" href="#offcanvasExample1" role="button" aria-controls="offcanvasExample1">+ Add Task</a>
     </div>
     <div class="container-fluid">
         <div class="row">
+<<<<<<< Updated upstream:W3CRM/Views/Proveedores/AgregarLoteProducto.cshtml
             <div class="col-lg-6">
+=======
+            <div class="col-lg-12">
+                <!-- Dimensiones de la tarjeta -->
+                <!-- Tarjeta para el formulario -->
+>>>>>>> Stashed changes:W3CRM/Views/Compras/AgregarLoteProducto.cshtml
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Nuevo lote de productos</h4>
                     </div>
                     <div class="card-body">
                         <div class="form-validation">
+<<<<<<< Updated upstream:W3CRM/Views/Proveedores/AgregarLoteProducto.cshtml
                         <div class="container-fluid p-0">
                                 <form class="needs-validation w-100" action="/ProductosController/AgregarNuevoLoteProducto" method="post" novalidate id="formulario">
                                 <input type="hidden" id="formulario_id" name="ID" value="0">
@@ -102,6 +116,78 @@
                                         <div class="input-group">
                                             <div class="input-group-text">$</div>
                                             <input type="text" class="form-control text-center" id="formulario_precio" name="PrecioVenta" readonly>
+=======
+                            <div class="container-fluid p-0">
+                                <!-- Formulario para agregar un nuevo lote -->
+                                <form class="needs-validation w-100" action="/ProductosController/AgregarNuevoLoteProducto" method="post" novalidate id="formulario">
+                                    <!-- Campo oculto para guardar el ID -->
+                                    <input type="hidden" id="formulario_id" name="ID" value="0">
+                                    <!-- Campo para seleccionar el tipo -->
+                                    <div class="row mb-3">
+                                        <label class="col-md-2 col-form-label" for="formulario_tipo">Tipo</label>
+                                        <div class="col-md-10">
+                                                <select class="form-select" id="tipoProducto" required>
+                                                    <option value="" selected disabled>Seleccione un tipo de producto</option>
+                                                    @foreach (var tipoProducto in Model.listaTiposProductos)
+                                                    {
+                                                        <option value="@tipoProducto.ID_TipoProducto">@tipoProducto.Nombre_Tipo_Producto</option>
+                                                    }
+                                                </select>
+                                        </div>
+                                    </div>
+                                    <!-- Campo para seleccionar el producto -->
+                                    <div class="row mb-3">
+                                        <label class="col-md-2 col-form-label" for="formulario_producto">Producto</label>
+                                        <div class="col-md-10">
+                                            <select class="wide form-control" id="formulario_producto" name="Producto_id" required>
+                                                <option selected disabled value="" id="formulario_producto_vacio">Por favor seleccione</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <!-- Campo para ingresar la cantidad -->
+                                    <div class="row mb-3">
+                                        <label class="col-md-2 col-form-label" for="formulario_cantidad">Cantidad</label>
+                                        <div class="col-md-10">
+                                            <input type="number" step="any" class="form-control" id="formulario_cantidad" placeholder="10" name="Cantidad" required>
+                                        </div>
+                                    </div>
+                                    <!-- Campo para ingresar el costo por unidad -->
+                                    <div class="row mb-3">
+                                        <label class="col-md-2 col-form-label" for="formulario_costo">Costo/Unidad</label>
+                                        <div class="col-md-10">
+                                            <div class="input-group">
+                                                <div class="input-group-text">$</div>
+                                                <input type="number" step="any" class="form-control" id="formulario_costo" placeholder="65.5" name="Costo" required oninput="calcularMargenYPrecio()">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Campo para seleccionar la fecha de vencimiento -->
+                                    <div class="row mb-3">
+                                        <label class="col-md-2 col-form-label" for="formulario_vencimiento">Vencimiento</label>
+                                        <div class="col-md-10">
+                                            <input name="Vencimiento" class="datepicker-default form-control" id="formulario_vencimiento">
+                                        </div>
+                                    </div>
+                                    <!-- Campo para indicar si es material -->
+                                    <div class="row mb-3">
+                                        <label class="col-md-2 col-form-label" for="formulario_material">Es material</label>
+                                        <div class="col-md-10">
+                                            <input type="checkbox" class="form-check-input" id="formulario_material" name="EsMaterial">
+                                        </div>
+                                    </div>
+                                    <!-- Campos para mostrar margen y precio de venta calculados -->
+                                    <div class="row mb-3">
+                                        <div class="col-md-6 text-center">
+                                            <label for="formulario_margen">Margen de ganancia (%)</label>
+                                            <input type="text" class="form-control text-center" id="formulario_margen" name="MargenGanancia" readonly>
+                                        </div>
+                                        <div class="col-md-6 text-center">
+                                            <label for="formulario_precio">Precio de venta</label>
+                                            <div class="input-group">
+                                                <div class="input-group-text">$</div>
+                                                <input type="text" class="form-control text-center" id="formulario_precio" name="PrecioVenta" readonly>
+                                            </div>
+>>>>>>> Stashed changes:W3CRM/Views/Compras/AgregarLoteProducto.cshtml
                                         </div>
                                     </div>
                                 </div>
@@ -250,39 +336,22 @@
         }
 
 
-
+        //
         function cargarProductos() {
             return new Promise((resolve, reject) => {
                 var tipoSeleccionado = document.getElementById("formulario_tipo").value;
 
                 fetch('/ProductosController/ObtenerProductosPorTipo?tipo=' + tipoSeleccionado)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Error en la respuesta del servidor');
-                        }
-                        return response.text(); // Obtener la respuesta como texto
-                    })
-                    .then(text => {
-                        if (!text) {
-                            throw new Error('Respuesta vacía');
-                        }
-
-                        try {
-                            var data = JSON.parse(text); // Intentar parsear el texto como JSON
-                        } catch (error) {
-                            throw new Error('Error al parsear JSON');
-                        }
-
+                    .then(response => response.json()) // Cambié el `text()` por `json()`
+                    .then(data => {
                         var selectProductos = document.getElementById("formulario_producto");
-                        selectProductos.innerHTML = '<option selected disabled value="" id="formulario_vacio">Por favor seleccione</option>';
-
+                        selectProductos.innerHTML = '<option selected disabled value="">Por favor seleccione</option>';
                         data.forEach(producto => {
                             var option = document.createElement("option");
                             option.text = producto.nombre;
                             option.value = producto.iD_Producto;
                             selectProductos.appendChild(option);
                         });
-
                         resolve();
                     })
                     .catch(error => {
@@ -293,7 +362,7 @@
         }
 
 
-
+        //Calcular margen de ganancia y precio de venta, todo es hecho con los datos proporcionados desde front-end, no se conecta con el servidor
         function calcularMargenYPrecio() {
             const costo = parseFloat(document.getElementById("formulario_costo").value) || 0;
             const margenPorcentaje = 20;  // Margen de ganancia predeterminado en %
@@ -306,6 +375,7 @@
         }
     </script>
 
+    <!-- Validacion de los formularios usando estilos y las reglas de bootrap, sino es vaido, bloquea el envio -->
 
     <script>
         (function () {
