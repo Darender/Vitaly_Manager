@@ -18,6 +18,7 @@ namespace Vitaly_Manager.Entidades
         [Required]
         public required DateTime fecha { get; set; }
 
+        [ForeignKey("LoteProducto")]
         public int? idProductoComprado {get;set;}
 
 
