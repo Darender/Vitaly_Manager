@@ -9,6 +9,13 @@ namespace Vitaly_Manager.Controladores
         public List<Proveedor> ListaProveedores = DataProveedores.ListaProveedores(out _, out _);
         public List<TipoProducto> ListasTipoProductos = DataTipoProducto.ListaTiposProductos(out _, out _);
         public List<TipoUnidad> ListaTipoUnidades = DataTipoUnidad.ListaTiposUnidades(out _, out _);
+        public List<CatalogoProducto> ListaProductos = DataCatalogoProducto.ListaCatalogoProductos(out _, out _);
+
+        public IActionResult ConsultaProductos()
+        {
+            return View(this);
+        }
+
         public IActionResult AgregarProductos()
         {
             return View(this);
@@ -74,5 +81,41 @@ namespace Vitaly_Manager.Controladores
             return Json(new { success = resultado, message = mensaje, errores = fallidos });
         }
 
+        /// <summary>
+        /// Metodo encargado de conbertir el id de un tipo de producto al nombre de dicho tipo de producto
+        /// </summary>
+        /// <param name="idTipoProducto">El id el tipo de producto a buscar</param>
+        /// <returns>El nombre del tipo de producto segun el id dado</returns>
+        public string ObtenerTipoProducto(int idTipoProducto) { 
+            foreach (TipoProducto item in ListasTipoProductos)
+            {
+                if (item.ID_TipoProducto == idTipoProducto)
+                    return item.Nombre_Tipo_Producto;
+            }
+            return "ERROR NO ENCONTRADO";
+        }
+
+        /// <summary>
+        /// Metodo encargado de conbertir el id de un proveedor al nombre de dicho proveedor
+        /// </summary>
+        public string ObtenerProveedor(int idProveedor)
+        {
+            foreach (Proveedor item in ListaProveedores)
+            {
+                if (item.ID_Proveedor == idProveedor)
+                    return item.Nombre_Proveedor;
+            }
+            return "ERROR NO ENCONTRADO";
+        }
+
+        public string ObtenerTipoUnidad(int idTipoUnidad)
+        {
+            foreach (TipoUnidad item in ListaTipoUnidades)
+            {
+                if (item.ID_TipoUnidad == idTipoUnidad)
+                    return item.Unidad_Medida;
+            }
+            return "ERROR NO ENCONTRADO";
+        }
     }
 }

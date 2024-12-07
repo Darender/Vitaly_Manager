@@ -46,7 +46,6 @@ namespace Vitaly_Manager.Data
             }
         }
 
-        /*
         /// <summary>
         /// Optiene todos los productos de la base de datos y los pone una lista
         /// </summary>
@@ -66,19 +65,19 @@ namespace Vitaly_Manager.Data
 
                     while (lector.Read())
                     {
-                        int idProducto = lector["idProducto"] != DBNull.Value ? Convert.ToInt32(lector["idProducto"]) : 0;
+                        int idProducto = lector["idCatalogoProd"] != DBNull.Value ? Convert.ToInt32(lector["idCatalogoProd"]) : 0;
                         string nombreProducto = lector["nombreProducto"] != DBNull.Value ? Convert.ToString(lector["nombreProducto"])! : "N/A";
-                        int unidades = lector["unidades"] != DBNull.Value ? Convert.ToInt32(lector["unidades"]) : 0;
+                        int unidades = lector["cantidadUnidades"] != DBNull.Value ? Convert.ToInt32(lector["cantidadUnidades"]) : 0;
                         string? paginaProducto = lector["paginaProducto"] != DBNull.Value ? Convert.ToString(lector["paginaProducto"])! : null;
                         int idProveedor = lector["idProveedor"] != DBNull.Value ? Convert.ToInt32(lector["idProveedor"]) : 0;
                         int idTipoUnidad = lector["idTipoUnidad"] != DBNull.Value ? Convert.ToInt32(lector["idTipoUnidad"]) : 0;
-                        int idTipoProducto = lector["idTipoProducto"] != DBNull.Value ? Convert.ToInt32(lector["idTipoProducto"]) : 0;
+                        int idTipoProducto = lector["idTipoProd"] != DBNull.Value ? Convert.ToInt32(lector["idTipoProd"]) : 0;
 
                         CatalogoProducto nuevo = new CatalogoProducto
                         {
-                            ID_Producto = idProducto,
-                            Nombre = nombreProducto,
-                            Unidades = unidades,
+                            ID_CatalogoProducto = idProducto,
+                            Nombre_Producto = nombreProducto,
+                            Cantidad_Unidades = unidades,
                             Pagina_Producto = paginaProducto,
                             ID_Proveedor = idProveedor,
                             ID_TipoUnidad = idTipoUnidad,
@@ -106,7 +105,7 @@ namespace Vitaly_Manager.Data
                 respuesta = $"Error inesperado: {ex.Message}";
                 return new List<CatalogoProducto>();
             }
-        }*/
+        }
 
     }
 }
