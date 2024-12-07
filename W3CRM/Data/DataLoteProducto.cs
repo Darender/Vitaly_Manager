@@ -4,7 +4,7 @@ using Vitaly_Manager.Entidades;
 namespace Vitaly_Manager.Data
 {
     public static class DataLoteProducto
-    {/*
+    {
         /// <summary>
         /// Agrega un nuevo lote de producto a la base de datos
         /// </summary>
@@ -26,7 +26,7 @@ namespace Vitaly_Manager.Data
                     using (SqlCommand comando = new SqlCommand(query, conexion))
                     {
                         comando.Parameters.AddWithValue("@ID_CatalogoProd", nuevo.ID_CatalogoProducto);
-                        comando.Parameters.AddWithValue("@IVA", nuevo.ID_Parametros);
+                        comando.Parameters.AddWithValue("@IVA", nuevo.IVA);
                         comando.Parameters.AddWithValue("@EsMaterial", nuevo.EsMaterial ? 1 : 0);
                         comando.Parameters.AddWithValue("@FechaIngreso", nuevo.Fecha_Ingreso);
                         comando.Parameters.AddWithValue("@FechaVencimiento", nuevo.Fecha_Vencimiento);
@@ -54,6 +54,6 @@ namespace Vitaly_Manager.Data
                 mensaje = $"Error inesperado: {ex.Message}";
                 return false;
             }
-        }*/
+        }
     }
 }

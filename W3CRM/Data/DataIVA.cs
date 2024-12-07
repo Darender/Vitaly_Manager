@@ -4,7 +4,7 @@ using Vitaly_Manager.Entidades;
 namespace Vitaly_Manager.Data
 {
     public class DataIVA
-    {/*
+    {
         /// <summary>
         /// Duelve el ultimo iva de la lista
         /// </summary>
@@ -19,18 +19,18 @@ namespace Vitaly_Manager.Data
                 using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
                 {
                     conexion.Open();
-                    SqlCommand comando = new SqlCommand("SELECT TOP 1 * FROM IVA ORDER BY idIVA DESC", conexion);
+                    SqlCommand comando = new SqlCommand("SELECT TOP 1 * FROM Parametros ORDER BY idIVA DESC", conexion);
                     SqlDataReader lector = comando.ExecuteReader();
 
                     while (lector.Read())
                     {
-                        int idIVA = lector["idIVA"] != DBNull.Value ? Convert.ToInt32(lector["idIVA"]) : 0;
-                        decimal porcentaje = Convert.ToInt32(lector["porcentaje"]);
+                        int idParametros = lector["idParametros"] != DBNull.Value ? Convert.ToInt32(lector["idParametros"]) : 0;
+                        decimal IVA = Convert.ToDecimal(lector["IVA"]);
 
                         Parametros nuevo = new Parametros
                         {
-                            ID_IVA = idIVA,
-                            Porcentaje = porcentaje
+                            ID_Parametros = idParametros,
+                            IVA = IVA
                         };
                         exito = true;
                         respuesta = "Consulta exitosa";
@@ -55,6 +55,6 @@ namespace Vitaly_Manager.Data
                 respuesta = $"Error inesperado: {ex.Message}";
                 return new Parametros();
             }
-        }*/
+        }
     }
 }

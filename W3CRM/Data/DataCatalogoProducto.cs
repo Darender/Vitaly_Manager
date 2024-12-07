@@ -5,7 +5,6 @@ namespace Vitaly_Manager.Data
 {
     public static class DataCatalogoProducto
     {
-        /*
         /// <summary>
         /// Optiene todos los productos de la base de datos y los pone una lista
         /// </summary>
@@ -20,28 +19,28 @@ namespace Vitaly_Manager.Data
                 using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
                 {
                     conexion.Open();
-                    SqlCommand comando = new SqlCommand("SELECT * FROM catalogoProducto", conexion);
+                    SqlCommand comando = new SqlCommand("SELECT * FROM CatalogoProducto", conexion);
                     SqlDataReader lector = comando.ExecuteReader();
 
                     while (lector.Read())
                     {
-                        int idProducto = lector["idProducto"] != DBNull.Value ? Convert.ToInt32(lector["idProducto"]) : 0;
+                        int idCatalogoProd = lector["idCatalogoProd"] != DBNull.Value ? Convert.ToInt32(lector["idCatalogoProd"]) : 0;
                         string nombreProducto = lector["nombreProducto"] != DBNull.Value ? Convert.ToString(lector["nombreProducto"])! : "N/A";
-                        int unidades = lector["unidades"] != DBNull.Value ? Convert.ToInt32(lector["unidades"]) : 0;
+                        int cantidadUnidades = lector["cantidadUnidades"] != DBNull.Value ? Convert.ToInt32(lector["cantidadUnidades"]) : 0;
                         string? paginaProducto = lector["paginaProducto"] != DBNull.Value ? Convert.ToString(lector["paginaProducto"])! : null;
                         int idProveedor = lector["idProveedor"] != DBNull.Value ? Convert.ToInt32(lector["idProveedor"]) : 0;
                         int idTipoUnidad = lector["idTipoUnidad"] != DBNull.Value ? Convert.ToInt32(lector["idTipoUnidad"]) : 0;
-                        int idTipoProducto = lector["idTipoProducto"] != DBNull.Value ? Convert.ToInt32(lector["idTipoProducto"]) : 0;
+                        int idTipoProd = lector["idTipoProd"] != DBNull.Value ? Convert.ToInt32(lector["idTipoProd"]) : 0;
 
                         CatalogoProducto nuevo = new CatalogoProducto
                         {
-                            ID_Producto = idProducto,
-                            Nombre = nombreProducto,
-                            Unidades = unidades,
+                            ID_CatalogoProducto = idCatalogoProd,
+                            Nombre_Producto = nombreProducto,
+                            Cantidad_Unidades = cantidadUnidades,
                             Pagina_Producto = paginaProducto,
                             ID_Proveedor = idProveedor,
                             ID_TipoUnidad = idTipoUnidad,
-                            ID_TipoProducto = idTipoProducto
+                            ID_TipoProducto = idTipoProd
                         };
 
                         listaCatalogoProductos.Add(nuevo);
@@ -65,7 +64,7 @@ namespace Vitaly_Manager.Data
                 respuesta = $"Error inesperado: {ex.Message}";
                 return new List<CatalogoProducto>();
             }
-        }*/
+        }
 
     }
 }
