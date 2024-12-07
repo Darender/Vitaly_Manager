@@ -20,29 +20,24 @@ namespace Vitaly_Manager.Data
                 using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
                 {
                     conexion.Open();
-                    SqlCommand comando = new SqlCommand("SELECT * FROM TipoProducto", conexion);
+                    SqlCommand comando = new SqlCommand("SELECT idTipoProd, nombreTipoProd FROM TipoProducto", conexion);
                     SqlDataReader lector = comando.ExecuteReader();
 
                     while (lector.Read())
                     {
-                        int idTipoProducto = lector["idTipoProducto"] != DBNull.Value
-                            ? Convert.ToInt32(lector["idTipoProducto"])
-                            : 0;
-
-                        string nombreTipoProducto = lector["NombreTipoProducto"] != DBNull.Value
-                            ? Convert.ToString(lector["NombreTipoProducto"])!
-                            : "N/A";
+                        int idTipoProd = lector["idTipoProd"] != DBNull.Value ? Convert.ToInt32(lector["idTipoProd"]) : 0;
+                        string nombreTipoProd = lector["nombreTipoProd"] != DBNull.Value ? Convert.ToString(lector["nombreTipoProd"])! : "N/A";
 
                         TipoProducto nuevo = new TipoProducto
                         {
-                            ID_TipoProducto = idTipoProducto,
-                            Nombre_Tipo_Producto = nombreTipoProducto, 
+                            ID_TipoProducto = idTipoProd,      
+                            Nombre_Tipo_Producto = nombreTipoProd 
                         };
 
-                        listaTiposProductos.Add(nuevo);
+                        listaTiposProductos.Add(nuevo); 
                     }
 
-                    lector.Close();
+                    lector.Close(); 
                 }
                 exito = true;
                 respuesta = "Consulta exitosa";
@@ -61,6 +56,7 @@ namespace Vitaly_Manager.Data
                 return new List<TipoProducto>();
             }
         }
+
 
     }
 }

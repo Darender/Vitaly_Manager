@@ -28,12 +28,6 @@ namespace Vitaly_Manager.Controladores
             return View(listaProveedores);
         }
 
-
-        public IActionResult AgregarLoteProducto()
-        {
-            ProveedoresController controlador = new ProveedoresController();
-            return View(controlador);
-        }
         [HttpPost]
         public ActionResult EliminarProveedor(int idProveedor)
         {
