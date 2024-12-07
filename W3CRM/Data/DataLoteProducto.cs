@@ -8,9 +8,9 @@ namespace Vitaly_Manager.Data
         /// <summary>
         /// Agrega un nuevo lote de producto a la base de datos
         /// </summary>
-        /// <param name="nuevo">Entidad de lote de producto que se agregara</param>
+        /// <param name="nuevo">Entidad de lote de producto que se agregará</param>
         /// <param name="mensaje">Mensaje de respuesta</param>
-        /// <returns>Un booleano de si fue exito o fragado la operacion</returns>
+        /// <returns>Un booleano que indica si la operación fue exitosa o fallida</returns>
         public static bool Agregar(LoteProducto nuevo, out string mensaje)
         {
             try
@@ -19,14 +19,14 @@ namespace Vitaly_Manager.Data
                 {
                     conexion.Open();
 
-                    string query = @"INSERT INTO loteProducto 
-                            (idCatalogo, idIVA, esMaterial, fechaIngreso, fechaVencimiento, cantidad, precioVenta, precioCompra, margenGanancia) 
-                            VALUES (@ID_CatalogoProducto, @ID_IVA, @EsMaterial, @FechaIngreso, @FechaVencimiento, @Cantidad, @PrecioVenta, @PrecioCompra, @MargenGanancia)";
+                    string query = @"INSERT INTO LoteProducto 
+                            (idCatalogoProd, IVA, esMaterial, fechaIngreso, fechaVencimiento, cantidad, precioVenta, precioCompra, margenGanancia) 
+                            VALUES (@ID_CatalogoProd, @IVA, @EsMaterial, @FechaIngreso, @FechaVencimiento, @Cantidad, @PrecioVenta, @PrecioCompra, @MargenGanancia)";
 
                     using (SqlCommand comando = new SqlCommand(query, conexion))
                     {
-                        comando.Parameters.AddWithValue("@ID_CatalogoProducto", nuevo.ID_CatalogoProducto);
-                        comando.Parameters.AddWithValue("@ID_IVA", nuevo.ID_IVA);
+                        comando.Parameters.AddWithValue("@ID_CatalogoProd", nuevo.ID_CatalogoProducto);
+                        comando.Parameters.AddWithValue("@IVA", nuevo.ID_Parametros);
                         comando.Parameters.AddWithValue("@EsMaterial", nuevo.EsMaterial ? 1 : 0);
                         comando.Parameters.AddWithValue("@FechaIngreso", nuevo.Fecha_Ingreso);
                         comando.Parameters.AddWithValue("@FechaVencimiento", nuevo.Fecha_Vencimiento);
@@ -55,6 +55,5 @@ namespace Vitaly_Manager.Data
                 return false;
             }
         }*/
-
     }
 }
