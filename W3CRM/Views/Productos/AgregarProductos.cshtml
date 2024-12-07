@@ -57,9 +57,10 @@
                                         <div class="col-lg-10">
                                             <select class="form-select" id="proveedor" required>
                                                 <option value="" selected disabled>Seleccione un proveedor</option>
-                                                <option value="1">Proveedor A</option>
-                                                <option value="2">Proveedor B</option>
-                                                <option value="3">Proveedor C</option>
+                                                @foreach (Proveedor proveedor in Model.ListaProveedores)
+                                                {
+                                                    <option value="@proveedor.ID_Proveedor">@proveedor.Nombre_Proveedor</option>
+                                                }
                                             </select>
                                             <div class="invalid-feedback">
                                                 Por favor seleccione un proveedor.
@@ -75,9 +76,10 @@
                                         <div class="col-lg-10">
                                             <select class="form-select" id="tipoproducto" required>
                                                 <option value="" selected disabled>Seleccione un tipo de producto</option>
-                                                <option value="1">Electrónico</option>
-                                                <option value="2">Alimento</option>
-                                                <option value="3">Ropa</option>
+                                                @foreach (TipoProducto item in Model.ListasTipoProductos)
+                                                {
+                                                    <option value="@item.ID_TipoProducto">@item.Nombre_Tipo_Producto</option>
+                                                }
                                             </select>
                                             <div class="invalid-feedback">
                                                 Por favor seleccione un tipo de producto.
@@ -115,9 +117,10 @@
                                         <div class="col-lg-10">
                                             <select class="form-select" id="tipounidad" required>
                                                 <option value="" selected disabled>Seleccione un tipo de unidad</option>
-                                                <option value="kg">Kilogramos</option>
-                                                <option value="lt">Litros</option>
-                                                <option value="pz">Piezas</option>
+                                                @foreach (TipoUnidad item in Model.ListaTipoUnidades)
+                                                {
+                                                    <option value="@item.ID_TipoUnidad">@item.Unidad_Medida</option>
+                                                }
                                             </select>
                                             <div class="invalid-feedback">
                                                 Por favor seleccione un tipo de unidad.
@@ -212,15 +215,98 @@
     </script>
 
     <script>
+            (function () {
+                'use strict';
+
+                var form = document.getElementById('formularioAgregarProducto');
+                const nombreProducto = document.getElementById("nombreproducto");
+                const tipoproducto = document.getElementById("tipoproducto");
+                const proveedor = document.getElementById("proveedor");
+                const paginaProducto = document.getElementById("paginaProducto");
+                const cantidadUnitaria = document.getElementById("cantidadUnitaria");
+                const tipounidad = document.getElementById("tipounidad");
+
+                if (form) {
+                    form.addEventListener('submit', function (event) {
+                        event.preventDefault();
+
+                        nombreProducto.classList.remove('is-invalid');
+                        tipoproducto.classList.remove('is-invalid');
+                        proveedor.classList.remove('is-invalid');
+                        paginaProducto.classList.remove('is-invalid');
+                        cantidadUnitaria.classList.remove('is-invalid');
+                        tipounidad.classList.remove('is-invalid');
+
+                        if (!form.checkValidity()) {
+                            event.stopPropagation();
+                        } else {
+                            $.ajax({
+                                url: '/Productos/AgregarNuevoProducto',
+                                type: 'POST',
+                                data: {
+                                    nombre: nombreProducto.value,
+                                    tipoProducto: tipoproducto.value,
+                                    proveedor: proveedor.value,
+                                    paginaProducto: paginaProducto.value,
+                                    cantidadUnitaria: cantidadUnitaria.value,
+                                    tipounidad: tipounidad.value,
+                                },
+                                success: function (response) {
+                                    if (response.success) {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: '¡Producto agregado!',
+                                            text: response.message,
+                                            confirmButtonText: 'Aceptar'
+                                        }).then((result) => {
+                                            form.reset();
+                                            form.classList.remove('was-validated');
+                                        });
+                                    } else {
+                                        if (response.errores.includes("nombre")) {
+                                            nombreProducto.classList.add('is-invalid');
+                                        }
+                                        if (response.errores.includes("cantidad")) {
+                                            nombreCliente.classList.add('is-invalid');
+                                        }
+
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Error',
+                                            text: response.message,
+                                            confirmButtonText: 'Aceptar'
+                                        });
+                                    }
+                                },
+                                error: function (error) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'Hubo un error al comunicarse con el servidor.',
+                                        confirmButtonText: 'Aceptar'
+                                    });
+                                }
+                            });
+                        }
+
+                        form.classList.add('was-validated'); // Aplicar las clases de validación
+                    }, false);
+                }
+            })();
+
         document.addEventListener('DOMContentLoaded', (event) => {
-            document.querySelectorAll('pre code').forEach((el) => {
-                hljs.highlightElement(el);
+            const cantidadUnitariaInput = document.getElementById('cantidadUnitaria');
+
+            cantidadUnitariaInput.addEventListener('input', (e) => {
+                const value = e.target.value;
+                // Permitir solo números (sin puntos ni otros caracteres)
+                const sanitizedValue = value.replace(/[^0-9]/g, '');
+                e.target.value = sanitizedValue;
             });
         });
     </script>
-
+          
     <script>
-        
     </script>
 
 
