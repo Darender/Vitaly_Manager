@@ -5,6 +5,47 @@ namespace Vitaly_Manager.Data
 {
     public static class DataCatalogoProducto
     {
+        public static bool Agregar(CatalogoProducto nuevo, out string mensaje)
+        {
+            try
+            {
+                using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
+                {
+                    conexion.Open();
+
+                    string query = @"INSERT INTO CatalogoProducto 
+                            (nombreProducto, cantidadUnidades, paginaProducto, idProveedor, idTipoUnidad, idTipoProd) 
+                            VALUES (@NombreProducto, @CantidadUnidades, @PaginaProducto, @IdProveedor, @IdTipoUnidad, @IdTipoProd)";
+
+                    using (SqlCommand comando = new SqlCommand(query, conexion))
+                    {
+                        comando.Parameters.AddWithValue("@NombreProducto", nuevo.Nombre_Producto);
+                        comando.Parameters.AddWithValue("@CantidadUnidades", nuevo.Cantidad_Unidades);
+                        comando.Parameters.AddWithValue("@PaginaProducto", nuevo.Pagina_Producto ?? (object)DBNull.Value);
+                        comando.Parameters.AddWithValue("@IdProveedor", nuevo.ID_Proveedor);
+                        comando.Parameters.AddWithValue("@IdTipoUnidad", nuevo.ID_TipoUnidad);
+                        comando.Parameters.AddWithValue("@IdTipoProd", nuevo.ID_TipoProducto);
+
+                        comando.ExecuteNonQuery();
+                    }
+
+                    conexion.Close();
+                }
+                mensaje = $"El cliente {nuevo.Nombre_Producto} ha sido agregado exitosamente.";
+                return true;
+            }
+            catch (SqlException ex)
+            {
+                mensaje = $"Error en la base de datos: {ex.Message}";
+                return false;
+            }
+            catch (Exception ex)
+            {
+                mensaje = $"Error inesperado: {ex.Message}";
+                return false;
+            }
+        }
+
         /*
         /// <summary>
         /// Optiene todos los productos de la base de datos y los pone una lista
