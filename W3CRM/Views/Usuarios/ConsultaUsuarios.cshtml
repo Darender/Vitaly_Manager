@@ -1,6 +1,321 @@
-﻿namespace Vitaly_Manager.Views.Usuarios
-{
-    public class ConsultaUsuarios
+﻿@using System.Globalization
+@using Vitaly_Manager.Entidades
+@using W3CRM.Controllers
+@{
+    ViewData["Title"] = "ConsultaUsuarios";
+}
+
+<div class="content-body">
+    <div class="page-titles">
+        <ol class="breadcrumb">
+            <li><h5 class="bc-title">Usuarios</h5></li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Index", "w3crm")">
+                    Inicio
+                </a>
+            </li>
+            <li class="breadcrumb-item active"><a href="javascript:void(0)">Consulta de Usuarios</a></li>
+        </ol>
+    </div>
+
+    <div class="container-fluid">
+        <div class="table-responsive">
+            <table id="example3" class="display table" style="min-width: 845px">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Apellido Paterno</th>
+                        <th>Apellido Materno</th>
+                        <th>Correo</th>
+                        <th>Rol</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var usuario in Model.ListaUsuarios)
+                    {
+                        <tr id="@usuario.ID_Usuario">
+                            <td>@usuario.ID_Usuario</td>
+                            <td>@usuario.Nombre</td>
+                            <td>@usuario.ApellidoPaterno</td>
+                            <td>@usuario.ApellidoMaterno</td>
+                            <td>@usuario.Correo</td>
+                            <td>@usuario.Rol</td>
+                            <td>
+                                <div class="d-flex">
+                                   <!-- <a href="javascript:void(0)" class="btn btn-primary shadow btn-xs sharp me-1"
+                                       data-bs-toggle="modal"
+                                       data-bs-target="#modificarUsuario"
+                                       onclick="modificarUsuario("@usuario.ID_Usuario")">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </a> -->
+
+                                    <!--Boton eliminar-->
+                                    <a href="javascript:void(0)" class="btn btn-danger shadow btn-xs sharp"
+                                       onclick="eliminarUsuario('@usuario.ID_Usuario')">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para modificar usuario -->
+<div class="modal fade" id="modificarUsuario" tabindex="-1" aria-labelledby="modificarUsuario" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="formularioModificarUsuario">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modificarUsuario">Modificar Usuario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="UsuarioModificar">
+                    <div class="mb-3">
+                        <label for="nombreUsuarioModificar" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombreUsuarioModificar" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="apellidoPaternoUsuarioModificar" class="form-label">Apellido Paterno</label>
+                        <input type="text" class="form-control" id="apellidoPaternoUsuarioModificar" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="apellidoMaternoUsuarioModificar" class="form-label">Apellido Materno</label>
+                        <input type="text" class="form-control" id="apellidoMaternoUsuarioModificar">
+                    </div>
+                    <div class="mb-3">
+                        <label for="correoUsuarioModificar" class="form-label">Correo</label>
+                        <input type="email" class="form-control" id="correoUsuarioModificar" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="rolUsuarioModificar" class="form-label">Rol</label>
+                        <select class="form-select" id="rolUsuarioModificar">
+                            <option value="Cliente">Cliente</option>
+                            <option value="Administrador">Administrador</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--**********************************
+	Content body end
+***********************************-->
+@section w3crm_style
+	{
+    <link href="~/w3crm/vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+	<link href="~/w3crm/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+
+        <!-- Daterange picker -->
+    <link href="~/w3crm/vendor/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+
+    <!-- Pick date -->
+    <link rel="stylesheet" href="~/w3crm/vendor/pickadate/themes/default.css">
+    <link rel="stylesheet" href="~/w3crm/vendor/pickadate/themes/default.date.css">
+
+	}
+
+    @section w3crm_script
     {
-    }
+	<!--**********************************
+		Scripts
+	***********************************-->
+
+    <script src="~/w3crm/vendor/sweetalert2/dist/sweetalert2.min.js"></script>
+    <script src="~/w3crm/js/plugins-init/sweetalert.init.js"></script>
+    <script src="~/w3crm/js/styleSwitcher.js"></script>
+
+    <!-- Required vendors -->
+    <script src="~/w3crm/vendor/global/global.min.js"></script>
+	<script src="~/w3crm/vendor/chart.js/Chart.bundle.min.js"></script>
+	<script src="~/w3crm/vendor/tagify/dist/tagify.min.js"></script>
+
+	<!-- Apex Chart -->
+	<script src="~/w3crm/vendor/apexchart/apexchart.js"></script>
+
+	<!-- Datatable -->
+	<script src="~/w3crm/vendor/datatables/js/jquery.dataTables.min.js"></script>
+	<script src="~/w3crm/js/plugins-init/datatables.init.js"></script>
+	<script src="~/w3crm/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+
+     <!-- code-highlight -->
+    <script src="~/w3crm/js/highlight.min.js"></script>
+
+    <!-- momment js is must -->
+    <script src="~/w3crm/vendor/moment/moment.min.js"></script>
+    <script src="~/w3crm/vendor/bootstrap-daterangepicker/daterangepicker.js"></script>
+
+    <!-- pickdate -->
+    <script src="~/w3crm/vendor/pickadate/picker.js"></script>
+    <script src="~/w3crm/vendor/pickadate/picker.time.js"></script>
+    <script src="~/w3crm/vendor/pickadate/picker.date.js"></script>
+
+     <!-- Pickdate -->
+    <script src="~/w3crm/js/plugins-init/pickadate-init.js"></script>
+    <script src="~/w3crm/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+    <script src="~/w3crm/js/custom.js"></script>
+    <script src="~/w3crm/js/deznav-init.js"></script>
+    <script src="~/w3crm/js/demo.js"></script>
+    <script src="~/w3crm/js/styleSwitcher.js"></script>
+
+    <script src="~/w3crm/js/custom.js"></script>
+    <script src="~/w3crm/js/deznav-init.js"></script>
+    <script src="~/w3crm/js/demo.js"></script>
+
+<script>
+    hljs.highlightAll();
+    hljs.configure({ ignoreUnescapedHTML: true })
+
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        document.querySelectorAll('pre code').forEach((el) => {
+            hljs.highlightElement(el);
+        });
+    });
+</script>
+
+<script>
+
+    /*
+function modificarUsuario(idUsuario) {
+    $.ajax({
+        url: '/Usuarios/_ModificarUsuarios',
+        type: 'GET',
+        data: { id: idUsuario },
+        success: function (response) {
+            $('#idUsuarioModificar').val(response.ID_Usuario);
+            $('#nombreUsuarioModificar').val(response.Nombre);
+            $('#apellidoPaternoUsuarioModificar').val(response.ApellidoPaterno);
+            $('#apellidoMaternoUsuarioModificar').val(response.ApellidoMaterno);
+            $('#correoUsuarioModificar').val(response.Correo);
+            $('#rolUsuarioModificar').val(response.Rol);
+        },
+        error: function (error) {
+            console.error('Error al obtener los datos del usuario:', error);
+        }
+    });
+} */
+
+/*$('#formularioModificarUsuario').on('submit', function (event) {
+    event.preventDefault();
+    const datos = {
+        ID_Usuario: $('#idUsuarioModificar').val(),
+        Nombre: $('#nombreUsuarioModificar').val(),
+        ApellidoPaterno: $('#apellidoPaternoUsuarioModificar').val(),
+        ApellidoMaterno: $('#apellidoMaternoUsuarioModificar').val(),
+        Correo: $('#correoUsuarioModificar').val(),
+        Rol: $('#rolUsuarioModificar').val(),
+    };
+
+    $.ajax({
+        url: '/Usuarios/_ModificarUsuario',
+        type: 'POST',
+        data: datos,
+        success: function (response) {
+            if (response.success) {
+                Swal.fire('Éxito', 'Usuario modificado con éxito', 'success');
+                $('#modificarUsuario').modal('hide');
+                recargarTablaUsuarios();
+            } else {
+                Swal.fire('Error', 'No se pudo modificar el usuario', 'error');
+            }
+        },
+        error: function (error) {
+            console.error('Error al modificar usuario:', error);
+        }
+    });
+});*/
+
+        function eliminarUsuario(idUsuario) {
+            if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
+                $.ajax({
+                    url: '@Url.Action("Eliminar", "Usuarios")', // Cambia esto a la acción correcta
+                    type: 'POST',
+                    data: { id: idUsuario },
+                    success: function (response) {
+                        if (response.success) {
+                            alert('Usuario eliminado con éxito');
+                            location.reload(); // Recarga la página para reflejar los cambios
+                        } else {
+                            alert('Error al eliminar el usuario');
+                        }
+                    },
+                    error: function () {
+                        alert('Hubo un problema al procesar la solicitud');
+                    }
+                });
+            }
+        }
+
+        /*
+function recargarTablaUsuarios() {
+    $.ajax({
+        url: '/Usuarios/ObtenerUsuariosActualizados',
+        type: 'GET',
+        success: function (response) {
+            const tabla = $('#example3 tbody');
+            tabla.empty();
+            response.data.forEach(usuario => {
+                const fila = `
+<tr id="${usuario.ID_Usuario}">
+    <td>${usuario.ID_Usuario}</td>
+    <td>${usuario.Nombre}</td>
+    <td>${usuario.ApellidoPaterno}</td>
+    <td>${usuario.ApellidoMaterno}</td>
+    <td>${usuario.Correo}</td>
+    <td>${usuario.Rol}</td>
+    <td>
+        <div class="d-flex">
+            <a href="javascript:void(0)" class="btn btn-primary shadow btn-xs sharp me-1" data-bs-toggle="modal" data-bs-target="#modificarUsuario" onclick="modificarUsuario('${usuario.ID_Usuario}')"><i class="fas fa-pencil-alt"></i></a>
+            <a href="javascript:void(0)" class="btn btn-danger shadow btn-xs sharp" onclick="eliminarUsuario('${usuario.ID_Usuario}')"><i class="fa fa-trash"></i></a>
+        </div>
+    </td>
+</tr>
+                `;
+                tabla.append(fila);
+            });
+        },
+        error: function (error) {
+            console.error('Error al recargar tabla de usuarios:', error);
+        }
+    });
+} */
+
+</script>
+
+<script>
+    (function () {
+        'use strict'
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.querySelectorAll('.needs-validation')
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+</script>
 }

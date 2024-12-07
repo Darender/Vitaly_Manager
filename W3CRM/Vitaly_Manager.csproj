@@ -12,6 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Controladores\UsuariosController.cs~RF59394c1.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="wwwroot\imagenes\usuarios\" />
     <Folder Include="wwwroot\images\demo\" />
     <Folder Include="wwwroot\w3crm\" />

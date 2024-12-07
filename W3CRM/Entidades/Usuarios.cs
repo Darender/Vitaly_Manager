@@ -4,69 +4,132 @@ namespace Vitaly_Manager.Entidades
 {
     public class Usuario
     {
-        public int ID_Usuario { get; set; } // ID del usuario, opcional en la creación
-        public string Nombre_Usuario { get; set; } // Nombre del usuario
-        public string Apellido_Paterno { get; set; } // Primer apellido
-        public string Apellido_Materno { get; set; } // Segundo apellido
-        public string Email { get; set; } // Correo electrónico
-        public string Contraseña { get; set; } // Contraseña
-        public string Rol { get; set; } // Rol del usuario (e.g., Administrador, Usuario, etc.)
-    }
-
-
-    public class Usuarios
-    {
         [Key]
-        public required int ID_Usuario { get; set; }
+        public int ID_Usuario { get; set; }
 
+        private string _nombre;
+        private string _apellidoPaterno;
+        private string _apellidoMaterno;
         private string _correo;
-        [Required(ErrorMessage = "El correor es obligatorio.")]
-        [StringLength(320, ErrorMessage = "El correo no puede exceder los 320 caracteres.")]
+        private string _contraseña;
+        private string _rol;
+
+        [Required(ErrorMessage = "El nombre es obligatorio.")]
+        [StringLength(50, ErrorMessage = "El nombre no puede exceder los 50 caracteres.")]
+        public required string Nombre
+        {
+            get => _nombre;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new ArgumentException("El nombre es obligatorio.");
+                }
+                if (value.Length > 50)
+                {
+                    throw new ArgumentException("El nombre no puede exceder los 50 caracteres.");
+                }
+                _nombre = value;
+            }
+        }
+
+        [Required(ErrorMessage = "El apellido paterno es obligatorio.")]
+        [StringLength(30, ErrorMessage = "El apellido paterno no puede exceder los 30 caracteres.")]
+        public required string ApellidoPaterno
+        {
+            get => _apellidoPaterno;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new ArgumentException("El apellido paterno es obligatorio.");
+                }
+                if (value.Length > 30)
+                {
+                    throw new ArgumentException("El apellido paterno no puede exceder los 30 caracteres.");
+                }
+                _apellidoPaterno = value;
+            }
+        }
+
+        [Required(ErrorMessage = "El apellido materno es obligatorio.")]
+        [StringLength(30, ErrorMessage = "El apellido materno no puede exceder los 30 caracteres.")]
+        public required string ApellidoMaterno
+        {
+            get => _apellidoMaterno;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new ArgumentException("El apellido materno es obligatorio.");
+                }
+                if (value.Length > 30)
+                {
+                    throw new ArgumentException("El apellido materno no puede exceder los 30 caracteres.");
+                }
+                _apellidoMaterno = value;
+            }
+        }
+
+        [Required(ErrorMessage = "El correo es obligatorio.")]
+        [EmailAddress(ErrorMessage = "El formato del correo electrónico no es válido.")]
+        [StringLength(100, ErrorMessage = "El correo no puede exceder los 100 caracteres.")]
         public required string Correo
         {
             get => _correo;
             set
             {
-                if (value.Length > 320)
+                if (string.IsNullOrWhiteSpace(value))
                 {
-                    throw new ArgumentException("El correo no puede exceder los 320 caracteres.");
+                    throw new ArgumentException("El correo es obligatorio.");
+                }
+                if (value.Length > 100)
+                {
+                    throw new ArgumentException("El correo no puede exceder los 100 caracteres.");
                 }
                 _correo = value;
             }
         }
 
-        private string _contrasena;
-        [Required(ErrorMessage = "El correor es obligatorio.")]
-        [StringLength(64, ErrorMessage = "La contrasena no puede exceder los 64 caracteres.")]
-        public required string Contrasena
+        [Required(ErrorMessage = "La contraseña es obligatoria.")]
+        [StringLength(50, ErrorMessage = "La contraseña no puede exceder los 50 caracteres.")]
+        public required string Contraseña
         {
-            get => _contrasena;
+            get => _contraseña;
             set
             {
-                if (value.Length > 64)
+                if (string.IsNullOrWhiteSpace(value))
                 {
-                    throw new ArgumentException("La contrasena no puede exceder los 64 caracteres.");
+                    throw new ArgumentException("La contraseña es obligatoria.");
                 }
-                _contrasena = value;
+                if (value.Length > 50)
+                {
+                    throw new ArgumentException("La contraseña no puede exceder los 50 caracteres.");
+                }
+                _contraseña = value;
             }
         }
 
-        private string _nombreUsuario;
-        [Required(ErrorMessage = "El nombre de usuario es obligatorio.")]
-        [StringLength(50, ErrorMessage = "El nombre de usuario no puede exceder los 50 caracteres.")]
-        public required string Nombre_Usuario
+        [Required(ErrorMessage = "El rol es obligatorio.")]
+        [StringLength(20, ErrorMessage = "El rol no puede exceder los 20 caracteres.")]
+        public required string Rol
         {
-            get => _contrasena;
+            get => _rol;
             set
             {
-                if (value.Length > 50)
+                if (string.IsNullOrWhiteSpace(value))
                 {
-                    throw new ArgumentException("El nombre de usuario no puede exceder los 50 caracteres.");
+                    throw new ArgumentException("El rol es obligatorio.");
                 }
-                _contrasena = value;
+                if (value.Length > 20)
+                {
+                    throw new ArgumentException("El rol no puede exceder los 20 caracteres.");
+                }
+                _rol = value;
             }
         }
-        [Required(ErrorMessage = "El campo 'EsAdmin' es obligatorio.")]
-        public required bool EsAdmin { get; set; }
+
+        [Required]
+        public required DateTime FechaRegistro { get; set; }
     }
 }
