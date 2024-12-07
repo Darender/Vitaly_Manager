@@ -6,7 +6,7 @@ namespace Vitaly_Manager.Entidades
     public class Gasto
     {
         [Key]
-        public required int idServicioGeneral { get; set; }
+        public required int idGasto { get; set; }
 
         [Required]
         public required string concepto { get; set; }

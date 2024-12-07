@@ -54,8 +54,61 @@ namespace Vitaly_Manager.Data
 
         }
 
-        public void ModificarGasto()
+        //Modifica un gasto ya existente en la base de datos, toma como parametro un objeto gasto
+        //con los nuevos valores y retorna un booleano y un string de respuesta
+        public bool ModificarGasto(Gasto gastoModificado, out string mensaje)
         {
+
+            try
+            {
+                //Se crea la conexión con la base de datos
+                using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
+                {
+                    //Se abre la conexion
+                    conexion.Open();
+
+                    //Se crea el query de modificacion
+                    string query = 
+                        @"UPDATE Gasto 
+                        SET 
+                        concepto = @Concepto, 
+                        monto = @Monto,
+                        fecha = @Fecha,
+                        idProductoComprado = @IdProductoComprado,
+                        WHERE idCliente = @IdGasto";
+
+                    //Se ejecuta el query de modificacion
+                    using (SqlCommand comando = new SqlCommand(query, conexion))
+                    {
+                        comando.Parameters.AddWithValue("@IdCliente", gastoModificado.idGasto);
+                        comando.Parameters.AddWithValue("@Concepto", gastoModificado.concepto);
+                        comando.Parameters.AddWithValue("@Monto", gastoModificado.monto);
+                        comando.Parameters.AddWithValue("@Fecha", gastoModificado.fecha);
+                        comando.Parameters.AddWithValue("@IdProductoComprado", gastoModificado.idProductoComprado ?? (object)DBNull.Value);
+
+                        comando.ExecuteNonQuery();
+                    }
+
+                    //Se cierra la conexion
+                    conexion.Close();
+                }
+
+                //se retorna true y un mensaje de exito
+                mensaje = "El gasto ha sido modificado exitosamente.";
+                return true;
+            }
+            catch (SqlException ex)
+            {
+                //Mensaje de error de Sql
+                mensaje = $"Error en la base de datos: {ex.Message}";
+                return false;
+            }
+            catch (Exception ex)
+            {
+                //Mensaje de error del sistema
+                mensaje = $"Error inesperado: {ex.Message}";
+                return false;
+            }
 
         }
 
