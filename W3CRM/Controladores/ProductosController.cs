@@ -81,6 +81,14 @@ namespace Vitaly_Manager.Controladores
             return Json(new { success = resultado, message = mensaje, errores = fallidos });
         }
 
+        [HttpDelete]
+        public IActionResult EliminarProducto(string id)
+        {
+            bool success = true;
+            string mensaje = "Prueva exitosa";
+            return Json(new { success, message = mensaje });
+        }
+
         /// <summary>
         /// Metodo encargado de conbertir el id de un tipo de producto al nombre de dicho tipo de producto
         /// </summary>
@@ -108,6 +116,9 @@ namespace Vitaly_Manager.Controladores
             return "ERROR NO ENCONTRADO";
         }
 
+        /// <summary>
+        /// Metodo encargado de conbertir el id de un tipo de unidad al nombre de dicho tipo de unidad
+        /// </summary>
         public string ObtenerTipoUnidad(int idTipoUnidad)
         {
             foreach (TipoUnidad item in ListaTipoUnidades)
