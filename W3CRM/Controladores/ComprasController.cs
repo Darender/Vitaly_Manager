@@ -6,11 +6,14 @@ namespace Vitaly_Manager.Controladores
 {
     public class ComprasController : Controller
     {
+
+        public List<LoteProducto> listaLoteProducto = DataLoteProducto.ListaLoteProducto(out _, out _);
+
         public IActionResult Index()
         {
             return View();
         }
-
+         
         /// <summary>
         /// Se encarga de devolver la vista para agregar un nuevo lote de producto.
         /// Obtiene las listas, ListaTipos y ListaProductos, así como el valor actual del IVA,
@@ -37,6 +40,102 @@ namespace Vitaly_Manager.Controladores
 
             return View();
         }
+
+        [HttpPost]
+        public JsonResult AgregarNuevoLoteProducto(int idCatalogoProd, decimal IVA, bool esMaterial, DateTime fechaIngreso, DateTime? fechaVencimiento, int cantidad, decimal precioVenta, decimal precioCompra, decimal margenGanancia)
+        {
+            bool resultado = false;
+            string mensaje = "Hubo un problema al agregar el lote de producto.";
+            List<string> fallidos = new List<string>();
+
+            try
+            {
+                // Validación de ID del catálogo de producto
+                if (idCatalogoProd <= 0)
+                {
+                    mensaje = "El ID del catálogo de producto debe ser mayor a 0.";
+                    fallidos.Add("idCatalogoProd");
+                }
+
+                // Validación del IVA
+                if (IVA < 0 || IVA > 100)
+                {
+                    mensaje = "El IVA debe estar entre 0 y 100.";
+                    fallidos.Add("IVA");
+                }
+
+                // Validación de la fecha de ingreso
+                if (fechaIngreso > DateTime.Now)
+                {
+                    mensaje = "La fecha de ingreso no puede ser futura.";
+                    fallidos.Add("fechaIngreso");
+                }
+
+                // Validación de la fecha de vencimiento
+                if (fechaVencimiento.HasValue && fechaVencimiento <= fechaIngreso)
+                {
+                    mensaje = "La fecha de vencimiento debe ser posterior a la fecha de ingreso.";
+                    fallidos.Add("fechaVencimiento");
+                }
+
+                // Validación de cantidad
+                if (cantidad <= 0)
+                {
+                    mensaje = "La cantidad debe ser mayor a 0.";
+                    fallidos.Add("cantidad");
+                }
+
+                // Validación de precios
+                if (precioCompra <= 0)
+                {
+                    mensaje = "El precio de compra debe ser mayor a 0.";
+                    fallidos.Add("precioCompra");
+                }
+                if (precioVenta <= 0)
+                {
+                    mensaje = "El precio de venta debe ser mayor a 0.";
+                    fallidos.Add("precioVenta");
+                }
+                if (margenGanancia < 0)
+                {
+                    mensaje = "El margen de ganancia no puede ser negativo.";
+                    fallidos.Add("margenGanancia");
+                }
+
+                if (fallidos.Count == 0)
+                {
+                    LoteProducto nuevo = new LoteProducto
+                    {
+                        ID_CatalogoProducto = idCatalogoProd,
+                        IVA = IVA,
+                        EsMaterial = esMaterial,
+                        Fecha_Ingreso = fechaIngreso,
+                        Fecha_Vencimiento = fechaVencimiento ?? default(DateTime),
+                        Cantidad = cantidad,
+                        Precio_Venta = precioVenta,
+                        Precio_Compra = precioCompra,
+                        Margen_Ganancia = margenGanancia
+                    };
+
+                    resultado = DataLoteProducto.Agregar(nuevo, out mensaje);
+                }
+            }
+            catch (Exception ex)
+            {
+                resultado = false;
+                mensaje = $"Error al agregar el lote de producto: {ex.Message}";
+            }
+
+            return Json(new { success = resultado, message = mensaje, errores = fallidos });
+        }
+
+
+
+
+
+
+
+
 
         /// <summary>
         /// Fórmula que incluye el precio de compra, el margen de ganancia y el IVA.
@@ -73,11 +172,24 @@ namespace Vitaly_Manager.Controladores
             }
         }
 
-
+        //SECCION DE CONSULTA//
         public IActionResult ConsultarLoteProducto()
         {
-            ComprasController controlador = new ComprasController();
-            return View(controlador);
+            string mensaje;
+            bool exito;
+
+            // Consulta la lista de lotes de producto
+            var listaLoteProducto = DataLoteProducto.ListaLoteProducto(out exito, out mensaje);
+
+            if (!exito)
+            {
+                ViewData["Error"] = mensaje;
+                return View(new List<LoteProducto>());
+            }
+
+            // Pasa la lista de lotes a la vista en caso de éxito
+            return View(listaLoteProducto);
         }
+
     }
 }

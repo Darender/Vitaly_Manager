@@ -28,10 +28,11 @@
                 <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Nuevo lote de productos</h4>
-                    </div>
+                        <form method="post" action="/Compras/AgregarNuevoLoteProducto">
+                      </div>
                     <div class="card-body">
-                        <form class="needs-validation w-100" action="/ComprasController/AgregarNuevoLoteProducto" method="post" novalidate id="formulario">
-                            <input type="hidden" id="formulario_id" name="ID" value="0">
+                        <div class="form-validation">
+                        <div class="container-fluid p-0">
                        
                             <!-- Tipo -->
                             <div class="row mb-3">
@@ -55,7 +56,7 @@
                                         <option selected disabled value="">Por favor seleccione</option>
                                         @foreach (var producto in ViewBag.ListaProductos)
                                         {
-                                            <option value="@producto.ID_Producto">@producto.Nombre_Producto</option>
+                                        <option value="@producto.ID_CatalogoProducto">@producto.Nombre_Producto</option>
                                         }
                                     </select>
                                 </div>
@@ -189,101 +190,78 @@
     <script src="~/w3crm/js/deznav-init.js"></script>
     <script src="~/w3crm/js/demo.js"></script>
 
-
-
-    <script>
-        hljs.highlightAll();
-        hljs.configure({ ignoreUnescapedHTML: true })
-
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-            document.querySelectorAll('pre code').forEach((el) => {
-                hljs.highlightElement(el);
-            });
-        });
-    </script>
-
     <script>
 
+document.addEventListener('DOMContentLoaded', (event) => {
+    const form = document.getElementById('form-lote-producto');
 
-        document.getElementById("formulario").addEventListener("submit", function (event) {
-            event.preventDefault();
-            enviarDatos();
-        });
+    form.addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevenir el envío normal del formulario
 
-        function enviarDatos() {
-            const tipo = document.getElementById("formulario_tipo").value;
-            const productoId = document.getElementById("formulario_producto").value;
-            const cantidad = document.getElementById("formulario_cantidad").value;
-            const costo = document.getElementById("formulario_costo").value;
-            const vencimiento = document.getElementById("formulario_vencimiento").value;
-            const esMaterial = document.getElementById("formulario_material").checked;
-            const margenGanancia = document.getElementById("formulario_margen").value;
-            const precioVenta = document.getElementById("formulario_precio").value;
+        // Obtener valores del formulario
+        const catalogoProducto = document.getElementById("catalogoProducto").value;
+        const iva = document.getElementById("iva").value;
+        const esMaterial = document.getElementById("esMaterial").value;
+        const fechaIngreso = document.getElementById("fechaIngreso").value;
+        const fechaVencimiento = document.getElementById("fechaVencimiento").value;
+        const cantidad = document.getElementById("cantidad").value;
+        const precioVenta = document.getElementById("precioVenta").value;
+        const precioCompra = document.getElementById("precioCompra").value;
+        const margenGanancia = document.getElementById("margenGanancia").value;
 
-            // Verifica que los campos requeridos no estén vacíos
-            if (!tipo || !productoId) {
-                alert("Por favor, selecciona el tipo y el producto antes de enviar.");
-                return;
-            }
-
-            // Para construir la URL con todos los parámetros
-            const url = `/ComprasController/AgregarNuevoLoteProducto?Tipo=${encodeURIComponent(tipo)}&Producto_id=${encodeURIComponent(productoId)}&Cantidad=${encodeURIComponent(cantidad)}&Costo=${encodeURIComponent(costo)}&Vencimiento=${encodeURIComponent(vencimiento)}&EsMaterial=${esMaterial}&MargenGanancia=${encodeURIComponent(margenGanancia)}&PrecioVenta=${encodeURIComponent(precioVenta)}`;
-
-            fetch(url, {
-                method: 'GET'
-            })
-                .then(response => response.json())
-                .then(data => { console.log(data); resetFormulario(); })
-                .catch(error => console.error('Error:', error));
-        }
-        function resetFormulario() {
-            const formulario = document.getElementById("formulario");
-            formulario.reset(); // Reinicia todos los campos del formulario
-
-            // Elimina marcas de error 
-            const inputs = formulario.querySelectorAll("input, select");
-            inputs.forEach(input => {
-                input.classList.remove("error"); 
-                input.nextElementSibling?.remove(); // Elimina el mensaje de error 
-            });
-
-            const productoSelect = document.getElementById("formulario_producto");
-            productoSelect.innerHTML = '<option selected disabled value="">Por favor seleccione</option>'; // Resetea el select de productos
+        // Validación del formulario
+        if (!form.checkValidity()) {
+            event.stopPropagation();
+            form.classList.add('was-validated');
+            return;
         }
 
-
-function cargarProductos() {
-    return new Promise((resolve, reject) => {
-        var tipoSeleccionado = document.getElementById("formulario_tipo").value;
-
-        fetch('/ComprasController/ObtenerProductosPorTipo?tipo=' + tipoSeleccionado)
-            .then(response => response.json()) 
-            .then(data => {
-                if (!data || data.length === 0) {
-                    throw new Error('No se encontraron productos.');
+        // Envío mediante AJAX
+        $.ajax({
+            url: '/Compras/AgregarNuevoLoteProducto',
+            type: 'POST',
+            data: {
+                idCatalogoProd: catalogoProducto,
+                IVA: iva,
+                esMaterial: esMaterial === "true",
+                fechaIngreso: fechaIngreso,
+                fechaVencimiento: fechaVencimiento || null,
+                cantidad: cantidad,
+                precioVenta: precioVenta,
+                precioCompra: precioCompra,
+                margenGanancia: margenGanancia
+            },
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Lote agregado!',
+                        text: response.message,
+                        confirmButtonText: 'Aceptar'
+                    }).then((result) => {
+                        form.reset();
+                        form.classList.remove('was-validated');
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.message,
+                        confirmButtonText: 'Aceptar'
+                    });
                 }
-
-                var selectProductos = document.getElementById("formulario_producto");
-                selectProductos.innerHTML = '<option selected disabled value="">Por favor seleccione</option>';
-
-                data.forEach(producto => {
-                    var option = document.createElement("option");
-                    option.text = producto.nombre;
-                    option.value = producto.iD_Producto;
-                    selectProductos.appendChild(option);
+            },
+            error: function (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Hubo un problema al enviar los datos.',
+                    confirmButtonText: 'Aceptar'
                 });
-
-                resolve();
-            })
-            .catch(error => {
-                console.error('Error al obtener productos:', error);
-                reject(error);
-            });
+            }
+        });
     });
-}
+});
 
 document.getElementById("formulario_costo").addEventListener("input", calcularPrecioVenta);
 document.getElementById("formulario_margen").addEventListener("input", calcularPrecioVenta);

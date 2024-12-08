@@ -55,5 +55,65 @@ namespace Vitaly_Manager.Data
                 return false;
             }
         }
+
+
+
+        // LISTA PARA CONSULTA
+        public static List<LoteProducto> ListaLoteProducto(out bool exito, out string mensaje)
+        {
+            List<LoteProducto> listaLoteProducto = new List<LoteProducto>();
+            exito = true;  // Si la consulta es exitosa
+            mensaje = string.Empty;  // Mensaje vacío por defecto
+
+            try
+            {
+                using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
+                {
+                    conexion.Open();
+
+                    string query = @"SELECT idCatalogoProd, IVA, esMaterial, fechaIngreso, fechaVencimiento, cantidad, precioVenta, precioCompra, margenGanancia 
+                             FROM LoteProducto";
+
+                    using (SqlCommand comando = new SqlCommand(query, conexion))
+                    {
+                        SqlDataReader lector = comando.ExecuteReader();
+
+                        while (lector.Read())
+                        {
+                            LoteProducto lote = new LoteProducto
+                            {
+                                ID_CatalogoProducto = Convert.ToInt32(lector["idCatalogoProd"]),
+                                IVA = Convert.ToDecimal(lector["IVA"]),
+                                EsMaterial = Convert.ToBoolean(lector["esMaterial"]),
+                                Fecha_Ingreso = Convert.ToDateTime(lector["fechaIngreso"]),
+                                Fecha_Vencimiento = Convert.ToDateTime(lector["fechaVencimiento"]),
+                                Cantidad = Convert.ToInt32(lector["cantidad"]),
+                                Precio_Venta = Convert.ToDecimal(lector["precioVenta"]),
+                                Precio_Compra = Convert.ToDecimal(lector["precioCompra"]),
+                                Margen_Ganancia = Convert.ToDecimal(lector["margenGanancia"])
+                            };
+
+                            listaLoteProducto.Add(lote);
+                        }
+                    }
+
+                    mensaje = "Consulta realizada exitosamente.";
+                }
+            }
+            catch (SqlException ex)
+            {
+                exito = false;
+                mensaje = "Error en la base de datos: " + ex.Message;
+            }
+            catch (Exception ex)
+            {
+                exito = false;
+                mensaje = "Error inesperado: " + ex.Message;
+            }
+
+            return listaLoteProducto;
+        }
+
+
     }
 }
