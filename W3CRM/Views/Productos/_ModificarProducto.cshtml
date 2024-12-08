@@ -1,0 +1,120 @@
+﻿@using System.Globalization
+@using Vitaly_Manager.Entidades
+<div class="modal fade" id="modificarProducto" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-center">
+		<div class="modal-content">
+			<div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Modificar Producto</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-xl-12">
+                        <div class="form-validation">
+                            <div class="container-fluid p-0">
+                                <form class="needs-validation w-100" method="post" novalidate id="formularioModificarProducto">
+                                    <input type="number" class="form-control" id="idClienteModificar" style="visibility: hidden; display: none;">
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-5 col-form-label" for="nombreproducto">
+                                            Nombre del producto
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-lg-7">
+                                            <input type="text" class="form-control" id="nombreproducto" placeholder="Inserte nombre.." required>
+                                            <div class="invalid-feedback">
+                                                Porfavor inserte el nombre del producto.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-5 col-form-label" for="proveedor">
+                                            Proveedor
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-lg-7">
+                                            <select class="form-select" id="proveedor" required>
+                                                <option value="" selected disabled>Seleccione un proveedor</option>
+                                                @foreach (Proveedor proveedor in Model.ListaProveedores)
+                                                {
+                                                    <option value="@proveedor.ID_Proveedor">@proveedor.Nombre_Proveedor</option>
+                                                }
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Por favor seleccione un proveedor.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-5 col-form-label" for="tipoproducto">
+                                            Tipo de Producto
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-lg-7">
+                                            <select class="form-select" id="tipoproducto" required>
+                                                <option value="" selected disabled>Seleccione un tipo de producto</option>
+                                                @foreach (TipoProducto item in Model.ListasTipoProductos)
+                                                {
+                                                    <option value="@item.ID_TipoProducto">@item.Nombre_Tipo_Producto</option>
+                                                }
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Por favor seleccione un tipo de producto.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-5 col-form-label" for="paginaProducto">
+                                            Página del Producto
+                                        </label>
+                                        <div class="col-lg-7">
+                                            <textarea class="form-control" id="paginaProducto" placeholder="Escriba información del producto..."></textarea>
+                                            <div class="invalid-feedback">
+                                                Por favor escriba información válida del producto.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-5 col-form-label" for="cantidadUnitaria">
+                                            Cantidad Unitaria
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-lg-7">
+                                            <input type="number" class="form-control" id="cantidadUnitaria" placeholder="Inserte cantidad unitaria.." step="0.01" required>
+                                            <div class="invalid-feedback">
+                                                Por favor inserte una cantidad válida.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-5 col-form-label" for="tipounidad">
+                                            Tipo de Unidad
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-lg-7">
+                                            <select class="form-select" id="tipounidad" required>
+                                                <option value="" selected disabled>Seleccione un tipo de unidad</option>
+                                                @foreach (TipoUnidad item in Model.ListaTipoUnidades)
+                                                {
+                                                    <option value="@item.ID_TipoUnidad">@item.Unidad_Medida</option>
+                                                }
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Por favor seleccione un tipo de unidad.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-12 row">
+                                        <div class="col-lg-12">
+                                            <button type="submit" class="btn btn-primary py-2 w-100" id="boton_agregar">Modificar</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>    
