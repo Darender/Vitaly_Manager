@@ -82,10 +82,20 @@ namespace Vitaly_Manager.Controladores
         }
 
         [HttpDelete]
-        public IActionResult EliminarProducto(string id)
+        public IActionResult EliminarProducto(int id)
         {
-            bool success = true;
-            string mensaje = "Prueva exitosa";
+            bool success = false;
+            string mensaje = "Error al eliminar el producto";
+
+            foreach(LoteProducto lote in DataLoteProducto.ListaLoteProducto(out _, out _))
+            {
+                if(lote.ID_CatalogoProducto == id)
+                {
+                    return Json(new { success = false, message = "Error: el producto ya es utilizado en un lote de producto" });
+                }
+            }
+
+            success = DataCatalogoProducto.Eliminar(id, out mensaje);
             return Json(new { success, message = mensaje });
         }
 
@@ -127,6 +137,12 @@ namespace Vitaly_Manager.Controladores
                     return item.Unidad_Medida;
             }
             return "ERROR NO ENCONTRADO";
+        }
+
+        [HttpGet]
+        public JsonResult ObtenerProductosActualizados()
+        {
+            return Json(new { success = true, data = ListaProductos });
         }
     }
 }

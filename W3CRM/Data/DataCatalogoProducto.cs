@@ -5,6 +5,44 @@ namespace Vitaly_Manager.Data
 {
     public static class DataCatalogoProducto
     {
+        public static bool Eliminar(int id, out string respuesta)
+        {
+            try
+            {
+                using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
+                {
+                    conexion.Open();
+
+                    // Confirma que exista el id en la base de datos
+                    string queryExiste = $"SELECT COUNT(1) FROM catalogoProducto WHERE idCatalogoProd = {id}";
+                    SqlCommand cmdExiste = new SqlCommand(queryExiste, conexion);
+                    int existe = (int)cmdExiste.ExecuteScalar();
+
+                    if (existe == 0)
+                    {
+                        respuesta = "No se encontro el id del producto en la base de datos";
+                        return false;
+                    }
+
+                    string queryEliminar = $"DELETE FROM CatalogoProducto WHERE idCatalogoProd = {id}";
+                    new SqlCommand(queryEliminar, conexion).ExecuteNonQuery();
+                    conexion.Close();
+                }
+                respuesta = "Se elimino exitosamente el producto";
+                return true;
+            }
+            catch (SqlException ex)
+            {
+                respuesta = $"Error en la base de datos (SqlException): {ex.Message}";
+                return false;
+            }
+            catch (Exception ex)
+            {
+                respuesta = $"Error inesperado (Exception): {ex.Message}";
+                return false;
+            }
+        }
+
         public static bool Agregar(CatalogoProducto nuevo, out string mensaje)
         {
             try
