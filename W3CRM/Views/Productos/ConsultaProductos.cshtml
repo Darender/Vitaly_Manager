@@ -149,6 +149,107 @@
     </script>
 
     <script>
+        function modificarClientes(idProducto) {
+            $.ajax({
+                url: '/Productos/SeleccionarProductoModificar',
+                type: 'GET',
+                data: { id: idProducto },
+                success: function (response) {
+                    document.getElementById('idProductoModificar').value = idProducto;
+                    document.getElementById('nombreproductoModificar').value = response.nombre_Producto;
+                    document.getElementById('proveedorModificar').value = response.iD_Proveedor;
+                    document.getElementById('tipoproductoModificar').value = response.iD_TipoProducto;
+                    document.getElementById('paginaProductoModificar').value = response.pagina_Producto;
+                    document.getElementById('cantidadUnitariaModificar').value = response.cantidad_Unidades;
+                    document.getElementById('tipounidadModificar').value = response.iD_TipoUnidad;
+                },
+                error: function (error) {
+                    console.error('Error al obtener los datos del producto:', error);
+                }
+            });
+        }
+
+        (function () {
+            'use strict';
+
+            var form = document.getElementById('formularioModificarProducto');
+            const idProducto = document.getElementById('idProductoModificar');
+            const nombre_Producto = document.getElementById("nombreproductoModificar");
+            const iD_Proveedor = document.getElementById("proveedorModificar");
+            const iD_TipoProducto = document.getElementById("tipoproductoModificar");
+            const pagina_Producto = document.getElementById("paginaProductoModificar");
+            const cantidad_Unidades = document.getElementById("cantidadUnitariaModificar");
+            const iD_TipoUnidad = document.getElementById("tipounidadModificar");
+
+            if (form) {
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault();
+
+                    nombre_Producto.classList.remove('is-invalid');
+                    iD_Proveedor.classList.remove('is-invalid');
+                    iD_TipoProducto.classList.remove('is-invalid');
+                    pagina_Producto.classList.remove('is-invalid');
+                    cantidad_Unidades.classList.remove('is-invalid');
+                    iD_TipoUnidad.classList.remove('is-invalid');
+
+                    if (!form.checkValidity()) {
+                        event.stopPropagation();
+                        form.classList.add('was-validated');
+                    } else {
+                        $.ajax({
+                            url: '/Productos/ModificarProducto',
+                            type: 'POST',
+                            data: {
+                                idSeleccionado: idProducto.value,
+                                nombre: nombre_Producto.value,
+                                tipoProducto: iD_TipoProducto.value,
+                                proveedor: iD_Proveedor.value,
+                                paginaProducto: pagina_Producto.value,
+                                cantidadUnitaria: cantidad_Unidades.value,
+                                tipounidad: iD_TipoUnidad.value,
+                            },
+                            success: function (response) {
+                                if (response.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: '¡Producto modificado!',
+                                        text: response.message,
+                                        confirmButtonText: 'Aceptar'
+                                    }).then((result) => {
+                                        form.reset();
+                                        form.classList.remove('was-validated');
+                                        $('#modificarProducto').modal('hide');
+                                        recargarTablaProductos();
+                                    });
+                                } else {
+                                    if (response.errores.includes("nombre")) {
+                                        nombre_Producto.classList.add('is-invalid');
+                                    }
+                                    if (response.errores.includes("cantidad")) {
+                                        cantidad_Unidades.classList.add('is-invalid');
+                                    }
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: response.message,
+                                        confirmButtonText: 'Aceptar'
+                                    });
+                                }
+                            },
+                            error: function (error) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Hubo un error al comunicarse con el servidor.',
+                                    confirmButtonText: 'Aceptar'
+                                });
+                            }
+                        });
+                    }
+                }, false);
+            }
+        })();
+
         function recargarTablaProductos() {
             $.ajax({
                 url: '/Productos/ObtenerProductosActualizados',
@@ -160,17 +261,17 @@
 
                         response.data.forEach(function (producto) {
                             var fila = `
-                            <tr id="${producto.ID_CatalogoProducto}">
-                                < td >${producto.Nombre_Producto} </td >
-                                <td>${Model.ObtenerTipoProducto(producto.ID_TipoProducto)}</td>
-                                <td>${Model.ObtenerProveedor(producto.ID_Proveedor)}</td>
-                                <td>${producto.Cantidad_Unidades}</td>
-                                <td>${Model.ObtenerTipoUnidad(producto.ID_TipoUnidad)}</td>
-                                <td>${producto.Pagina_Producto}</td>
+                            <tr id="${producto.iD_CatalogoProducto}">
+                                <td>${producto.nombre_Producto}</td>
+                                <td>${producto.tipoProducto}</td>
+                                <td>${producto.proveedor}</td>
+                                <td>${producto.cantidad_Unidades}</td>
+                                <td>${producto.tipoUnidad}</td>
+                                <td>${producto.pagina_Producto}</td>
                                 <td>
                                     <div class="d-flex">
-                                                <a href="#javascript:void(0)" class="btn btn-primary shadow btn-xs sharp me-1" data-bs-toggle="modal" data-bs-target="#modificarProducto" onclick="modificarProducto('${producto.ID_CatalogoProducto}')"><i class="fas fa-pencil-alt"></i></a>
-                                        <a href="#" class="btn btn-danger shadow btn-xs sharp" onclick="eliminarProducto('${producto.ID_CatalogoProducto}')"><i class="fa fa-trash"></i></a>
+                                        <a href="javascript:void(0)" class="btn btn-primary shadow btn-xs sharp me-1" data-bs-toggle="modal" data-bs-target="#modificarProducto" onclick="modificarClientes('${producto.iD_CatalogoProducto}')"><i class="fas fa-pencil-alt"></i></a>
+                                        <a href="javascript:void(0)" class="btn btn-danger shadow btn-xs sharp" onclick="eliminarProducto('${producto.iD_CatalogoProducto}')"><i class="fa fa-trash"></i></a>
                                     </div>
                                 </td>
                             </tr>

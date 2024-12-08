@@ -75,7 +75,7 @@ namespace Vitaly_Manager.Controladores
             catch (Exception ex)
             {
                 resultado = false;
-                mensaje = $"Error al agregar el cliente: {ex.Message}";
+                mensaje = $"Error al agregar el producto: {ex.Message}";
             }
 
             return Json(new { success = resultado, message = mensaje, errores = fallidos });
@@ -142,7 +142,97 @@ namespace Vitaly_Manager.Controladores
         [HttpGet]
         public JsonResult ObtenerProductosActualizados()
         {
-            return Json(new { success = true, data = ListaProductos });
+            var productosActualizados = ListaProductos.Select(producto => new
+            {
+                producto.ID_CatalogoProducto,
+                producto.Nombre_Producto,
+                TipoProducto = ObtenerTipoProducto(producto.ID_TipoProducto), // Convertir ID a nombre
+                Proveedor = ObtenerProveedor(producto.ID_Proveedor),         // Convertir ID a nombre
+                producto.Cantidad_Unidades,
+                TipoUnidad = ObtenerTipoUnidad(producto.ID_TipoUnidad),      // Convertir ID a nombre
+                producto.Pagina_Producto
+            }).ToList();
+
+            return Json(new { success = true, data = productosActualizados });
         }
+
+
+        [HttpGet]
+        public IActionResult SeleccionarProductoModificar(int id)
+        {
+            CatalogoProducto producto = ListaProductos[0];
+            foreach (CatalogoProducto valor in ListaProductos)
+            {
+                if (valor.ID_CatalogoProducto == id)
+                {
+                    producto = valor;
+                    break;
+                }
+            }
+
+            return Json(producto);
+        }
+
+        [HttpPost]
+        public JsonResult ModificarProducto(int idSeleccionado, string nombre, int tipoProducto, int proveedor, string? paginaProducto, string cantidadUnitaria, int tipounidad)
+        {
+            bool resultado = false;
+            string mensaje = "Hubo un problema al agregar el cliente.";
+            List<string> fallidos = new List<string>();
+
+            try
+            {
+                // Validación del nombre
+                if (string.IsNullOrWhiteSpace(nombre))
+                {
+                    mensaje = "El nombre no puede estar vacío.";
+                    fallidos.Add("nombre");
+                }
+                else if (nombre.Length < 3 || nombre.Length > 100)
+                {
+                    mensaje = "El nombre debe tener entre 3 y 100 caracteres.";
+                    fallidos.Add("nombre");
+                }
+
+                int cantidadNumerica = 0;
+                // Validación de edad
+                if (!string.IsNullOrWhiteSpace(cantidadUnitaria))
+                {
+                    int temp;
+                    if (!int.TryParse(cantidadUnitaria, out temp))
+                    {
+                        mensaje = "La cantidad debe ser un número válido.";
+                        fallidos.Add("cantidad");
+                    }
+                    cantidadNumerica = temp;
+                }
+
+
+                if (fallidos.Count == 0)
+                {
+                    CatalogoProducto nuevo = new CatalogoProducto
+                    {
+                        ID_CatalogoProducto = idSeleccionado,
+                        Nombre_Producto = nombre,
+                        Cantidad_Unidades = cantidadNumerica,
+                        Pagina_Producto = paginaProducto,
+                        ID_Proveedor = proveedor,
+                        ID_TipoUnidad = tipounidad,
+                        ID_TipoProducto = tipoProducto
+
+                    };
+
+                    resultado = DataCatalogoProducto.Modificar(nuevo, out mensaje);
+                }
+            }
+            catch (Exception ex)
+            {
+                resultado = false;
+                mensaje = $"Error al modificar el producto: {ex.Message}";
+            }
+
+            return Json(new { success = resultado, message = mensaje, errores = fallidos });
+        }
+
     }
 }

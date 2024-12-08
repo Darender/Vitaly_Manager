@@ -5,6 +5,52 @@ namespace Vitaly_Manager.Data
 {
     public static class DataCatalogoProducto
     {
+        public static bool Modificar(CatalogoProducto modificado, out string mensaje)
+        {
+            try 
+            {
+                using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
+                {
+                    conexion.Open();
+
+                    string query = @"UPDATE CatalogoProducto 
+                             SET nombreProducto = @NombreProducto, 
+                                 cantidadUnidades = @CantidadUnidades, 
+                                 paginaProducto = @PaginaProducto, 
+                                 idProveedor = @IdProveedor, 
+                                 idTipoUnidad = @IdTipoUnidad, 
+                                 idTipoProd = @IdTipoProd
+                             WHERE idCatalogoProd = @IdProducto";
+
+                    using (SqlCommand comando = new SqlCommand(query, conexion))
+                    {
+                        comando.Parameters.AddWithValue("@NombreProducto", modificado.Nombre_Producto);
+                        comando.Parameters.AddWithValue("@CantidadUnidades", modificado.Cantidad_Unidades);
+                        comando.Parameters.AddWithValue("@PaginaProducto", modificado.Pagina_Producto ?? (object)DBNull.Value);
+                        comando.Parameters.AddWithValue("@IdProveedor", modificado.ID_Proveedor);
+                        comando.Parameters.AddWithValue("@IdTipoUnidad", modificado.ID_TipoUnidad);
+                        comando.Parameters.AddWithValue("@IdTipoProd", modificado.ID_TipoProducto);
+                        comando.Parameters.AddWithValue("@IdProducto", modificado.ID_CatalogoProducto);
+                        comando.ExecuteNonQuery();
+                    }
+
+                    conexion.Close();
+                }
+                mensaje = $"El producto {modificado.Nombre_Producto} ha sido modificado exitosamente.";
+                return true;
+            }
+            catch (SqlException ex)
+            {
+                mensaje = $"Error en la base de datos: {ex.Message}";
+                return false;
+            }
+            catch (Exception ex)
+            {
+                mensaje = $"Error inesperado: {ex.Message}";
+                return false;
+            }
+        }
+
         public static bool Eliminar(int id, out string respuesta)
         {
             try

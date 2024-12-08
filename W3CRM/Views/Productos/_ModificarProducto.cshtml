@@ -13,26 +13,26 @@
                         <div class="form-validation">
                             <div class="container-fluid p-0">
                                 <form class="needs-validation w-100" method="post" novalidate id="formularioModificarProducto">
-                                    <input type="number" class="form-control" id="idClienteModificar" style="visibility: hidden; display: none;">
+                                    <input type="number" class="form-control" id="idProductoModificar" style="visibility: hidden; display: none;">
                                     <div class="mb-3 row">
-                                        <label class="col-lg-5 col-form-label" for="nombreproducto">
+                                        <label class="col-lg-5 col-form-label" for="nombreproductoModificar">
                                             Nombre del producto
                                             <span class="text-danger">*</span>
                                         </label>
                                         <div class="col-lg-7">
-                                            <input type="text" class="form-control" id="nombreproducto" placeholder="Inserte nombre.." required>
+                                            <input type="text" class="form-control" id="nombreproductoModificar" placeholder="Inserte nombre.." required>
                                             <div class="invalid-feedback">
                                                 Porfavor inserte el nombre del producto.
                                             </div>
                                         </div>
                                     </div>
                                     <div class="mb-3 row">
-                                        <label class="col-lg-5 col-form-label" for="proveedor">
+                                        <label class="col-lg-5 col-form-label" for="proveedorModificar">
                                             Proveedor
                                             <span class="text-danger">*</span>
                                         </label>
                                         <div class="col-lg-7">
-                                            <select class="form-select" id="proveedor" required>
+                                            <select class="form-select" id="proveedorModificar" required>
                                                 <option value="" selected disabled>Seleccione un proveedor</option>
                                                 @foreach (Proveedor proveedor in Model.ListaProveedores)
                                                 {
@@ -46,12 +46,12 @@
                                     </div>
 
                                     <div class="mb-3 row">
-                                        <label class="col-lg-5 col-form-label" for="tipoproducto">
+                                        <label class="col-lg-5 col-form-label" for="tipoproductoModificar">
                                             Tipo de Producto
                                             <span class="text-danger">*</span>
                                         </label>
                                         <div class="col-lg-7">
-                                            <select class="form-select" id="tipoproducto" required>
+                                            <select class="form-select" id="tipoproductoModificar" required>
                                                 <option value="" selected disabled>Seleccione un tipo de producto</option>
                                                 @foreach (TipoProducto item in Model.ListasTipoProductos)
                                                 {
@@ -64,35 +64,35 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 row">
-                                        <label class="col-lg-5 col-form-label" for="paginaProducto">
+                                        <label class="col-lg-5 col-form-label" for="paginaProductoModificar">
                                             Página del Producto
                                         </label>
                                         <div class="col-lg-7">
-                                            <textarea class="form-control" id="paginaProducto" placeholder="Escriba información del producto..."></textarea>
+                                            <textarea class="form-control" id="paginaProductoModificar" placeholder="Escriba información del producto..."></textarea>
                                             <div class="invalid-feedback">
                                                 Por favor escriba información válida del producto.
                                             </div>
                                         </div>
                                     </div>
                                     <div class="mb-3 row">
-                                        <label class="col-lg-5 col-form-label" for="cantidadUnitaria">
+                                        <label class="col-lg-5 col-form-label" for="cantidadUnitariaModificar">
                                             Cantidad Unitaria
                                             <span class="text-danger">*</span>
                                         </label>
                                         <div class="col-lg-7">
-                                            <input type="number" class="form-control" id="cantidadUnitaria" placeholder="Inserte cantidad unitaria.." step="0.01" required>
+                                            <input type="number" class="form-control" id="cantidadUnitariaModificar" placeholder="Inserte cantidad unitaria.." step="0.01" required>
                                             <div class="invalid-feedback">
                                                 Por favor inserte una cantidad válida.
                                             </div>
                                         </div>
                                     </div>
                                     <div class="mb-3 row">
-                                        <label class="col-lg-5 col-form-label" for="tipounidad">
+                                        <label class="col-lg-5 col-form-label" for="tipounidadModificar">
                                             Tipo de Unidad
                                             <span class="text-danger">*</span>
                                         </label>
                                         <div class="col-lg-7">
-                                            <select class="form-select" id="tipounidad" required>
+                                            <select class="form-select" id="tipounidadModificar" required>
                                                 <option value="" selected disabled>Seleccione un tipo de unidad</option>
                                                 @foreach (TipoUnidad item in Model.ListaTipoUnidades)
                                                 {
