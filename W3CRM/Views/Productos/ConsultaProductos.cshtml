@@ -1,0 +1,334 @@
+﻿@using System.Globalization
+@using Vitaly_Manager.Entidades
+@using W3CRM.Controllers
+@{
+    ViewData["Title"] = "Consulta Productos";
+}
+<!--**********************************
+	Content body start
+***********************************-->
+
+
+<div class="content-body">
+    <div class="page-titles">
+        <ol class="breadcrumb">
+            <li><h5 class="bc-title">Productos</h5></li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Index", "w3crm")">
+                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2.125 6.375L8.5 1.41667L14.875 6.375V14.1667C14.875 14.5424 14.7257 14.9027 14.4601 15.1684C14.1944 15.4341 13.8341 15.5833 13.4583 15.5833H3.54167C3.16594 15.5833 2.80561 15.4341 2.53993 15.1684C2.27426 14.9027 2.125 14.5424 2.125 14.1667V6.375Z" stroke="#2C2C2C" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M6.375 15.5833V8.5H10.625V15.5833" stroke="#2C2C2C" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Inicio
+                </a>
+            </li>
+            <li class="breadcrumb-item active"><a href="javascript:void(0)">Productos</a></li>
+            <li class="breadcrumb-item active"><a href="javascript:void(0)">Consulta de Productos</a></li>
+        </ol>
+    </div>
+    <div class="container-fluid">
+        <div class="tab-content" id="myTabContent-2">
+            <div class="tab-pane fade show active" id="withoutSpace" role="tabpanel" aria-labelledby="home-tab-2">
+                <div class="card-body pt-0">
+		            <div class="table-responsive">
+						<table id="example3" class="display table" style="min-width: 845px">
+				            <thead>
+					            <tr>
+						            <th>Nombre</th>
+                                    <th>Tipo de Producto</th>
+                                    <th>Proveedor</th>
+						            <th>Cantidad Unidades</th>
+                                    <th>Tipo Unidad</th>
+						            <th>Pagina del Producto</th>
+						            <th>Accion</th>
+					            </tr>
+				            </thead>
+				            <tbody>
+                                @foreach (CatalogoProducto producto in Model.ListaProductos)
+                                {
+                                    <tr id="@producto.ID_CatalogoProducto">
+                                        <td>@producto.Nombre_Producto</td>
+                                        <td>@Model.ObtenerTipoProducto(producto.ID_TipoProducto)</td>
+                                        <td>@Model.ObtenerProveedor(producto.ID_Proveedor)</td>
+                                        <td>@producto.Cantidad_Unidades</td>
+                                        <td>@Model.ObtenerTipoUnidad(producto.ID_TipoUnidad)</td>
+                                        <td>@producto.Pagina_Producto</td>
+                                        <td>
+                                            <div class="d-flex">
+                                                <a href="#javascript:void(0)" class="btn btn-primary shadow btn-xs sharp me-1" data-bs-toggle="modal" data-bs-target="#modificarProducto" onclick="modificarClientes('@producto.ID_CatalogoProducto')"><i class="fas fa-pencil-alt"></i></a>
+                                                <a href="#" class="btn btn-danger shadow btn-xs sharp" onclick="eliminarProducto('@producto.ID_CatalogoProducto')"><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+				            </tbody>
+			            </table>
+		            </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--**********************************
+	Content body end
+***********************************-->
+@section w3crm_style
+	{
+    <link href="~/w3crm/vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+	<link href="~/w3crm/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+
+        <!-- Daterange picker -->
+    <link href="~/w3crm/vendor/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+
+    <!-- Pick date -->
+    <link rel="stylesheet" href="~/w3crm/vendor/pickadate/themes/default.css">
+    <link rel="stylesheet" href="~/w3crm/vendor/pickadate/themes/default.date.css">
+}
+
+@section w3crm_script
+	{
+	<!--**********************************
+		Scripts
+	***********************************-->
+
+    <script src="~/w3crm/vendor/sweetalert2/dist/sweetalert2.min.js"></script>
+    <script src="~/w3crm/js/plugins-init/sweetalert.init.js"></script>
+    <script src="~/w3crm/js/styleSwitcher.js"></script>
+
+    <!-- Required vendors -->
+    <script src="~/w3crm/vendor/global/global.min.js"></script>
+	<script src="~/w3crm/vendor/chart.js/Chart.bundle.min.js"></script>
+	<script src="~/w3crm/vendor/tagify/dist/tagify.min.js"></script>
+
+	<!-- Apex Chart -->
+	<script src="~/w3crm/vendor/apexchart/apexchart.js"></script>
+
+	<!-- Datatable -->
+	<script src="~/w3crm/vendor/datatables/js/jquery.dataTables.min.js"></script>
+	<script src="~/w3crm/js/plugins-init/datatables.init.js"></script>
+	<script src="~/w3crm/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+
+     <!-- code-highlight -->
+    <script src="~/w3crm/js/highlight.min.js"></script>
+
+    <!-- momment js is must -->
+    <script src="~/w3crm/vendor/moment/moment.min.js"></script>
+    <script src="~/w3crm/vendor/bootstrap-daterangepicker/daterangepicker.js"></script>
+
+    <!-- pickdate -->
+    <script src="~/w3crm/vendor/pickadate/picker.js"></script>
+    <script src="~/w3crm/vendor/pickadate/picker.time.js"></script>
+    <script src="~/w3crm/vendor/pickadate/picker.date.js"></script>
+
+     <!-- Pickdate -->
+    <script src="~/w3crm/js/plugins-init/pickadate-init.js"></script>
+    <script src="~/w3crm/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+    <script src="~/w3crm/js/custom.js"></script>
+    <script src="~/w3crm/js/deznav-init.js"></script>
+    <script src="~/w3crm/js/demo.js"></script>
+    <script src="~/w3crm/js/styleSwitcher.js"></script>
+
+    <script src="~/w3crm/js/custom.js"></script>
+    <script src="~/w3crm/js/deznav-init.js"></script>
+    <script src="~/w3crm/js/demo.js"></script>
+
+    
+
+    <script>
+        hljs.highlightAll();
+        hljs.configure({ ignoreUnescapedHTML: true })
+
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('pre code').forEach((el) => {
+                hljs.highlightElement(el);
+            });
+        });
+    </script>
+
+    <script>
+        function modificarClientes(idProducto) {
+            $.ajax({
+                url: '/Productos/SeleccionarProductoModificar',
+                type: 'GET',
+                data: { id: idProducto },
+                success: function (response) {
+                    document.getElementById('idProductoModificar').value = idProducto;
+                    document.getElementById('nombreproductoModificar').value = response.nombre_Producto;
+                    document.getElementById('proveedorModificar').value = response.iD_Proveedor;
+                    document.getElementById('tipoproductoModificar').value = response.iD_TipoProducto;
+                    document.getElementById('paginaProductoModificar').value = response.pagina_Producto;
+                    document.getElementById('cantidadUnitariaModificar').value = response.cantidad_Unidades;
+                    document.getElementById('tipounidadModificar').value = response.iD_TipoUnidad;
+                },
+                error: function (error) {
+                    console.error('Error al obtener los datos del producto:', error);
+                }
+            });
+        }
+
+        (function () {
+            'use strict';
+
+            var form = document.getElementById('formularioModificarProducto');
+            const idProducto = document.getElementById('idProductoModificar');
+            const nombre_Producto = document.getElementById("nombreproductoModificar");
+            const iD_Proveedor = document.getElementById("proveedorModificar");
+            const iD_TipoProducto = document.getElementById("tipoproductoModificar");
+            const pagina_Producto = document.getElementById("paginaProductoModificar");
+            const cantidad_Unidades = document.getElementById("cantidadUnitariaModificar");
+            const iD_TipoUnidad = document.getElementById("tipounidadModificar");
+
+            if (form) {
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault();
+
+                    nombre_Producto.classList.remove('is-invalid');
+                    iD_Proveedor.classList.remove('is-invalid');
+                    iD_TipoProducto.classList.remove('is-invalid');
+                    pagina_Producto.classList.remove('is-invalid');
+                    cantidad_Unidades.classList.remove('is-invalid');
+                    iD_TipoUnidad.classList.remove('is-invalid');
+
+                    if (!form.checkValidity()) {
+                        event.stopPropagation();
+                        form.classList.add('was-validated');
+                    } else {
+                        $.ajax({
+                            url: '/Productos/ModificarProducto',
+                            type: 'POST',
+                            data: {
+                                idSeleccionado: idProducto.value,
+                                nombre: nombre_Producto.value,
+                                tipoProducto: iD_TipoProducto.value,
+                                proveedor: iD_Proveedor.value,
+                                paginaProducto: pagina_Producto.value,
+                                cantidadUnitaria: cantidad_Unidades.value,
+                                tipounidad: iD_TipoUnidad.value,
+                            },
+                            success: function (response) {
+                                if (response.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: '¡Producto modificado!',
+                                        text: response.message,
+                                        confirmButtonText: 'Aceptar'
+                                    }).then((result) => {
+                                        form.reset();
+                                        form.classList.remove('was-validated');
+                                        $('#modificarProducto').modal('hide');
+                                        recargarTablaProductos();
+                                    });
+                                } else {
+                                    if (response.errores.includes("nombre")) {
+                                        nombre_Producto.classList.add('is-invalid');
+                                    }
+                                    if (response.errores.includes("cantidad")) {
+                                        cantidad_Unidades.classList.add('is-invalid');
+                                    }
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: response.message,
+                                        confirmButtonText: 'Aceptar'
+                                    });
+                                }
+                            },
+                            error: function (error) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Hubo un error al comunicarse con el servidor.',
+                                    confirmButtonText: 'Aceptar'
+                                });
+                            }
+                        });
+                    }
+                }, false);
+            }
+        })();
+
+        function recargarTablaProductos() {
+            $.ajax({
+                url: '/Productos/ObtenerProductosActualizados',
+                type: 'GET',
+                success: function (response) {
+                    if (response.success) {
+                        var tabla = $('#example3 tbody');
+                        tabla.empty();
+
+                        response.data.forEach(function (producto) {
+                            var fila = `
+                            <tr id="${producto.iD_CatalogoProducto}">
+                                <td>${producto.nombre_Producto}</td>
+                                <td>${producto.tipoProducto}</td>
+                                <td>${producto.proveedor}</td>
+                                <td>${producto.cantidad_Unidades}</td>
+                                <td>${producto.tipoUnidad}</td>
+                                <td>${producto.pagina_Producto}</td>
+                                <td>
+                                    <div class="d-flex">
+                                        <a href="javascript:void(0)" class="btn btn-primary shadow btn-xs sharp me-1" data-bs-toggle="modal" data-bs-target="#modificarProducto" onclick="modificarClientes('${producto.iD_CatalogoProducto}')"><i class="fas fa-pencil-alt"></i></a>
+                                        <a href="javascript:void(0)" class="btn btn-danger shadow btn-xs sharp" onclick="eliminarProducto('${producto.iD_CatalogoProducto}')"><i class="fa fa-trash"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            `;
+                            tabla.append(fila);
+                        });
+                    } else {
+                        console.error("Error al obtener los clientes actualizados.");
+                    }
+                },
+                error: function (error) {
+                    console.error("Error en la solicitud AJAX:", error);
+                }
+            });
+        }
+
+        // Funcion para eliminar productos de la base de datos
+        function eliminarProducto(idProducto) {
+            $.ajax({
+                url: '/Productos/EliminarProducto',
+                type: 'DELETE',
+                data: { id: idProducto },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire("Éxito", "El producto se eliminó correctamente.", "success");
+                        recargarTablaProductos();
+                    } else {
+                        Swal.fire("Error", response.message, "error");
+                    }
+                },
+                error: function () {
+                    Swal.fire("Error", "Hubo un problema al eliminar a el cliente.", "error");
+                }
+            });
+        }
+    </script>
+
+
+    <script>
+        (function () {
+          'use strict'
+
+          // Fetch all the forms we want to apply custom Bootstrap validation styles to
+          var forms = document.querySelectorAll('.needs-validation')
+
+          // Loop over them and prevent submission
+          Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+              form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                  event.preventDefault()
+                  event.stopPropagation()
+                }
+
+                form.classList.add('was-validated')
+              }, false)
+            })
+        })()
+    </script>
+}

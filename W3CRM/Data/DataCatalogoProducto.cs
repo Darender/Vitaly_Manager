@@ -5,7 +5,131 @@ namespace Vitaly_Manager.Data
 {
     public static class DataCatalogoProducto
     {
-        /*
+        public static bool Modificar(CatalogoProducto modificado, out string mensaje)
+        {
+            try 
+            {
+                using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
+                {
+                    conexion.Open();
+
+                    string query = @"UPDATE CatalogoProducto 
+                             SET nombreProducto = @NombreProducto, 
+                                 cantidadUnidades = @CantidadUnidades, 
+                                 paginaProducto = @PaginaProducto, 
+                                 idProveedor = @IdProveedor, 
+                                 idTipoUnidad = @IdTipoUnidad, 
+                                 idTipoProd = @IdTipoProd
+                             WHERE idCatalogoProd = @IdProducto";
+
+                    using (SqlCommand comando = new SqlCommand(query, conexion))
+                    {
+                        comando.Parameters.AddWithValue("@NombreProducto", modificado.Nombre_Producto);
+                        comando.Parameters.AddWithValue("@CantidadUnidades", modificado.Cantidad_Unidades);
+                        comando.Parameters.AddWithValue("@PaginaProducto", modificado.Pagina_Producto ?? (object)DBNull.Value);
+                        comando.Parameters.AddWithValue("@IdProveedor", modificado.ID_Proveedor);
+                        comando.Parameters.AddWithValue("@IdTipoUnidad", modificado.ID_TipoUnidad);
+                        comando.Parameters.AddWithValue("@IdTipoProd", modificado.ID_TipoProducto);
+                        comando.Parameters.AddWithValue("@IdProducto", modificado.ID_CatalogoProducto);
+                        comando.ExecuteNonQuery();
+                    }
+
+                    conexion.Close();
+                }
+                mensaje = $"El producto {modificado.Nombre_Producto} ha sido modificado exitosamente.";
+                return true;
+            }
+            catch (SqlException ex)
+            {
+                mensaje = $"Error en la base de datos: {ex.Message}";
+                return false;
+            }
+            catch (Exception ex)
+            {
+                mensaje = $"Error inesperado: {ex.Message}";
+                return false;
+            }
+        }
+
+        public static bool Eliminar(int id, out string respuesta)
+        {
+            try
+            {
+                using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
+                {
+                    conexion.Open();
+
+                    // Confirma que exista el id en la base de datos
+                    string queryExiste = $"SELECT COUNT(1) FROM catalogoProducto WHERE idCatalogoProd = {id}";
+                    SqlCommand cmdExiste = new SqlCommand(queryExiste, conexion);
+                    int existe = (int)cmdExiste.ExecuteScalar();
+
+                    if (existe == 0)
+                    {
+                        respuesta = "No se encontro el id del producto en la base de datos";
+                        return false;
+                    }
+
+                    string queryEliminar = $"DELETE FROM CatalogoProducto WHERE idCatalogoProd = {id}";
+                    new SqlCommand(queryEliminar, conexion).ExecuteNonQuery();
+                    conexion.Close();
+                }
+                respuesta = "Se elimino exitosamente el producto";
+                return true;
+            }
+            catch (SqlException ex)
+            {
+                respuesta = $"Error en la base de datos (SqlException): {ex.Message}";
+                return false;
+            }
+            catch (Exception ex)
+            {
+                respuesta = $"Error inesperado (Exception): {ex.Message}";
+                return false;
+            }
+        }
+
+        public static bool Agregar(CatalogoProducto nuevo, out string mensaje)
+        {
+            try
+            {
+                using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
+                {
+                    conexion.Open();
+
+                    string query = @"INSERT INTO CatalogoProducto 
+                            (nombreProducto, cantidadUnidades, paginaProducto, idProveedor, idTipoUnidad, idTipoProd) 
+                            VALUES (@NombreProducto, @CantidadUnidades, @PaginaProducto, @IdProveedor, @IdTipoUnidad, @IdTipoProd)";
+
+                    using (SqlCommand comando = new SqlCommand(query, conexion))
+                    {
+                        comando.Parameters.AddWithValue("@NombreProducto", nuevo.Nombre_Producto);
+                        comando.Parameters.AddWithValue("@CantidadUnidades", nuevo.Cantidad_Unidades);
+                        comando.Parameters.AddWithValue("@PaginaProducto", nuevo.Pagina_Producto ?? (object)DBNull.Value);
+                        comando.Parameters.AddWithValue("@IdProveedor", nuevo.ID_Proveedor);
+                        comando.Parameters.AddWithValue("@IdTipoUnidad", nuevo.ID_TipoUnidad);
+                        comando.Parameters.AddWithValue("@IdTipoProd", nuevo.ID_TipoProducto);
+
+                        comando.ExecuteNonQuery();
+                    }
+
+                    conexion.Close();
+                }
+                mensaje = $"El cliente {nuevo.Nombre_Producto} ha sido agregado exitosamente.";
+                return true;
+            }
+            catch (SqlException ex)
+            {
+                mensaje = $"Error en la base de datos: {ex.Message}";
+                return false;
+            }
+            catch (Exception ex)
+            {
+                mensaje = $"Error inesperado: {ex.Message}";
+                return false;
+            }
+        }
+
         /// <summary>
         /// Optiene todos los productos de la base de datos y los pone una lista
         /// </summary>
@@ -25,19 +149,19 @@ namespace Vitaly_Manager.Data
 
                     while (lector.Read())
                     {
-                        int idProducto = lector["idProducto"] != DBNull.Value ? Convert.ToInt32(lector["idProducto"]) : 0;
+                        int idProducto = lector["idCatalogoProd"] != DBNull.Value ? Convert.ToInt32(lector["idCatalogoProd"]) : 0;
                         string nombreProducto = lector["nombreProducto"] != DBNull.Value ? Convert.ToString(lector["nombreProducto"])! : "N/A";
-                        int unidades = lector["unidades"] != DBNull.Value ? Convert.ToInt32(lector["unidades"]) : 0;
+                        int unidades = lector["cantidadUnidades"] != DBNull.Value ? Convert.ToInt32(lector["cantidadUnidades"]) : 0;
                         string? paginaProducto = lector["paginaProducto"] != DBNull.Value ? Convert.ToString(lector["paginaProducto"])! : null;
                         int idProveedor = lector["idProveedor"] != DBNull.Value ? Convert.ToInt32(lector["idProveedor"]) : 0;
                         int idTipoUnidad = lector["idTipoUnidad"] != DBNull.Value ? Convert.ToInt32(lector["idTipoUnidad"]) : 0;
-                        int idTipoProducto = lector["idTipoProducto"] != DBNull.Value ? Convert.ToInt32(lector["idTipoProducto"]) : 0;
+                        int idTipoProducto = lector["idTipoProd"] != DBNull.Value ? Convert.ToInt32(lector["idTipoProd"]) : 0;
 
                         CatalogoProducto nuevo = new CatalogoProducto
                         {
-                            ID_Producto = idProducto,
-                            Nombre = nombreProducto,
-                            Unidades = unidades,
+                            ID_CatalogoProducto = idProducto,
+                            Nombre_Producto = nombreProducto,
+                            Cantidad_Unidades = unidades,
                             Pagina_Producto = paginaProducto,
                             ID_Proveedor = idProveedor,
                             ID_TipoUnidad = idTipoUnidad,
@@ -65,7 +189,7 @@ namespace Vitaly_Manager.Data
                 respuesta = $"Error inesperado: {ex.Message}";
                 return new List<CatalogoProducto>();
             }
-        }*/
+        }
 
     }
 }

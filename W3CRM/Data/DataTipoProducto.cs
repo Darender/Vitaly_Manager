@@ -5,7 +5,7 @@ namespace Vitaly_Manager.Data
 {
     public static class DataTipoProducto
     {
-        /*
+  
         /// <summary>
         /// Obtiene una lista de los tipos de productos que hay en la base de datos
         /// </summary>
@@ -25,13 +25,13 @@ namespace Vitaly_Manager.Data
 
                     while (lector.Read())
                     {
-                        int idTipoProducto = lector["idTipoProducto"] != DBNull.Value ? Convert.ToInt32(lector["idTipoProducto"]) : 0;
-                        string tipo = lector["tipo"] != DBNull.Value ? Convert.ToString(lector["tipo"])! : "N/A";
+                        int idTipoProducto = lector["idTipoProd"] != DBNull.Value ? Convert.ToInt32(lector["idTipoProd"]) : 0;
+                        string tipo = lector["nombreTipoProd"] != DBNull.Value ? Convert.ToString(lector["nombreTipoProd"])! : "N/A";
                        
                         TipoProducto nuevo = new TipoProducto
                         {
                             ID_TipoProducto = idTipoProducto,
-                            Tipo = tipo,
+                            Nombre_Tipo_Producto = tipo,
                         };
 
                         listaTiposProductos.Add(nuevo);
@@ -55,6 +55,6 @@ namespace Vitaly_Manager.Data
                 respuesta = $"Error inesperado: {ex.Message}";
                 return new List<TipoProducto>();
             }
-        }*/
+        }
     }
 }

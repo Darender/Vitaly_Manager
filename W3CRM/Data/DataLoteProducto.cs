@@ -4,7 +4,71 @@ using Vitaly_Manager.Entidades;
 namespace Vitaly_Manager.Data
 {
     public static class DataLoteProducto
-    {/*
+    {
+     
+
+        public static List<LoteProducto> ListaLoteProducto(out string respuesta, out bool exito)
+        {
+            List<LoteProducto> listaClientes = new List<LoteProducto>();
+            try
+            {
+                using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
+                {
+                    conexion.Open();
+                    SqlCommand comando = new SqlCommand("SELECT * FROM LoteProducto", conexion);
+                    SqlDataReader lector = comando.ExecuteReader();
+
+                    while (lector.Read())
+                    {
+                        int idLoteProd = lector["idLoteProd"] != DBNull.Value ? Convert.ToInt32(lector["idLoteProd"]) : 0;
+                        int idCatalogoProd = lector["idCatalogoProd"] != DBNull.Value ? Convert.ToInt32(lector["idCatalogoProd"]) : 0;
+                        decimal IVa = lector["IVA"] != DBNull.Value ? Convert.ToInt32(lector["IVA"]) : 0;
+                        bool esMaterial = lector["esMaterial"] != DBNull.Value;
+                        DateTime fechaIngreso = Convert.ToDateTime(lector["fechaIngreso"]);
+                        DateTime fechaVencimiento = Convert.ToDateTime(lector["fechaVencimiento"]);
+                        int cantidad = lector["cantidad"] != DBNull.Value ? Convert.ToInt32(lector["cantidad"]) : 0;
+                        decimal precioVenta = lector["precioVenta"] != DBNull.Value ? Convert.ToInt32(lector["precioVenta"]) : 0;
+                        decimal precioCompra = lector["precioCompra"] != DBNull.Value ? Convert.ToInt32(lector["precioCompra"]) : 0;
+                        decimal margenGanancia = lector["margenGanancia"] != DBNull.Value ? Convert.ToInt32(lector["margenGanancia"]) : 0;
+
+                        LoteProducto nuevo = new LoteProducto
+                        {
+                            ID_LoteProducto = idLoteProd,
+                            ID_CatalogoProducto = idCatalogoProd,
+                            IVA = IVa,
+                            EsMaterial = esMaterial,
+                            Fecha_Ingreso = fechaIngreso,
+                            Fecha_Vencimiento = fechaVencimiento,
+                            Cantidad = cantidad,
+                            Precio_Venta = precioVenta,
+                            Precio_Compra = precioCompra,
+                            Margen_Ganancia = margenGanancia
+                        };
+
+                        listaClientes.Add(nuevo);
+                    }
+
+                    lector.Close();
+                }
+                exito = true;
+                respuesta = "Consulta exitosa";
+                return listaClientes;
+            }
+            catch (SqlException ex)
+            {
+                exito = false;
+                respuesta = $"Error en la base de datos: {ex.Message}";
+                return new List<LoteProducto>();
+            }
+            catch (Exception ex)
+            {
+                exito = false;
+                respuesta = $"Error inesperado: {ex.Message}";
+                return new List<LoteProducto>();
+            }
+        }
+
+        /*
         /// <summary>
         /// Agrega un nuevo lote de producto a la base de datos
         /// </summary>
