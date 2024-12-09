@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <None Remove="Controladores\UsuariosController.cs~RF59394c1.TMP" />
+    <None Remove="Views\Usuarios\AgregarUsuarios.cshtml~RF53da83b.TMP" />
   </ItemGroup>
 
   <ItemGroup>

@@ -168,7 +168,7 @@ namespace Vitaly_Manager.Controladores
 
 
         [HttpPost]
-        public IActionResult Eliminar(int id)
+        public IActionResult EliminarUsuarios(int id)
         {
             string mensaje;
             bool exito = DataUsuarios.Eliminar(id, out mensaje);

@@ -239,7 +239,7 @@ function modificarUsuario(idUsuario) {
         function eliminarUsuario(idUsuario) {
             if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
                 $.ajax({
-                    url: '@Url.Action("eliminarUsuario", "Usuarios")', 
+                    url: '@Url.Action("EliminarUsuarios", "Usuarios")', 
                     type: 'POST',
                     data: { id: idUsuario },
                     success: function (response) {

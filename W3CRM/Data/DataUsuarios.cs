@@ -139,7 +139,7 @@ namespace Vitaly_Manager.Data
                     conexion.Open();
 
                     // Verifica que el ID del usuario exista en la base de datos
-                    string queryExiste = $"SELECT COUNT(1) FROM usuario WHERE IdUsuario = {id}";
+                    string queryExiste = $"SELECT COUNT(1) FROM usuario WHERE idUsuario = {id}";
                     SqlCommand cmdExiste = new SqlCommand(queryExiste, conexion);
                     int existe = (int)cmdExiste.ExecuteScalar();
 
