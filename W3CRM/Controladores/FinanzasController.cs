@@ -20,12 +20,20 @@ namespace Vitaly_Manager.Controladores
         {
             try
             {
-                var gastos = _dataGasto.ConsultarGastos(out string mensaje, out bool exito);
-                return Ok(new { success = true, data = gastos });
+                var gastos = _dataGasto.ConsultarGastos(out string respuesta, out bool exito);
+
+                if (exito)
+                {
+                    return Json(new { success = true, data = gastos });
+                }
+                else
+                {
+                    return Json(new { success = false, message = respuesta });
+                }
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { success = false, message = ex.Message });
+                return Json(new { success = false, message = $"Error inesperado: {ex.Message}" });
             }
         }
 
