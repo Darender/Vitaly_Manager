@@ -279,7 +279,7 @@
             // Enviar los datos al controlador a través de POST (por parámetros de consulta)
             fetch(url, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' } // Aunque estamos enviando por URL, seguimos usando POST
+                headers: { 'Content-Type': 'application/json' }
             })
             .then(response => response.json())
             .then(data => {
