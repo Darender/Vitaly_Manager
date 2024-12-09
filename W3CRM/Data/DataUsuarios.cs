@@ -130,6 +130,9 @@ namespace Vitaly_Manager.Data
             }
         }
 
+        /// <summary>
+        /// Eliminar al usuario de la base de datos
+        /// </summary>
         public static bool Eliminar(int id, out string respuesta)
         {
             try

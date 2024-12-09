@@ -1,0 +1,80 @@
+﻿@using System.Globalization
+@using Vitaly_Manager.Entidades
+@using W3CRM.Controllers
+@{
+    ViewData["Title"] = "Iniciar Sesión";
+}
+
+<div class="content-body">
+    <div class="page-titles">
+        <ol class="breadcrumb">
+            <li><h5 class="bc-title">Iniciar Sesión</h5></li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Index", "Home")">Inicio</a>
+            </li>
+            <li class="breadcrumb-item active"><a href="javascript:void(0)">Login</a></li>
+        </ol>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Iniciar sesión</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" asp-action="Login" id="loginForm" novalidate>
+                            <!-- Campo ID (solo números) -->
+                            <div class="mb-3">
+                                <label for="usuarioID" class="form-label">ID</label>
+                                <input type="text" class="form-control" id="usuarioID" name="usuarioID" required pattern="^\d+$" />
+                                <div class="invalid-feedback">
+                                    El ID debe contener solo números.
+                                </div>
+                            </div>
+
+                            <!-- Campo Contraseña -->
+                            <div class="mb-3">
+                                <label for="contrasena" class="form-label">Contraseña</label>
+                                <input type="password" class="form-control" id="contrasena" name="contrasena" required />
+                                <div class="invalid-feedback">
+                                    La contraseña no puede estar vacía.
+                                </div>
+                            </div>
+
+                            <!-- Botón Iniciar Sesión -->
+                            <button type="submit" class="btn btn-primary w-100">Iniciar sesión</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        // Validación de formulario al hacer submit
+        (function () {
+            'use strict';
+
+            // Obtiene todos los formularios a los que se les aplicará validación
+            var forms = document.querySelectorAll('.needs-validation');
+
+            // Recorre cada formulario y previene el envío si no es válido
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+        })();
+    </script>
+}
+

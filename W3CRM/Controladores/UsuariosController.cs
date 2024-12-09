@@ -33,9 +33,10 @@ namespace Vitaly_Manager.Controladores
         /// <param name="correo">Correo electrónico.</param>
         /// <param name="contraseña">Contraseña del usuario.</param>
         /// <param name="esAdmin"></param>
-        /// <param name="mensaje">Mensaje de respuesta.</param>
         /// <returns>Booleano indicando si la creación fue exitosa.</returns>
-        public bool AgregarUsuario(string nombre,string correo, string contrasena, bool esAdmin, out string mensaje)
+        /// 
+        [HttpPost]
+        public bool AgregarUsuarios(string nombre,string correo, string contrasena, bool esAdmin)
         {
             bool resultado;
 
@@ -49,9 +50,26 @@ namespace Vitaly_Manager.Controladores
             };
 
             // Enviar el nuevo usuario a DataUsuarios para agregarlo a la base de datos
-            resultado = DataUsuarios.Agregar(nuevo, out mensaje);
+            resultado = DataUsuarios.Agregar(nuevo, out string mensaje);
 
             return resultado;
+        }
+
+
+        [HttpPost]
+        public IActionResult EliminarUsuarios(int id)
+        {
+            string mensaje;
+            bool exito = DataUsuarios.Eliminar(id, out mensaje);
+
+            if (exito)
+            {
+                return Json(new { success = true, message = mensaje });
+            }
+            else
+            {
+                return Json(new { success = false, message = mensaje });
+            }
         }
 
         /*
@@ -167,21 +185,6 @@ namespace Vitaly_Manager.Controladores
         } */
 
 
-        [HttpPost]
-        public IActionResult EliminarUsuarios(int id)
-        {
-            string mensaje;
-            bool exito = DataUsuarios.Eliminar(id, out mensaje);
-
-            if (exito)
-            {
-                return Json(new { success = true, message = mensaje });
-            }
-            else
-            {
-                return Json(new { success = false, message = mensaje });
-            }
-        }
 
     }
 }

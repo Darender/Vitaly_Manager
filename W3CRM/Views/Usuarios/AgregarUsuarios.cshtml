@@ -66,7 +66,7 @@
                                         <!-- Campo Contraseña -->
                                         <div class="mb-3">
                                             <label class="form-label" for="usuario_contraseña">Contraseña <span class="text-danger">*</span></label>
-                                            <input type="password" class="form-control" id="usuario_contraseña" placeholder="Ingrese una contraseña segura" name="Contraseña" required>
+                                            <input type="password" class="form-control" id="usuario_contrasena" placeholder="Ingrese una contraseña segura" name="Contraseña" required>
                                             <div class="invalid-feedback">Por favor, ingrese una contraseña.</div>
                                         </div>
 
@@ -201,57 +201,60 @@
                         // Obtener los valores dentro del evento submit
                         const nombreUsuario = document.getElementById("usuario_nombre");
                         const correo = document.getElementById("usuario_correo");
-                        const contraseña = document.getElementById("usuario_contraseña");
+                        const contrasena = document.getElementById("usuario_contrasena");
                         const rol = document.getElementById("usuario_rol");
 
             if (!form.checkValidity()) {
                 event.stopPropagation();
             } else {
-                $.ajax({
-                            url: '/Usuarios/AgregarUsuarios',
-                    type: 'POST',
-                    data: {
-                        nombre: nombreUsuario.value,
-                        correo: correo.value,
-                        contraseña: contraseña.value,
-                        rol: rol.value
-                    },
-                    
-                    //Antes de usar includes, se verifica si response.errores es un array con Array.isArray(response.errores). 
-                            success: function (response) {
-            if (response.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Usuario agregado!',
-                    text: response.message,
-                    confirmButtonText: 'Aceptar'
-                }).then((result) => {
-                    form.reset();
-                    form.classList.remove('was-validated');
-                });
-            } else {
-                // Verificar si `response.errores` está definido y es un array antes de usar `includes`
-                if (Array.isArray(response.errores)) {
-                    if (response.errores.includes("nombre")) {
-                        nombreUsuario.classList.add('is-invalid');
-                    }
-                    if (response.errores.includes("correo")) {
-                        correo.classList.add('is-invalid');
-                    }
-                    if (response.errores.includes("contraseña")) {
-                        contraseña.classList.add('is-invalid');
-                    }
-                    if (response.errores.includes("rol")) {
-                        rol.classList.add('is-invalid');
-                    }
-                }
 
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: response.message,
-                    confirmButtonText: 'Aceptar'
-                });
+                $.ajax({
+                 url: '/Usuarios/AgregarUsuario',
+                    type: 'POST',
+                            data: {
+                nombre: nombreUsuario.value,
+                correo: correo.value,
+                contrasena: contrasena.value, // Aquí se usa 'contrasena' consistentemente
+                rol: rol.value
+             },
+                     success: function (response) {
+                        if (response.success) {
+                                Swal.fire({
+                                icon: 'success',
+                                title: '¡Usuario agregado!',
+                                text: response.message,
+                                confirmButtonText: 'Aceptar'
+            }).then((result) => {
+                form.reset();
+                form.classList.remove('was-validated');
+            });
+        } else {
+            // Verificar errores
+            if (Array.isArray(response.errores)) {
+                if (response.errores.includes("nombre")) {
+                    nombreUsuario.classList.add('is-invalid');
+                }
+                if (response.errores.includes("correo")) {
+                    correo.classList.add('is-invalid');
+                }
+                if (response.errores.includes("contrasena")) {
+                    contrasena.classList.add('is-invalid'); // Aquí también está corregido
+                }
+                if (response.errores.includes("rol")) {
+                    rol.classList.add('is-invalid');
+                }
+            }
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: response.message,
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    }
+});
+
             }
         }
 

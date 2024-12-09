@@ -4,6 +4,7 @@ namespace Vitaly_Manager.Entidades
 {
     public class Usuario
     {
+
         [Key]
         public int ID_Usuario { get; set; }
 
@@ -53,6 +54,7 @@ namespace Vitaly_Manager.Entidades
 
         [Required(ErrorMessage = "La contraseña es obligatoria.")]
         [StringLength(50, ErrorMessage = "La contraseña no puede exceder los 50 caracteres.")]
+
         public required string Contraseña
         {
             get => _contraseña;
@@ -69,7 +71,6 @@ namespace Vitaly_Manager.Entidades
                 _contraseña = value;
             }
         }
-
         public bool esAdmin
         {
             get => _esAdmin;
@@ -78,5 +79,6 @@ namespace Vitaly_Manager.Entidades
                 _esAdmin = value;
             }
         }
+
     }
 }
