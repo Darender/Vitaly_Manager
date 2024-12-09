@@ -1,4 +1,5 @@
-﻿using System.Data.SqlClient;
+﻿using Microsoft.CodeAnalysis.Differencing;
+using System.Data.SqlClient;
 using Vitaly_Manager.Entidades;
 
 namespace Vitaly_Manager.Data
@@ -163,9 +164,73 @@ namespace Vitaly_Manager.Data
 
         }
 
-        public void ConsultarGastos()
+        //Consulta todos los gastos existentes en la base de datos, retorna
+        //una lista con los gastos consultados, un string y un booleano de respuesta.
+        public List<Gasto> ConsultarGastos(out string respuesta, out bool exito)
         {
+            List<Gasto> listaGastos = new List<Gasto>();
 
+            try
+            {
+                //Se crea la conexión con la base de datos
+                using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
+                {
+                    //Se abre la conexion
+                    conexion.Open();
+
+                    //Se crea el query de consulta
+                    SqlCommand comando = new SqlCommand("SELECT * FROM Gasto", conexion);
+
+                    //Se crea el lector de datos  
+                    SqlDataReader lector = comando.ExecuteReader();
+
+                    //Se crea un ciclo que se ejecutara mientras el lector registros que leer
+                    while (lector.Read())
+                    {
+                        //Todos los datos de SQL se convierten en datos validos para C#
+                        int idGasto = Convert.ToInt32(lector["idGasto"]);
+                        string concepto = Convert.ToString(lector["concepto"]);
+                        decimal monto = Convert.ToDecimal(lector["monto"]);
+                        DateTime fecha = Convert.ToDateTime(lector["fecha"]);
+                        int? idProductoComprado = lector["idProductoComprado"] != DBNull.Value ? Convert.ToInt32(lector["idProductoComprado"]) : null;
+
+                        //Se crea el objeto de gasto con todos los datos leidos
+                        Gasto gasto = new Gasto
+                        {
+                            idGasto = idGasto,
+                            concepto = concepto,
+                            monto = monto,
+                            fecha = fecha,
+                            idProductoComprado = idProductoComprado,
+                        };
+
+                        //Se agrega gasto a la lista 
+                        listaGastos.Add(gasto);
+                    }
+
+                    //Se cierra la conexion
+                    lector.Close();
+                }
+
+                //Se retorna la lista de gastos, un true y un mensaje de exito
+                exito = true;
+                respuesta = "Consulta exitosa";
+                return listaGastos;
+            }
+            catch (SqlException ex)
+            {
+                //Mensaje de error de Sql
+                exito = false;
+                respuesta = $"Error en la base de datos: {ex.Message}";
+                return new List<Gasto>();
+            }
+            catch (Exception ex)
+            {
+                //Mensaje de error del sistema
+                exito = false;
+                respuesta = $"Error inesperado: {ex.Message}";
+                return new List<Gasto>();
+            }
         }
 
         
