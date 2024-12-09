@@ -1,4 +1,4 @@
-﻿@using System.Globalization
+﻿@@using System.Globalization
 @using Vitaly_Manager.Entidades
 @using W3CRM.Controllers
 @{
@@ -33,7 +33,10 @@
                         <div class="mb-4">
                             <h6>Total de egresos</h6>
                             <h2>$0.00</h2>
-                            <button class="btn btn-primary">Lista de egresos</button>
+                            <!-- Botón para abrir el modal de lista de egresos -->
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#egresosModal">
+                                Lista de egresos
+                            </button>
                         </div>
                         <div>
                             <h6>Total de ingresos</h6>
@@ -55,6 +58,72 @@
         </div>
     </div>
 </div>
+
+<!-- Modal de egresos -->
+<div class="modal fade" id="egresosModal" tabindex="-1" aria-labelledby="egresosModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="egresosModalLabel">Lista de Egresos</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped" id="tablaEgresos">
+                    <thead>
+                        <tr>
+                            <th>Descripción</th>
+                            <th>Monto</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Las filas se insertarán dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#agregarEgresoModal">
+                    Agregar Egreso
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para agregar un nuevo egreso -->
+<div class="modal fade" id="agregarEgresoModal" tabindex="-1" aria-labelledby="agregarEgresoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="agregarEgresoModalLabel">Agregar Nuevo Egreso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formEgreso" class="needs-validation" novalidate>
+                    <div class="mb-3">
+                        <label for="concepto" class="form-label">concepto</label>
+                        <input type="text" class="form-control" id="concepto" placeholder="Concepto del egreso" required>
+                        <div class="invalid-feedback">Por favor, ingrese una descripción.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="monto" class="form-label">Monto</label>
+                        <input type="number" class="form-control" id="monto" placeholder="Monto del egreso" min="0.01" required>
+                        <div class="invalid-feedback">Por favor, ingrese un monto válido.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fecha" class="form-label">Fecha</label>
+                        <input type="date" class="form-control" id="fecha" required>
+                        <div class="invalid-feedback">Por favor, ingrese una fecha.</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!--**********************************
     Content body end
 ***********************************-->
@@ -148,6 +217,8 @@
         })()
     </script>
 
+
+
     <script>
         // Configuración del gráfico de ganancias
         const ctx = document.getElementById('gananciasChart').getContext('2d');
@@ -180,6 +251,144 @@
                 }
             }
         });
+    </script>
+
+    <script>
+        document.getElementById("formEgreso").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            // Captura de datos del formulario
+            const concepto = document.getElementById("concepto").value; 
+            const monto = parseFloat(document.getElementById("monto").value);
+            const fecha = new Date(document.getElementById("fecha").value).toISOString(); // Formato ISO 8601
+
+            // Validación simple del formulario
+            if (!concepto || !monto || !fecha) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Por favor, completa todos los campos.',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+                return;
+            }
+
+            // Crear los parámetros de la URL
+            const url = `/Finanzas/AgregarGasto?concepto=${encodeURIComponent(concepto)}&monto=${monto}&fecha=${encodeURIComponent(fecha)}`;
+
+            // Enviar los datos al controlador a través de POST (por parámetros de consulta)
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' } // Aunque estamos enviando por URL, seguimos usando POST
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Éxito',
+                        text: data.message,
+                        icon: 'success',
+                        confirmButtonText: 'Aceptar'
+                    }).then(() => {
+                        // Agregar la nueva fila en la tabla
+                        const tabla = document.getElementById("tablaEgresos").querySelector("tbody");
+                        const nuevaFila = `
+                            <tr>
+                                <td>${tabla.children.length + 1}</td>
+                                <td>${concepto}</td>  
+                                <td>$${monto.toFixed(2)}</td>
+                                <td>${new Date(fecha).toLocaleDateString()}</td>
+                                <td>
+                                    <!-- Botón de modificar -->
+                                    <a href="#javascript:void(0)" class="btn btn-primary shadow btn-xs sharp me-1" data-bs-toggle="modal" data-bs-target="#modificarProveedor" onclick="modificarProveedor"><i class="fas fa-pencil-alt"></i></a>
+                                    <!-- Botón de eliminar -->
+                                    <button class="btn btn-danger shadow btn-xs sharp btn-eliminar" onclick="confirmarEliminargasto">
+                                    <i class="fa fa-trash"></i>
+                                </td>
+                            </tr>`;
+                        tabla.insertAdjacentHTML("beforeend", nuevaFila);
+
+                        // Limpiar el formulario
+                        document.getElementById("formEgreso").reset();
+
+                        // Cerrar el modal
+                        bootstrap.Modal.getInstance(document.getElementById("agregarEgresoModal")).hide();
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: data.message,
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error("Error al agregar el gasto:", error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Ocurrió un error al intentar agregar el gasto.',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            });
+        });
+    </script>
+
+
+    <script>
+        function cargarEgresos() {
+            fetch('/Finanzas/ConsultarGastos')
+                .then(response => response.json())
+                .then(data => {
+           <script>
+                // Función para cargar los egresos al cargar la página
+        function cargarEgresos() {
+            fetch('/Finanzas/ConsultarGastos')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const tablaCuerpo = document.querySelector("#tablaEgresos tbody");
+                        tablaCuerpo.innerHTML = ''; // Limpiar el contenido actual del tbody
+
+                        // Crear y agregar filas dinámicamente
+                        data.data.forEach((egreso, index) => {
+                            const fila =
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${egreso.descripcion}</td>
+                                    <td>$${egreso.monto.toFixed(2)}</td>
+                                    <td>${new Date(egreso.fecha).toLocaleDateString()}</td>
+                                    <td>
+                                        <a href="javascript:void(0)" class="btn btn-primary shadow btn-xs sharp me-1" onclick="modificarProveedor(${egreso.idGasto})">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </a>
+                                        <button class="btn btn-danger shadow btn-xs sharp" onclick="confirmarEliminarGasto(${egreso.idGasto})">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>;
+                            tablaCuerpo.insertAdjacentHTML('beforeend', fila);
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'No se pudieron cargar los egresos.',
+                            icon: 'error',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al cargar los egresos:', error);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Ocurrió un error al cargar los egresos.',
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                });
+        }
     </script>
 }
 

@@ -6,7 +6,8 @@ namespace Vitaly_Manager.Entidades
     public class Gasto
     {
         [Key]
-        public required int idGasto { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int idGasto { get; set; }
 
         [Required]
         public required string concepto { get; set; }
@@ -19,8 +20,7 @@ namespace Vitaly_Manager.Entidades
         public required DateTime fecha { get; set; }
 
         [ForeignKey("LoteProducto")]
-        public int? idProductoComprado {get;set;}
-
-
+        public int? idProductoComprado { get; set; }
     }
+
 }
