@@ -5,7 +5,7 @@ namespace Vitaly_Manager.Entidades
     public class CatalogoServicio
     {
         [Key]
-        public required int ID_CatalogoServicio { get; set; }
+        public int ID_CatalogoServicio { get; set; }
 
         private string _nombreServ;
         private string _descripcion;
@@ -49,8 +49,7 @@ namespace Vitaly_Manager.Entidades
             }
         }
 
-        [Required(ErrorMessage = "La duración promedio es obligatoria.")]
-        public required TimeSpan DuracionPromedio
+        public  TimeSpan DuracionPromedio
         {
             get => _duracionPromedio;
             set

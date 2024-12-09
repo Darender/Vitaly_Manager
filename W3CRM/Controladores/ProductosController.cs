@@ -6,9 +6,9 @@ namespace Vitaly_Manager.Controladores
 {
     public class ProductosController : Controller
     {
-        public List<Proveedor> ListaProveedores = DataProveedores.ListaProveedores(out _, out _);
-        public List<TipoProducto> ListasTipoProductos = DataTipoProducto.ListaTiposProductos(out _, out _);
-        public List<TipoUnidad> ListaTipoUnidades = DataTipoUnidad.ListaTiposUnidades(out _, out _);
+        public static List<Proveedor> ListaProveedores = DataProveedores.ListaProveedores(out _, out _);
+        public static List<TipoProducto> ListasTipoProductos = DataTipoProducto.ListaTiposProductos(out _, out _);
+        public static List<TipoUnidad> ListaTipoUnidades = DataTipoUnidad.ListaTiposUnidades(out _, out _);
         public List<CatalogoProducto> ListaProductos = DataCatalogoProducto.ListaCatalogoProductos(out _, out _);
 
         public IActionResult ConsultaProductos()
