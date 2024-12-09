@@ -51,22 +51,9 @@
 
                                         <!-- Campo Nombre -->
                                         <div class="mb-3">
-                                            <label class="form-label" for="usuario_nombre">Nombre <span class="text-danger">*</span></label>
+                                            <label class="form-label" for="usuario_nombre">Nombre Completo <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" id="usuario_nombre" placeholder="Nombre del usuario" name="Nombre" required>
                                             <div class="invalid-feedback">Por favor, ingrese el nombre.</div>
-                                        </div>
-
-                                        <!-- Campo Apellido Paterno -->
-                                        <div class="mb-3">
-                                            <label class="form-label" for="usuario_apellido_paterno">Apellido Paterno <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="usuario_apellido_paterno" placeholder="Apellido paterno del usuario" name="ApellidoPaterno" required>
-                                            <div class="invalid-feedback">Por favor, ingrese el apellido paterno.</div>
-                                        </div>
-
-                                        <!-- Campo Apellido Materno -->
-                                        <div class="mb-3">
-                                            <label class="form-label" for="usuario_apellido_materno">Apellido Materno</label>
-                                            <input type="text" class="form-control" id="usuario_apellido_materno" placeholder="Apellido materno del usuario" name="ApellidoMaterno">
                                         </div>
 
                                         <!-- Campo Correo Electrónico -->
@@ -213,8 +200,6 @@
 
                         // Obtener los valores dentro del evento submit
                         const nombreUsuario = document.getElementById("usuario_nombre");
-                        const apellidoPaterno = document.getElementById("usuario_apellido_paterno");
-                        const apellidoMaterno = document.getElementById("usuario_apellido_materno");
                         const correo = document.getElementById("usuario_correo");
                         const contraseña = document.getElementById("usuario_contraseña");
                         const rol = document.getElementById("usuario_rol");
@@ -227,8 +212,6 @@
                     type: 'POST',
                     data: {
                         nombre: nombreUsuario.value,
-                        apellidoPaterno: apellidoPaterno.value,
-                        apellidoMaterno: apellidoMaterno.value,
                         correo: correo.value,
                         contraseña: contraseña.value,
                         rol: rol.value
@@ -251,9 +234,6 @@
                 if (Array.isArray(response.errores)) {
                     if (response.errores.includes("nombre")) {
                         nombreUsuario.classList.add('is-invalid');
-                    }
-                    if (response.errores.includes("apellidoPaterno")) {
-                        apellidoPaterno.classList.add('is-invalid');
                     }
                     if (response.errores.includes("correo")) {
                         correo.classList.add('is-invalid');

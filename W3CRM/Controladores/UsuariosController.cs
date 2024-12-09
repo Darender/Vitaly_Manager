@@ -23,22 +23,19 @@ namespace Vitaly_Manager.Controladores
         /// <returns></returns>
         public IActionResult ConsultaUsuarios()
         {
-            UsuariosController controlador = new UsuariosController();
-            return View(controlador);
+            return View(this);
         }
 
         /// <summary>
         /// Método para crear un nuevo usuario.
         /// </summary>
         /// <param name="nombre">Nombre del usuario.</param>
-        /// <param name="apellidoPaterno">Primer apellido.</param>
-        /// <param name="apellidoMaterno">Segundo apellido.</param>
         /// <param name="correo">Correo electrónico.</param>
         /// <param name="contraseña">Contraseña del usuario.</param>
-        /// <param name="rol">Rol del usuario.</param>
+        /// <param name="esAdmin"></param>
         /// <param name="mensaje">Mensaje de respuesta.</param>
         /// <returns>Booleano indicando si la creación fue exitosa.</returns>
-        public bool AgregarUsuario(string nombre, string apellidoPaterno, string apellidoMaterno, string correo, string contrasena, string rol, out string mensaje)
+        public bool AgregarUsuario(string nombre,string correo, string contrasena, bool esAdmin, out string mensaje)
         {
             bool resultado;
 
@@ -46,12 +43,9 @@ namespace Vitaly_Manager.Controladores
             Usuario nuevo = new Usuario
             {
                 Nombre = nombre,
-                ApellidoPaterno = apellidoPaterno,
-                ApellidoMaterno = apellidoMaterno,
                 Correo = correo,
                 Contraseña = contrasena,
-                Rol = rol,
-                FechaRegistro = DateTime.Now // Asignar la fecha de registro actual
+                esAdmin = esAdmin,
             };
 
             // Enviar el nuevo usuario a DataUsuarios para agregarlo a la base de datos

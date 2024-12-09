@@ -20,34 +20,35 @@ namespace Vitaly_Manager.Data
                     conexion.Open();
 
                     // Verificar si el correo ya existe
-                    string verificarQuery = @"SELECT COUNT(*) FROM Usuario 
-                                              WHERE Correo = @Correo";
+                    string verificarQuery = @"SELECT 1 FROM Usuario WHERE Correo = @Correo;
+";
 
                     using (SqlCommand verificarComando = new SqlCommand(verificarQuery, conexion))
                     {
                         verificarComando.Parameters.AddWithValue("@Correo", nuevo.Correo);
-
-                        int count = (int)verificarComando.ExecuteScalar();
-                        if (count > 0)
+                        using (SqlDataReader reader = verificarComando.ExecuteReader())
                         {
-                            mensaje = "El correo electrónico ya existe en la base de datos.";
-                            return false;
+                            if (reader.HasRows) // Si existe alguna fila, el correo ya está registrado.
+                            {
+                                mensaje = "El correo electrónico ya existe en la base de datos.";
+                                return false;
+                            }
                         }
                     }
 
+
                     // Insertar el nuevo usuario
                     string insertarQuery = @"INSERT INTO Usuario 
-                                             (Nombre_Usuario, Apellido_Paterno, Apellido_Materno, Correo, Contraseña, Rol) 
-                                             VALUES (@Nombre, @ApellidoPaterno, @ApellidoMaterno, @Correo, @Contraseña, @Rol)";
+                                             (Nombre_Usuario,Correo, Contraseña, esAdmin) 
+                                             VALUES (@Nombre, @Correo, @Contraseña, @esAdmin)";
 
                     using (SqlCommand insertarComando = new SqlCommand(insertarQuery, conexion))
                     {
                         insertarComando.Parameters.AddWithValue("@Nombre", nuevo.Nombre);
-                        insertarComando.Parameters.AddWithValue("@ApellidoPaterno", nuevo.ApellidoPaterno);
-                        insertarComando.Parameters.AddWithValue("@ApellidoMaterno", nuevo.ApellidoMaterno ?? (object)DBNull.Value);
+                       
                         insertarComando.Parameters.AddWithValue("@Correo", nuevo.Correo);
                         insertarComando.Parameters.AddWithValue("@Contraseña", nuevo.Contraseña);
-                        insertarComando.Parameters.AddWithValue("@Rol", nuevo.Rol);
+                        insertarComando.Parameters.AddWithValue("@esAdmin", nuevo.esAdmin);
 
                         insertarComando.ExecuteNonQuery();
                     }
@@ -91,23 +92,18 @@ namespace Vitaly_Manager.Data
                     {
                         int idUsuario = lector["idUsuario"] != DBNull.Value ? Convert.ToInt32(lector["idUsuario"]) : 0;
                         string nombre = lector["nombreUsuario"] != DBNull.Value ? Convert.ToString(lector["nombreUsuario"])! : "N/A";
-                        string apellidoP = lector["apellidoPaterno"] != DBNull.Value ? Convert.ToString(lector["apellidoPaterno"])! : "N/A";
-                        string apellidoM = lector["apellidoMaterno"] != DBNull.Value ? Convert.ToString(lector["apellidoMaterno"])! : "N/A";
-                        string? contraseña = lector["contraseña"] != DBNull.Value ? Convert.ToString(lector["contraseña"]) : null;
+                        string? contrasena = lector["contrasena"] != DBNull.Value ? Convert.ToString(lector["contrasena"]) : null;
                         string? correo = lector["correo"] != DBNull.Value ? Convert.ToString(lector["correo"]) : null;
-                        string? rol = lector["rol"] != DBNull.Value ? Convert.ToString(lector["rol"]) : null;
-                        DateTime fechaRegistro = lector["fechaRegistro"] != DBNull.Value ? Convert.ToDateTime(lector["fechaRegistro"]) : DateTime.Now;
+                        bool esAdmin = lector["esAdmin"] != DBNull.Value;
 
                         Usuario nuevo = new Usuario
                         {
                             ID_Usuario = idUsuario,
                             Nombre = nombre,
-                            ApellidoPaterno = apellidoP,
-                            ApellidoMaterno = apellidoM,
                             Correo = correo ?? string.Empty, // Proporciona un valor por defecto si es null
-                            Contraseña = contraseña ?? string.Empty,
-                            Rol = rol ?? string.Empty,
-                            FechaRegistro = DateTime.Now // Inicializa FechaRegistro o usa el valor real de la base de datos si está disponible
+                            Contraseña = contrasena ?? string.Empty,
+                            esAdmin = esAdmin,
+                           
                         };
 
 
@@ -134,66 +130,6 @@ namespace Vitaly_Manager.Data
             }
         }
 
-        /// <summary>
-        /// Modifica un usuario existente en la base de datos.
-        /// </summary>
-        /// <param name="usuarioModificado">Entidad de usuario que será modificada</param>
-        /// <param name="mensaje">Mensaje de respuesta</param>
-        /// <returns>Un booleano indicando si la operación fue exitosa o fallida</returns>
-      /*  public static bool Modificar(Usuario usuarioModificado, out string mensaje)
-        {
-            try
-            {
-                using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
-                {
-                    conexion.Open();
-
-                    string query = @"UPDATE Usuarios 
-                             SET nombre = @Nombre, 
-                                 apellidoPaterno = @ApellidoPaterno, 
-                                 apellidoMaterno = @ApellidoMaterno, 
-                                 correo = @Correo, 
-                                 contraseña = @Contraseña, 
-                                 rol = @Rol
-                             WHERE idUsuario = @IdUsuario";
-
-                    using (SqlCommand comando = new SqlCommand(query, conexion))
-                    {
-                        // Agregar los parámetros con valores
-                        comando.Parameters.AddWithValue("@Nombre", usuarioModificado.Nombre);
-                        comando.Parameters.AddWithValue("@ApellidoPaterno", usuarioModificado.ApellidoPaterno);
-                        comando.Parameters.AddWithValue("@ApellidoMaterno", usuarioModificado.ApellidoMaterno ?? (object)DBNull.Value); // Opcional
-                        comando.Parameters.AddWithValue("@Correo", usuarioModificado.Correo);
-                        comando.Parameters.AddWithValue("@Contraseña", usuarioModificado.Contraseña);
-                        comando.Parameters.AddWithValue("@Rol", usuarioModificado.Rol);
-                        comando.Parameters.AddWithValue("@IdUsuario", usuarioModificado.ID_Usuario);
-
-                        comando.ExecuteNonQuery();
-                    }
-
-                    conexion.Close();
-                }
-                mensaje = $"El usuario {usuarioModificado.Nombre} ha sido modificado exitosamente.";
-                return true;
-            }
-            catch (SqlException ex)
-            {
-                mensaje = $"Error en la base de datos: {ex.Message}";
-                return false;
-            }
-            catch (Exception ex)
-            {
-                mensaje = $"Error inesperado: {ex.Message}";
-                return false;
-            }
-        } */
-
-        /// <summary>
-        /// Elimina un usuario de la base de datos
-        /// </summary>
-        /// <param name="id">El id del usuario a eliminar</param>
-        /// <param name="respuesta">Mensaje que describe el resultado de la operación</param>
-        /// <returns>Un booleano que confirma si se pudo o no eliminar el usuario</returns>
         public static bool Eliminar(int id, out string respuesta)
         {
             try
@@ -232,6 +168,70 @@ namespace Vitaly_Manager.Data
                 return false;
             }
         }
+
+
+
+        /// <summary>
+        /// Modifica un usuario existente en la base de datos.
+        /// </summary>
+        /// <param name="usuarioModificado">Entidad de usuario que será modificada</param>
+        /// <param name="mensaje">Mensaje de respuesta</param>
+        /// <returns>Un booleano indicando si la operación fue exitosa o fallida</returns>
+        /*  public static bool Modificar(Usuario usuarioModificado, out string mensaje)
+          {
+              try
+              {
+                  using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
+                  {
+                      conexion.Open();
+
+                      string query = @"UPDATE Usuarios 
+                               SET nombre = @Nombre, 
+                                   apellidoPaterno = @ApellidoPaterno, 
+                                   apellidoMaterno = @ApellidoMaterno, 
+                                   correo = @Correo, 
+                                   contraseña = @Contraseña, 
+                                   rol = @Rol
+                               WHERE idUsuario = @IdUsuario";
+
+                      using (SqlCommand comando = new SqlCommand(query, conexion))
+                      {
+                          // Agregar los parámetros con valores
+                          comando.Parameters.AddWithValue("@Nombre", usuarioModificado.Nombre);
+                          comando.Parameters.AddWithValue("@ApellidoPaterno", usuarioModificado.ApellidoPaterno);
+                          comando.Parameters.AddWithValue("@ApellidoMaterno", usuarioModificado.ApellidoMaterno ?? (object)DBNull.Value); // Opcional
+                          comando.Parameters.AddWithValue("@Correo", usuarioModificado.Correo);
+                          comando.Parameters.AddWithValue("@Contraseña", usuarioModificado.Contraseña);
+                          comando.Parameters.AddWithValue("@Rol", usuarioModificado.Rol);
+                          comando.Parameters.AddWithValue("@IdUsuario", usuarioModificado.ID_Usuario);
+
+                          comando.ExecuteNonQuery();
+                      }
+
+                      conexion.Close();
+                  }
+                  mensaje = $"El usuario {usuarioModificado.Nombre} ha sido modificado exitosamente.";
+                  return true;
+              }
+              catch (SqlException ex)
+              {
+                  mensaje = $"Error en la base de datos: {ex.Message}";
+                  return false;
+              }
+              catch (Exception ex)
+              {
+                  mensaje = $"Error inesperado: {ex.Message}";
+                  return false;
+              }
+          } */
+
+        /// <summary>
+        /// Elimina un usuario de la base de datos
+        /// </summary>
+        /// <param name="id">El id del usuario a eliminar</param>
+        /// <param name="respuesta">Mensaje que describe el resultado de la operación</param>
+        /// <returns>Un booleano que confirma si se pudo o no eliminar el usuario</returns>
+
     }
 }
 

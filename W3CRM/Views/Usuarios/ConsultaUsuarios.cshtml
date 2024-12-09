@@ -25,23 +25,19 @@
                     <tr>
                         <th>ID</th>
                         <th>Nombre</th>
-                        <th>Apellido Paterno</th>
-                        <th>Apellido Materno</th>
                         <th>Correo</th>
-                        <th>Rol</th>
+                        <th>esAdmin</th>
                         <th>Acción</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var usuario in Model.ListaUsuarios)
+                    @foreach (Usuario usuario in Model.ListaUsuarios)
                     {
                         <tr id="@usuario.ID_Usuario">
                             <td>@usuario.ID_Usuario</td>
                             <td>@usuario.Nombre</td>
-                            <td>@usuario.ApellidoPaterno</td>
-                            <td>@usuario.ApellidoMaterno</td>
                             <td>@usuario.Correo</td>
-                            <td>@usuario.Rol</td>
+                            <td>@usuario.esAdmin </td>
                             <td>
                                 <div class="d-flex">
                                    <!-- <a href="javascript:void(0)" class="btn btn-primary shadow btn-xs sharp me-1"
@@ -66,7 +62,7 @@
     </div>
 </div>
 
-<!-- Modal para modificar usuario -->
+<!-- Modal para modificar usuario 
 <div class="modal fade" id="modificarUsuario" tabindex="-1" aria-labelledby="modificarUsuario" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -108,7 +104,7 @@
             </form>
         </div>
     </div>
-</div>
+</div> -->
 
 <!--**********************************
 	Content body end
@@ -243,7 +239,7 @@ function modificarUsuario(idUsuario) {
         function eliminarUsuario(idUsuario) {
             if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
                 $.ajax({
-                    url: '@Url.Action("Eliminar", "Usuarios")', // Cambia esto a la acción correcta
+                    url: '@Url.Action("eliminarUsuario", "Usuarios")', 
                     type: 'POST',
                     data: { id: idUsuario },
                     success: function (response) {
@@ -261,10 +257,10 @@ function modificarUsuario(idUsuario) {
             }
         }
 
-        /*
-function recargarTablaUsuarios() {
-    $.ajax({
-        url: '/Usuarios/ObtenerUsuariosActualizados',
+        
+        function recargarTablaUsuarios() {
+             $.ajax({
+            url: '/Usuarios/ObtenerUsuariosActualizados',
         type: 'GET',
         success: function (response) {
             const tabla = $('#example3 tbody');
@@ -274,12 +270,11 @@ function recargarTablaUsuarios() {
 <tr id="${usuario.ID_Usuario}">
     <td>${usuario.ID_Usuario}</td>
     <td>${usuario.Nombre}</td>
-    <td>${usuario.ApellidoPaterno}</td>
-    <td>${usuario.ApellidoMaterno}</td>
     <td>${usuario.Correo}</td>
-    <td>${usuario.Rol}</td>
+            <td>${usuario.esAdmin}</td>
     <td>
         <div class="d-flex">
+        
             <a href="javascript:void(0)" class="btn btn-primary shadow btn-xs sharp me-1" data-bs-toggle="modal" data-bs-target="#modificarUsuario" onclick="modificarUsuario('${usuario.ID_Usuario}')"><i class="fas fa-pencil-alt"></i></a>
             <a href="javascript:void(0)" class="btn btn-danger shadow btn-xs sharp" onclick="eliminarUsuario('${usuario.ID_Usuario}')"><i class="fa fa-trash"></i></a>
         </div>
@@ -293,7 +288,12 @@ function recargarTablaUsuarios() {
             console.error('Error al recargar tabla de usuarios:', error);
         }
     });
-} */
+} 
+
+    function cancelarOperacion() {
+
+    $('#modificarUsuario').modal('hide');  // Cierra el modal si lo estás usando
+}
 
 </script>
 

@@ -8,11 +8,9 @@ namespace Vitaly_Manager.Entidades
         public int ID_Usuario { get; set; }
 
         private string _nombre;
-        private string _apellidoPaterno;
-        private string _apellidoMaterno;
         private string _correo;
         private string _contraseña;
-        private string _rol;
+        private bool _esAdmin;
 
         [Required(ErrorMessage = "El nombre es obligatorio.")]
         [StringLength(50, ErrorMessage = "El nombre no puede exceder los 50 caracteres.")]
@@ -30,44 +28,6 @@ namespace Vitaly_Manager.Entidades
                     throw new ArgumentException("El nombre no puede exceder los 50 caracteres.");
                 }
                 _nombre = value;
-            }
-        }
-
-        [Required(ErrorMessage = "El apellido paterno es obligatorio.")]
-        [StringLength(30, ErrorMessage = "El apellido paterno no puede exceder los 30 caracteres.")]
-        public required string ApellidoPaterno
-        {
-            get => _apellidoPaterno;
-            set
-            {
-                if (string.IsNullOrWhiteSpace(value))
-                {
-                    throw new ArgumentException("El apellido paterno es obligatorio.");
-                }
-                if (value.Length > 30)
-                {
-                    throw new ArgumentException("El apellido paterno no puede exceder los 30 caracteres.");
-                }
-                _apellidoPaterno = value;
-            }
-        }
-
-        [Required(ErrorMessage = "El apellido materno es obligatorio.")]
-        [StringLength(30, ErrorMessage = "El apellido materno no puede exceder los 30 caracteres.")]
-        public required string ApellidoMaterno
-        {
-            get => _apellidoMaterno;
-            set
-            {
-                if (string.IsNullOrWhiteSpace(value))
-                {
-                    throw new ArgumentException("El apellido materno es obligatorio.");
-                }
-                if (value.Length > 30)
-                {
-                    throw new ArgumentException("El apellido materno no puede exceder los 30 caracteres.");
-                }
-                _apellidoMaterno = value;
             }
         }
 
@@ -110,26 +70,13 @@ namespace Vitaly_Manager.Entidades
             }
         }
 
-        [Required(ErrorMessage = "El rol es obligatorio.")]
-        [StringLength(20, ErrorMessage = "El rol no puede exceder los 20 caracteres.")]
-        public required string Rol
+        public bool esAdmin
         {
-            get => _rol;
+            get => _esAdmin;
             set
-            {
-                if (string.IsNullOrWhiteSpace(value))
-                {
-                    throw new ArgumentException("El rol es obligatorio.");
-                }
-                if (value.Length > 20)
-                {
-                    throw new ArgumentException("El rol no puede exceder los 20 caracteres.");
-                }
-                _rol = value;
+            {  
+                _esAdmin = value;
             }
         }
-
-        [Required]
-        public required DateTime FechaRegistro { get; set; }
     }
 }
