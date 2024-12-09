@@ -76,12 +76,12 @@ namespace Vitaly_Manager.Data
                         monto = @Monto,
                         fecha = @Fecha,
                         idProductoComprado = @IdProductoComprado,
-                        WHERE idCliente = @IdGasto";
+                        WHERE idGasto = @IdGasto";
 
                     //Se ejecuta el query de modificacion
                     using (SqlCommand comando = new SqlCommand(query, conexion))
                     {
-                        comando.Parameters.AddWithValue("@IdCliente", gastoModificado.idGasto);
+                        comando.Parameters.AddWithValue("@IdGasto", gastoModificado.idGasto);
                         comando.Parameters.AddWithValue("@Concepto", gastoModificado.concepto);
                         comando.Parameters.AddWithValue("@Monto", gastoModificado.monto);
                         comando.Parameters.AddWithValue("@Fecha", gastoModificado.fecha);

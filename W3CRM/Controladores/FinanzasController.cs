@@ -20,7 +20,7 @@ namespace Vitaly_Manager.Controladores
         {
             try
             {
-                var gastos = _dataGasto.ConsultarGastos();
+                var gastos = _dataGasto.ConsultarGastos(out string mensaje, out bool exito);
                 return Ok(new { success = true, data = gastos });
             }
             catch (Exception ex)
@@ -61,4 +61,5 @@ namespace Vitaly_Manager.Controladores
 
 
 
+    }
 }
