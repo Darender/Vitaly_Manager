@@ -10,6 +10,10 @@ namespace Vitaly_Manager.Controladores
         public static List<TipoProducto> ListasTipoProductos = DataTipoProducto.ListaTiposProductos(out _, out _);
         public static List<TipoUnidad> ListaTipoUnidades = DataTipoUnidad.ListaTiposUnidades(out _, out _);
         public List<CatalogoProducto> ListaProductos = DataCatalogoProducto.ListaCatalogoProductos(out _, out _);
+        public IActionResult AgregarLoteProducto()
+        {
+            return View(this);
+        }
 
         public IActionResult ConsultaProductos()
         {

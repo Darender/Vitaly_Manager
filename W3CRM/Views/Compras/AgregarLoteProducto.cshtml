@@ -1,0 +1,220 @@
+﻿﻿@using System.Globalization
+@using Vitaly_Manager.Entidades
+@using W3CRM.Controllers
+@{
+    ViewData["Title"] = "AgregarLoteProducto";
+}
+<!--**********************************
+    Content body start
+***********************************-->
+
+<style>
+    .small-margin-bottom {
+        margin-bottom: -30px; /* Ajusta el valor según sea necesario */
+    }
+</style>
+
+<div class="content-body">
+    <div class="page-titles">
+        <ol class="breadcrumb">
+            <li><h5 class="bc-title">Productos</h5></li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Index", "w3crm")">
+                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2.125 6.375L8.5 1.41667L14.875 6.375V14.1667C14.875 14.5424 14.7257 14.9027 14.4601 15.1684C14.1944 15.4341 13.8341 15.5833 13.4583 15.5833H3.54167C3.16594 15.5833 2.80561 15.4341 2.53993 15.1684C2.27426 14.9027 2.125 14.5424 2.125 14.1667V6.375Z" stroke="#2C2C2C" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M6.375 15.5833V8.5H10.625V15.5833" stroke="#2C2C2C" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Inicio
+                </a>
+            </li>
+            <li class="breadcrumb-item active"><a href="javascript:void(0)">Agregar Lote Producto</a></li>
+        </ol>
+        <a class="text-primary fs-13" data-bs-toggle="offcanvas" href="#offcanvasExample1" role="button" aria-controls="offcanvasExample1">+ Add Task</a>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Nuevo lote de productos</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-validation">
+                            <div class="container-fluid p-0">
+                                <form class="needs-validation w-100" action="/ProductosController/AgregarNuevoLoteProducto" method="post" novalidate id="formulario">
+                                    <input type="hidden" id="formulario_id" name="ID" value="0">
+                                    <div class="row mb-3">
+                                        <label class="col-md-2 col-form-label" for="formulario_tipo">Tipo</label>
+                                        <div class="col-md-10">
+                                            <select class="wide form-control" id="formulario_tipo" name="Tipo" required onchange="cargarProductos()">
+                                                <option selected disabled value="" id="formulario_tipo_vacio1">Por favor seleccione</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-2 col-form-label" for="formulario_producto">Producto</label>
+                                        <div class="col-md-10">
+                                            <select class="wide form-control" id="formulario_producto" name="Producto_id" required>
+                                                <option selected disabled value="" id="formulario_producto_vacio">Por favor seleccione</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-2 col-form-label" for="formulario_cantidad">Cantidad</label>
+                                        <div class="col-md-10">
+                                            <input type="number" step="any" class="form-control" id="formulario_cantidad" placeholder="10" name="Cantidad" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-2 col-form-label" for="formulario_costo">Costo/Unidad</label>
+                                        <div class="col-md-10">
+                                            <div class="input-group">
+                                                <div class="input-group-text">$</div>
+                                                <input type="number" step="any" class="form-control" id="formulario_costo" placeholder="65.5" name="Costo" required oninput="calcularMargenYPrecio()">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-2 col-form-label" for="formulario_vencimiento">Vencimiento</label>
+                                        <div class="col-md-10">
+                                            <input name="Vencimiento" class="datepicker-default form-control" id="formulario_vencimiento">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label class="col-md-2 col-form-label" for="formulario_material">Es material</label>
+                                        <div class="col-md-10">
+                                            <input type="checkbox" class="form-check-input" id="formulario_material" name="EsMaterial">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6 text-center">
+                                            <label for="formulario_margen">Margen de ganancia (%)</label>
+                                            <input type="text" class="form-control text-center" id="formulario_margen" name="MargenGanancia" >
+                                        </div>
+                                        <div class="col-md-6 text-center">
+                                            <label for="formulario_precio">Precio de venta</label>
+                                            <div class="input-group">
+                                                <div class="input-group-text">$</div>
+                                                <input type="text" class="form-control text-center" id="formulario_precio" name="PrecioVenta" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Botón de "Agregar"  -->
+                                    <div class="row mb-3">
+                                        <div class="col-md-12">
+                                            <button type="submit" class="btn btn-primary py-2 w-100" id="boton_subir">Agregar Producto</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--**********************************
+	Content body end
+***********************************-->
+@section w3crm_style
+	{
+    <link href="~/w3crm/vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+	<link href="~/w3crm/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+
+        <!-- Daterange picker -->
+    <link href="~/w3crm/vendor/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+
+    <!-- Pick date -->
+    <link rel="stylesheet" href="~/w3crm/vendor/pickadate/themes/default.css">
+    <link rel="stylesheet" href="~/w3crm/vendor/pickadate/themes/default.date.css">
+}
+
+@section w3crm_script
+	{
+	<!--**********************************
+		Scripts
+	***********************************-->
+
+    <script src="~/w3crm/vendor/sweetalert2/dist/sweetalert2.min.js"></script>
+    <script src="~/w3crm/js/plugins-init/sweetalert.init.js"></script>
+    <script src="~/w3crm/js/styleSwitcher.js"></script>
+
+    <!-- Required vendors -->
+    <script src="~/w3crm/vendor/global/global.min.js"></script>
+	<script src="~/w3crm/vendor/chart.js/Chart.bundle.min.js"></script>
+	<script src="~/w3crm/vendor/tagify/dist/tagify.min.js"></script>
+
+	<!-- Apex Chart -->
+	<script src="~/w3crm/vendor/apexchart/apexchart.js"></script>
+
+	<!-- Datatable -->
+	<script src="~/w3crm/vendor/datatables/js/jquery.dataTables.min.js"></script>
+	<script src="~/w3crm/js/plugins-init/datatables.init.js"></script>
+	<script src="~/w3crm/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+
+     <!-- code-highlight -->
+    <script src="~/w3crm/js/highlight.min.js"></script>
+
+    <!-- momment js is must -->
+    <script src="~/w3crm/vendor/moment/moment.min.js"></script>
+    <script src="~/w3crm/vendor/bootstrap-daterangepicker/daterangepicker.js"></script>
+
+    <!-- pickdate -->
+    <script src="~/w3crm/vendor/pickadate/picker.js"></script>
+    <script src="~/w3crm/vendor/pickadate/picker.time.js"></script>
+    <script src="~/w3crm/vendor/pickadate/picker.date.js"></script>
+
+     <!-- Pickdate -->
+    <script src="~/w3crm/js/plugins-init/pickadate-init.js"></script>
+    <script src="~/w3crm/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+    <script src="~/w3crm/js/custom.js"></script>
+    <script src="~/w3crm/js/deznav-init.js"></script>
+    <script src="~/w3crm/js/demo.js"></script>
+    <script src="~/w3crm/js/styleSwitcher.js"></script>
+
+    <script src="~/w3crm/js/custom.js"></script>
+    <script src="~/w3crm/js/deznav-init.js"></script>
+    <script src="~/w3crm/js/demo.js"></script>
+
+    
+
+    <script>
+        hljs.highlightAll();
+        hljs.configure({ ignoreUnescapedHTML: true })
+
+    </script>
+
+    <script>
+    </script>
+
+    <script>
+        (function () {
+          'use strict'
+
+          // Fetch all the forms we want to apply custom Bootstrap validation styles to
+          var forms = document.querySelectorAll('.needs-validation')
+
+          // Loop over them and prevent submission
+          Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+              form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                  event.preventDefault()
+                  event.stopPropagation()
+                }
+
+                form.classList.add('was-validated')
+              }, false)
+            })
+        })()
+    </script>
+}
