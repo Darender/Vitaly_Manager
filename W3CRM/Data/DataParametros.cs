@@ -3,14 +3,8 @@ using Vitaly_Manager.Entidades;
 
 namespace Vitaly_Manager.Data
 {
-    public class DataIVA
-    {/*
-        /// <summary>
-        /// Duelve el ultimo iva de la lista
-        /// </summary>
-        /// <param name="respuesta">Mensaje de respuesta</param>
-        /// <param name="exito">Booleano de si fue exito o fracaso la consulta</param>
-        /// <returns>Debuelve una entidad IVA</returns>
+    public class DataParametros
+    {
         public static Parametros UltimoIVA(out string respuesta, out bool exito)
         {
             Parametros listaTiposProductos = new();
@@ -19,18 +13,18 @@ namespace Vitaly_Manager.Data
                 using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
                 {
                     conexion.Open();
-                    SqlCommand comando = new SqlCommand("SELECT TOP 1 * FROM IVA ORDER BY idIVA DESC", conexion);
+                    SqlCommand comando = new SqlCommand("SELECT TOP 1 * FROM Parametros ORDER BY idParametros DESC", conexion);
                     SqlDataReader lector = comando.ExecuteReader();
 
                     while (lector.Read())
                     {
-                        int idIVA = lector["idIVA"] != DBNull.Value ? Convert.ToInt32(lector["idIVA"]) : 0;
-                        decimal porcentaje = Convert.ToInt32(lector["porcentaje"]);
+                        int idIVA = lector["idParametros"] != DBNull.Value ? Convert.ToInt32(lector["idParametros"]) : 0;
+                        decimal porcentaje = Convert.ToInt32(lector["IVA"]);
 
                         Parametros nuevo = new Parametros
                         {
-                            ID_IVA = idIVA,
-                            Porcentaje = porcentaje
+                            ID_Parametros = idIVA,
+                            IVA = porcentaje
                         };
                         exito = true;
                         respuesta = "Consulta exitosa";
@@ -55,6 +49,6 @@ namespace Vitaly_Manager.Data
                 respuesta = $"Error inesperado: {ex.Message}";
                 return new Parametros();
             }
-        }*/
+        }
     }
 }

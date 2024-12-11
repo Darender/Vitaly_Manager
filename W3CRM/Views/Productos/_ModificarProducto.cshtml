@@ -34,9 +34,9 @@
                                         <div class="col-lg-7">
                                             <select class="form-select" id="proveedorModificar" required>
                                                 <option value="" selected disabled>Seleccione un proveedor</option>
-                                                @foreach (Proveedor proveedor in Model.ListaProveedores)
+                                                @foreach (Proveedor proveedor in Vitaly_Manager.Controladores.ProductosController.ListaProveedores)
                                                 {
-                                                    <option value="@proveedor.ID_Proveedor">@proveedor.Nombre_Proveedor</option>
+                                                    <option value="@proveedor.IdProveedor">@proveedor.Nombre</option>
                                                 }
                                             </select>
                                             <div class="invalid-feedback">
@@ -53,7 +53,7 @@
                                         <div class="col-lg-7">
                                             <select class="form-select" id="tipoproductoModificar" required>
                                                 <option value="" selected disabled>Seleccione un tipo de producto</option>
-                                                @foreach (TipoProducto item in Model.ListasTipoProductos)
+                                                @foreach (TipoProducto item in Vitaly_Manager.Controladores.ProductosController.ListasTipoProductos)
                                                 {
                                                     <option value="@item.ID_TipoProducto">@item.Nombre_Tipo_Producto</option>
                                                 }
@@ -94,7 +94,7 @@
                                         <div class="col-lg-7">
                                             <select class="form-select" id="tipounidadModificar" required>
                                                 <option value="" selected disabled>Seleccione un tipo de unidad</option>
-                                                @foreach (TipoUnidad item in Model.ListaTipoUnidades)
+                                                @foreach (TipoUnidad item in Vitaly_Manager.Controladores.ProductosController.ListaTipoUnidades)
                                                 {
                                                     <option value="@item.ID_TipoUnidad">@item.Unidad_Medida</option>
                                                 }

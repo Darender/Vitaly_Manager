@@ -6,10 +6,10 @@ namespace Vitaly_Manager.Controladores
 {
     public class ProductosController : Controller
     {
-        public List<Proveedor> ListaProveedores = DataProveedores.ListaProveedores(out _, out _);
-        public List<TipoProducto> ListasTipoProductos = DataTipoProducto.ListaTiposProductos(out _, out _);
-        public List<TipoUnidad> ListaTipoUnidades = DataTipoUnidad.ListaTiposUnidades(out _, out _);
-        public List<CatalogoProducto> ListaProductos = DataCatalogoProducto.ListaCatalogoProductos(out _, out _);
+        public static List<Proveedor> ListaProveedores = DataProveedores.ListaProveedores(out _, out _);
+        public static List<TipoProducto> ListasTipoProductos = DataTipoProducto.ListaTiposProductos(out _, out _);
+        public static List<TipoUnidad> ListaTipoUnidades = DataTipoUnidad.ListaTiposUnidades(out _, out _);
+        public static List<CatalogoProducto> ListaProductos = DataCatalogoProducto.ListaCatalogoProductos(out _, out _);
 
         public IActionResult ConsultaProductos()
         {
@@ -120,8 +120,8 @@ namespace Vitaly_Manager.Controladores
         {
             foreach (Proveedor item in ListaProveedores)
             {
-                if (item.ID_Proveedor == idProveedor)
-                    return item.Nombre_Proveedor;
+                if (item.IdProveedor == idProveedor)
+                    return item.Nombre;
             }
             return "ERROR NO ENCONTRADO";
         }

@@ -1,0 +1,52 @@
+﻿<div class="modal fade" id="agregarProveedor" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-center">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Modificar Proveedor</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-validation">
+                    <div class="container-fluid p-0">
+                        <div class="row">
+                            <!-- Formulario de Nuevo Proveedor -->
+                            <div class="col-12">
+                                <form class="needs-validation" novalidate onsubmit="handleFormSubmit(event)">
+                                    <input type="hidden" id="formulario_agregarProveedores_id" name="ID" value="0">
+
+                                    <!-- Campo Nombres -->
+                                    <div class="mb-3">
+                                        <label class="form-label" for="formulario_agregarProveedores_nombres">Nombre(s) <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="formulario_agregarProveedores_nombres" placeholder="Nombre completo del proveedor" name="Nombres" required>
+                                        <div class="invalid-feedback">Por favor, ingrese un nombre válido.</div>
+                                    </div>
+
+                                    <!-- Campo Teléfono -->
+                                    <div class="mb-3">
+                                        <label class="form-label" for="formulario_agregarProveedores_telefono">Teléfono <span class="text-danger">*</span></label>
+                                        <input type="tel" class="form-control" id="formulario_agregarProveedores_telefono" placeholder="+52 686-999-999" name="Telefono">
+                                        <div class="invalid-feedback">Por favor, ingrese un número de teléfono válido.</div>
+                                    </div>
+
+                                    <!-- Campo Otro medio de contacto -->
+                                    <div class="mb-3">
+                                        <label class="form-label" for="formulario_agregarProveedores_contacto">Otro medio de contacto <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="formulario_agregarProveedores_contacto" placeholder="Link o usuario" name="MedioContacto">
+                                        <div class="invalid-feedback">Por favor, ingrese un contacto válido.</div>
+                                    </div>
+
+                                    <!-- Botón Guardar -->
+                                    <div class="text-center mt-4">
+                                        <button type="submit" class="btn btn-primary w-100 py-2" id="guardar_proveedor">GUARDAR PROVEEDOR</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

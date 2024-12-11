@@ -12,28 +12,10 @@ namespace Vitaly_Manager.Controladores
 
         public IActionResult ConsultaProveedores()
         {
-            // Cargar la lista de proveedores
-            string respuesta;
-            bool exito;
-            var listaProveedores = DataProveedores.ListaProveedores(out respuesta, out exito);
-
-            // Verificar si la consulta fue exitosa
-            if (!exito)
-            {
-                ViewData["Error"] = respuesta;
-                return View(new List<Proveedor>());
-            }
-
             // Pasar los proveedores a la vista
             return View(listaProveedores);
         }
 
-
-        public IActionResult AgregarLoteProducto()
-        {
-            ProveedoresController controlador = new ProveedoresController();
-            return View(controlador);
-        }
         [HttpPost]
         public ActionResult EliminarProveedor(int idProveedor)
         {
@@ -55,6 +37,7 @@ namespace Vitaly_Manager.Controladores
             string mensaje;
             try
             {
+                /*
                 if (DataProveedores.tieneProductos(id))
                 {
                     resultado = true;
@@ -64,7 +47,9 @@ namespace Vitaly_Manager.Controladores
                 {
                     resultado = false;
                     mensaje = "";
-                }
+                }*/
+                resultado = false;
+                mensaje = "";
             }
             catch (Exception ex)
             {
@@ -145,9 +130,9 @@ namespace Vitaly_Manager.Controladores
                 {
                      Proveedor nuevo = new Proveedor
                     {
-                        Nombre_Proveedor = nombre,
+                        Nombre = nombre,
                          Telefono = telefono,
-                         Pagina_Contacto = contactoAlternativo
+                         ContactoAlternativo = contactoAlternativo
                      };
 
                     // Envio del nuevo profesor a data para que se envie a la base de datos
@@ -169,7 +154,7 @@ namespace Vitaly_Manager.Controladores
             Proveedor proveedor = listaProveedores[0];
             foreach (Proveedor valor in listaProveedores)
             {
-                if (valor.ID_Proveedor == id)
+                if (valor.IdProveedor == id)
                 {
                     proveedor = valor;
                     break;
@@ -224,7 +209,7 @@ namespace Vitaly_Manager.Controladores
 
                 foreach (Proveedor item in listaProveedores)
                 {
-                    if (item.Telefono == telefono && item.ID_Proveedor != proveedorSeleccionado)
+                    if (item.Telefono == telefono && item.IdProveedor != proveedorSeleccionado)
                     {
                         fallidos.Add("telefono");
                         mensaje = "Numero de telefono ya existente en la base de datos";
@@ -235,14 +220,14 @@ namespace Vitaly_Manager.Controladores
                 {
                     Proveedor modificado = new Proveedor
                     {
-                        ID_Proveedor = proveedorSeleccionado,
-                        Nombre_Proveedor = nombre,
+                        IdProveedor = proveedorSeleccionado,
+                        Nombre = nombre,
                         Telefono = telefono,
-                        Pagina_Contacto = contactoAlternativo
+                        ContactoAlternativo = contactoAlternativo
 
                     };
 
-                    resultado = DataProveedores.Modificar(modificado, out mensaje);
+                    resultado = DataProveedores.ModificarProveedor(modificado, out mensaje);
                 }
             }
             catch (Exception ex)

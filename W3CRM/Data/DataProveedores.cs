@@ -33,17 +33,17 @@ namespace Vitaly_Manager.Data
                     {
                         //Obtiene y valida cada campo en el registro, 
                         int idProveedor = lector["idProveedor"] != DBNull.Value ? Convert.ToInt32(lector["idProveedor"]) : 0;
-                        string nombreProveedor = lector["nombreProvedor"] != DBNull.Value ? Convert.ToString(lector["nombreProvedor"])! : "N/A";
+                        string nombreProveedor = lector["nombre"] != DBNull.Value ? Convert.ToString(lector["nombre"])! : "N/A";
                         string? telefono = lector["telefono"] != DBNull.Value ? Convert.ToString(lector["telefono"]) : null;
-                        string? paginaContacto = lector["PaginaContacto"] != DBNull.Value ? Convert.ToString(lector["PaginaContacto"]) : null;
+                        string? paginaContacto = lector["contactoAlternativo"] != DBNull.Value ? Convert.ToString(lector["contactoAlternativo"]) : null;
 
                         //Cree un objeto proveedor con los datos para agregarse a la listaProveedor
                         Proveedor nuevo = new Proveedor
                         {
-                            ID_Proveedor = idProveedor,
-                            Nombre_Proveedor = nombreProveedor,
+                            IdProveedor = idProveedor,
+                            Nombre = nombreProveedor,
                             Telefono = telefono,
-                            Pagina_Contacto = paginaContacto,
+                            ContactoAlternativo = paginaContacto,
                         };
 
                         listaProveedores.Add(nuevo);
@@ -73,7 +73,7 @@ namespace Vitaly_Manager.Data
         }
 
 
-        public static bool Modificar(Proveedor proveedorModificado, out string mensaje)
+        public static bool ModificarProveedor(Proveedor proveedorModificado, out string mensaje)
         {
             try
             {
@@ -82,24 +82,24 @@ namespace Vitaly_Manager.Data
                     conexion.Open();
 
                     string query = @"UPDATE Proveedor 
-                             SET nombreProvedor = @NombreProveedor, 
+                             SET nombre = @NombreProveedor, 
                                  telefono = @Telefono, 
-                                 paginaContacto = @Contacto_Alternativo 
+                                 contactoAlternativo = @Contacto_Alternativo 
                              WHERE idProveedor = @IdProveedor";
 
                     using (SqlCommand comando = new SqlCommand(query, conexion))
                     {
-                        comando.Parameters.AddWithValue("@NombreProveedor", proveedorModificado.Nombre_Proveedor);
+                        comando.Parameters.AddWithValue("@NombreProveedor", proveedorModificado.Nombre);
                         comando.Parameters.AddWithValue("@Telefono", proveedorModificado.Telefono);
-                        comando.Parameters.AddWithValue("@Contacto_Alternativo", proveedorModificado.Pagina_Contacto ?? (object)DBNull.Value);
-                        comando.Parameters.AddWithValue("@IdProveedor", proveedorModificado.ID_Proveedor); // Asegúrate de tener el Id del cliente
+                        comando.Parameters.AddWithValue("@Contacto_Alternativo", proveedorModificado.ContactoAlternativo ?? (object)DBNull.Value);
+                        comando.Parameters.AddWithValue("@IdProveedor", proveedorModificado.IdProveedor); // Asegúrate de tener el Id del cliente
 
                         comando.ExecuteNonQuery();
                     }
 
                     conexion.Close();
                 }
-                mensaje = $"El cliente {proveedorModificado.Nombre_Proveedor} ha sido modificado exitosamente.";
+                mensaje = $"El cliente {proveedorModificado.Nombre} ha sido modificado exitosamente.";
                 return true;
             }
             catch (SqlException ex)
@@ -148,29 +148,9 @@ namespace Vitaly_Manager.Data
             {
                 exito = false;
                 respuesta = $"Error inesperado: {ex.Message}";
-
-    }
-}
-        //Toma el id del proveedor, verifica si tiene algun producto relacionado. Si es asi devuelve true,
-        //de lo contrario devuelve false.
-        public static bool tieneProductos(int id)
-        {
-            using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
-            {
-                conexion.Open();
-                SqlCommand comando = new SqlCommand($"SELECT * FROM CatalogoProducto WHERE idProveedor = {id}", conexion);
-                SqlDataReader lector = comando.ExecuteReader();
-                if (lector.HasRows)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-
             }
         }
+
         /// Agrega un nuevo cliente a la base de datos
         /// </summary>
         /// <param name="nuevo">Entidad de cliente que se agregara</param>
@@ -186,12 +166,12 @@ namespace Vitaly_Manager.Data
 
                     // Verificar si el nombre o el teléfono ya existen
                     string verificarQuery = @"SELECT COUNT(*) FROM Proveedor 
-                                      WHERE nombreProvedor = @NombreProvedor 
+                                      WHERE nombre = @NombreProvedor 
                                       OR telefono = @Telefono";
 
                     using (SqlCommand verificarComando = new SqlCommand(verificarQuery, conexion))
                     {
-                        verificarComando.Parameters.AddWithValue("@NombreProvedor", nuevo.Nombre_Proveedor);
+                        verificarComando.Parameters.AddWithValue("@NombreProvedor", nuevo.Nombre);
                         verificarComando.Parameters.AddWithValue("@Telefono", nuevo.Telefono);
 
                         int count = (int)verificarComando.ExecuteScalar(); // Obtiene el número de registros coincidentes
@@ -205,14 +185,14 @@ namespace Vitaly_Manager.Data
 
                     // Si no existen, proceder con la inserción
                     string insertarQuery = @"INSERT INTO Proveedor 
-                                     (nombreProvedor, telefono, paginaContacto) 
+                                     (nombre, telefono, contactoAlternativo) 
                                      VALUES (@NombreProvedor, @Telefono, @PaginaContacto)";
 
                     using (SqlCommand insertarComando = new SqlCommand(insertarQuery, conexion))
                     {
-                        insertarComando.Parameters.AddWithValue("@NombreProvedor", nuevo.Nombre_Proveedor);
+                        insertarComando.Parameters.AddWithValue("@NombreProvedor", nuevo.Nombre);
                         insertarComando.Parameters.AddWithValue("@Telefono", nuevo.Telefono);
-                        insertarComando.Parameters.AddWithValue("@PaginaContacto", nuevo.Pagina_Contacto ?? (object)DBNull.Value);
+                        insertarComando.Parameters.AddWithValue("@PaginaContacto", nuevo.ContactoAlternativo ?? (object)DBNull.Value);
 
                         insertarComando.ExecuteNonQuery();
                     }
@@ -220,7 +200,7 @@ namespace Vitaly_Manager.Data
                     conexion.Close();
                 }
 
-                mensaje = $"El Proveedor {nuevo.Nombre_Proveedor} ha sido agregado exitosamente.";
+                mensaje = $"El Proveedor {nuevo.Nombre} ha sido agregado exitosamente.";
                 return true;
             }
             catch (SqlException ex)

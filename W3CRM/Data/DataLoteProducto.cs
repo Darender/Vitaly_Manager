@@ -68,7 +68,6 @@ namespace Vitaly_Manager.Data
             }
         }
 
-        /*
         /// <summary>
         /// Agrega un nuevo lote de producto a la base de datos
         /// </summary>
@@ -84,13 +83,13 @@ namespace Vitaly_Manager.Data
                     conexion.Open();
 
                     string query = @"INSERT INTO loteProducto 
-                            (idCatalogo, idIVA, esMaterial, fechaIngreso, fechaVencimiento, cantidad, precioVenta, precioCompra, margenGanancia) 
+                            (idCatalogoProd, IVA, esMaterial, fechaIngreso, fechaVencimiento, cantidad, precioVenta, precioCompra, margenGanancia) 
                             VALUES (@ID_CatalogoProducto, @ID_IVA, @EsMaterial, @FechaIngreso, @FechaVencimiento, @Cantidad, @PrecioVenta, @PrecioCompra, @MargenGanancia)";
 
                     using (SqlCommand comando = new SqlCommand(query, conexion))
                     {
                         comando.Parameters.AddWithValue("@ID_CatalogoProducto", nuevo.ID_CatalogoProducto);
-                        comando.Parameters.AddWithValue("@ID_IVA", nuevo.ID_IVA);
+                        comando.Parameters.AddWithValue("@ID_IVA", DataParametros.UltimoIVA(out _, out _).IVA   );
                         comando.Parameters.AddWithValue("@EsMaterial", nuevo.EsMaterial ? 1 : 0);
                         comando.Parameters.AddWithValue("@FechaIngreso", nuevo.Fecha_Ingreso);
                         comando.Parameters.AddWithValue("@FechaVencimiento", nuevo.Fecha_Vencimiento);
@@ -118,7 +117,7 @@ namespace Vitaly_Manager.Data
                 mensaje = $"Error inesperado: {ex.Message}";
                 return false;
             }
-        }*/
+        }
 
     }
 }
