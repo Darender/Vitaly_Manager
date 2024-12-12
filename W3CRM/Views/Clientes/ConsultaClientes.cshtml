@@ -33,41 +33,45 @@
     <div class="container-fluid">
         <div class="tab-content" id="myTabContent-2">
             <div class="tab-pane fade show active" id="withoutSpace" role="tabpanel" aria-labelledby="home-tab-2">
+                <div class="d-flex justify-content-center">
+                    <a href="javascript:void(0)"
+                       class="btn btn-primary shadow w-40 py-1"
+                       data-bs-toggle="modal"
+                       data-bs-target="#agregarCliente">
+                        <i class="fas fa-plus me-2"></i> Agregar Nuevo Cliente
+                    </a>
+                </div>
                 <div class="card-body pt-0">
 		            <div class="table-responsive">
 						<table id="example3" class="display table" style="min-width: 845px">
 				            <thead>
 					            <tr>
 						            <th>Nombre(s)</th>
-						            <th>Apellido Paterno</th>
-                                    <th>Apellido Materno</th>
+						            <th>Apellidos</th>
 						            <th>Telefono</th>
 						            <th>Edad</th>
 						            <th>Genero</th>
-						            <th>Fecha de Registro</th>
 						            <th>Accion</th>
                                     <th>Contacto Alternativo</th>
 					            </tr>
 				            </thead>
 				            <tbody>
-                                @foreach (var Cliente in Model.listaClientes)
+                                @foreach (Cliente cliente in Model.listaClientes)
                                 {
-                                    <tr id="@Cliente.ID_Cliente">
-                                        <td>@Cliente.NombreCliente</td>
-                                        <td>@Cliente.ApellidoP</td>
-                                        <td>@Cliente.ApellidoM</td>
-                                        <td><a href="javascript:void(0);"><strong>@Cliente.Telefono</strong></a></td>
-                                        <td>@Cliente.Edad</td>
-                                        <td>@Cliente.Genero</td>
-                                        <td>@Cliente.FechaRegistro.ToShortDateString()</td>
+                                    <tr id="@cliente.IdCliente">
+                                        <td>@cliente.Nombre</td>
+                                        <td>@cliente.Apellidos</td>
+                                        <td><a href="javascript:void(0);"><strong>@cliente.Telefono</strong></a></td>
+                                        <td>@cliente.Edad</td>
+                                        <td>@cliente.Genero</td>
                                         <td>
                                             <div class="d-flex">
-                                                <a href="#javascript:void(0)" class="btn btn-primary shadow btn-xs sharp me-1"  data-bs-toggle="modal" data-bs-target="#modificarCliente" onclick="modificarClientes('@Cliente.ID_Cliente')"><i class="fas fa-pencil-alt"></i></a>
-                                                <a href="#" class="btn btn-danger shadow btn-xs sharp" onclick="eliminarCliente('@Cliente.ID_Cliente')"><i class="fa fa-trash"></i></a>
+                                                <a href="#javascript:void(0)" class="btn btn-primary shadow btn-xs sharp me-1" data-bs-toggle="modal" data-bs-target="#modificarCliente" onclick="modificarClientes('@cliente.IdCliente')"><i class="fas fa-pencil-alt"></i></a>
+                                                <a href="#" class="btn btn-danger shadow btn-xs sharp" onclick="eliminarCliente('@cliente.IdCliente')"><i class="fa fa-trash"></i></a>
                                             </div>
                                         </td>
 
-                                        <td>@(string.IsNullOrEmpty(Cliente.ContactoAlternativo) ? "No disponible" : Cliente.ContactoAlternativo)</td>
+                                        <td>@(string.IsNullOrEmpty(cliente.ContactoAlternativo) ? "No disponible" : cliente.ContactoAlternativo)</td>
                                     </tr>
                                 }
 				            </tbody>
@@ -158,6 +162,114 @@
     </script>
 
     <script>
+        (function () {
+            'use strict';
+
+            var form = document.getElementById('formularioAgregarCliente');
+            const nombreCliente = document.getElementById("nombreCliente");
+            const apellidos = document.getElementById("apellidosCliente");
+            const numeroTelefonico = document.getElementById("numeroTelefonico");
+            const generoCliente = document.getElementById("genero");
+            const contactoAlternativoCliente = document.getElementById("contactoAlternativo");
+            const edadCliente = document.getElementById("edad");
+
+            if (form) {
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault();
+
+                    nombreCliente.classList.remove('is-invalid');
+                    apellidos.classList.remove('is-invalid');
+                    numeroTelefonico.classList.remove('is-invalid');
+                    edadCliente.classList.remove('is-invalid');
+
+                    if (!form.checkValidity()) {
+                        event.stopPropagation();
+                    } else {
+                        $.ajax({
+                            url: '/Clientes/AgregarNuevoCliente',
+                            type: 'POST',
+                            data: {
+                                nombre: nombreCliente.value,
+                                apellidos: apellidos.value,
+                                telefono: numeroTelefonico.value,
+                                genero: generoCliente.value,
+                                contactoAlternativo: contactoAlternativoCliente.value,
+                                edad: edadCliente.value
+                            },
+                            success: function (response) {
+                                if (response.success) {
+                                    recargarTablaClientes();
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: '¡Cliente agregado!',
+                                        text: response.message,
+                                        confirmButtonText: 'Aceptar'
+                                    }).then((result) => {
+                                        form.reset();
+                                        form.classList.remove('was-validated');
+                                    });
+                                } else {
+                                    if (response.errores.includes("telefono")) {
+                                        numeroTelefonico.classList.add('is-invalid');
+                                    }
+                                    if (response.errores.includes("nombre")) {
+                                        nombreCliente.classList.add('is-invalid');
+                                    }
+                                    if (response.errores.includes("apellidos")) {
+                                        apellidos.classList.add('is-invalid');
+                                    }
+                                    if (response.errores.includes("edad")) {
+                                        edadCliente.classList.add('is-invalid');
+                                    }
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: response.message,
+                                        confirmButtonText: 'Aceptar'
+                                    });
+                                }
+                            },
+                            error: function (error) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Hubo un error al comunicarse con el servidor.',
+                                    confirmButtonText: 'Aceptar'
+                                });
+                            }
+                        });
+                    }
+
+                    form.classList.add('was-validated'); // Aplicar las clases de validación
+                }, false);
+            }
+        })();
+
+
+        document.getElementById('numeroTelefonico').addEventListener('input', function (e) {
+            var value = e.target.value.replace(/[^0-9]/g, '');
+
+            if (value.length > 3) {
+                value = value.substring(0, 3) + '-' + value.substring(3);
+            }
+
+            if (value.length > 7) {
+                value = value.substring(0, 7) + '-' + value.substring(7);
+            }
+
+            if (value.length >= 13) {
+                value = value.replace(/[-+]/g, '');
+                var ultimos4 = value.substring(value.length - 4);
+                value = value.substring(0, value.length - 4);
+                var ultimos3 = value.substring(value.length - 3);
+                value = value.substring(0, value.length - 3);
+                var primeros3 = value.substring(value.length - 3);
+                value = value.substring(0, value.length - 3);
+                value = "+" + value + " " + primeros3 + "-" + ultimos3 + "-" + ultimos4;
+            }
+            e.target.value = value;
+        });
+
 
         function recargarTablaClientes() {
     $.ajax({
@@ -170,18 +282,16 @@
 
                 response.data.forEach(function(cliente) {
                     var fila = `
-                        <tr id="${cliente.iD_Cliente}">
-                            <td>${cliente.nombreCliente}</td>
-                            <td>${cliente.apellidoP}</td>
-                            <td>${cliente.apellidoM}</td>
+                            <tr id="${cliente.idCliente}">
+                            <td>${cliente.nombre}</td>
+                            <td>${cliente.apellidos}</td>
                             <td><a href="javascript:void(0);"><strong>${cliente.telefono}</strong></a></td>
                             <td>${cliente.edad}</td>
                             <td>${cliente.genero}</td>
-                            <td>${new Date(cliente.fechaRegistro).toLocaleDateString()}</td>
                             <td>
                                 <div class="d-flex">
-                                    <a href="javascript:void(0)" class="btn btn-primary shadow btn-xs sharp me-1" data-bs-toggle="modal" data-bs-target="#modificarCliente" onclick="modificarClientes('${cliente.iD_Cliente}')"><i class="fas fa-pencil-alt"></i></a>
-                                    <a href="javascript:void(0)" class="btn btn-danger shadow btn-xs sharp" onclick="eliminarCliente('${cliente.iD_Cliente }')"><i class="fa fa-trash"></i></a>
+                                            <a href="javascript:void(0)" class="btn btn-primary shadow btn-xs sharp me-1" data-bs-toggle="modal" data-bs-target="#modificarCliente" onclick="modificarClientes('${cliente.idCliente}')"><i class="fas fa-pencil-alt"></i></a>
+                                            <a href="javascript:void(0)" class="btn btn-danger shadow btn-xs sharp" onclick="eliminarCliente('${cliente.idCliente}')"><i class="fa fa-trash"></i></a>
                                 </div>
                             </td>
                             <td>${cliente.contactoAlternativo || ''}</td>
@@ -206,9 +316,8 @@
             data: { id: idCliente },
             success: function (response) {
                 document.getElementById('idClienteModificar').value = idCliente;
-                document.getElementById('nombreClienteModificar').value = response.nombreCliente;
-                document.getElementById('apellidoPaternoModificar').value = response.apellidoP;
-                document.getElementById('apellidoMaternoModificar').value = response.apellidoM;
+                document.getElementById('nombreClienteModificar').value = response.nombre;
+                document.getElementById('apellidosModificar').value = response.apellidos;
                 document.getElementById('numeroTelefonicoModificar').value = response.telefono;
                 var selectElement = document.getElementById('generoModificar');
                 if (response.genero === "Hombre") {
@@ -229,61 +338,99 @@
         });
     }
 
-        function eliminarCliente(idCliente) {
-            //primero se verifica si hay alguna venta relacionada con el cliente
-    $.ajax({
-        url: '/Clientes/tieneVentas', //metodo de verificacion en la clase controlador
-        type: 'POST',
-        data: { id: idCliente },
-        success: function (response) {
-            //Si hay ventas relacionadas, se abre un modulo notificandoselo y cancelando la eliminacion
-            if (response.success) {  
-                Swal.fire({
-                    title: 'Error',
-                    text: response.message,
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'Aceptar',
-                });        
-            } else {
-                // si no hay ventas relacionadas se crea un módulo de confirmación 
-                // para confirmar la eliminación.
-        
-                Swal.fire({
-                    title: '¿Estás seguro de que quieres eliminar a este cliente?',
-                    text: "Esta acción no se puede deshacer.",
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Aceptar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                        
-                    if (result.value) { // Al presionar aceptar, se procede a la eliminación
-                        console.log('Respuesta de botón recibida');
+        // Funcion para eliminar productos de la base de datos
+        function eliminarCliente(idProducto) {
+            $.ajax({
+                url: '/Clientes/EliminarCliente',
+                type: 'DELETE',
+                data: { id: idProducto },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire("Éxito", "El cliente se eliminó correctamente.", "success");
+                        recargarTablaClientes();
+                    } else {
+                        Swal.fire("Error", response.message, "error");
+                    }
+                },
+                error: function () {
+                    Swal.fire("Error", "Hubo un problema al eliminar a el cliente.", "error");
+                }
+            });
+        }
+
+
+        (function () {
+            'use strict';
+
+            var form = document.getElementById('formularioModificarCliete');
+            const idCliente = document.getElementById('idClienteModificar');
+            const nombreCliente = document.getElementById("nombreClienteModificar");
+            const apellidos = document.getElementById("apellidosModificar");
+            const numeroTelefonico = document.getElementById("numeroTelefonicoModificar");
+            const generoCliente = document.getElementById("generoModificar");
+            const contactoAlternativoCliente = document.getElementById("contactoAlternativoModificar");
+            const edadCliente = document.getElementById("edadModificar");
+
+            if (form) {
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault(); 
+
+                    nombreCliente.classList.remove('is-invalid');
+                    apellidosModificar.classList.remove('is-invalid');
+                    numeroTelefonico.classList.remove('is-invalid');
+                    edadCliente.classList.remove('is-invalid');
+
+                    if (!form.checkValidity()) {
+                        event.stopPropagation();
+                        form.classList.add('was-validated');
+                    } else {
                         $.ajax({
-                            url: '/Clientes/EliminarCliente', //Metodo de eliminacion en la clase controlador
+                            url: '/Clientes/ModificarCliente', 
                             type: 'POST',
-                            data: { id: idCliente },
-                            success: function (response) { 
-                                if (response.success) { //Si no hubo algun problema en la eliminacion, se muestra un mensaje de exito
-                                    console.log('Respuesta de AJAX exitosa');
+                            data: {
+                                nombre: nombreCliente.value,
+                                apellidos: apellidosModificar.value,
+                                telefono: numeroTelefonico.value,
+                                genero: generoCliente.value,
+                                contactoAlternativo: contactoAlternativoCliente.value,
+                                edad: edadCliente.value,
+                                clienteSeleccionado: idCliente.value
+                            },
+                            success: function (response) {
+                                if (response.success) {
                                     Swal.fire({
                                         icon: 'success',
-                                        title: 'Cliente eliminado',
+                                        title: '¡Cliente modificado!',
                                         text: response.message,
                                         confirmButtonText: 'Aceptar'
-                                    }).then(() => {
-                                        recargarTablaClientes(); //recargar tabla con datos actualizados
+                                    }).then((result) => {
+                                        form.reset(); 
+                                        form.classList.remove('was-validated'); 
+                                        $('#modificarCliente').modal('hide'); 
+                                        recargarTablaClientes();
                                     });
-                                } else { //Notificacion de error con el proceso de eliminacion
+                                } else {
+                                    if (response.errores.includes("telefono")) {
+                                        numeroTelefonico.classList.add('is-invalid');
+                                    }
+                                    if (response.errores.includes("nombre")) {
+                                        nombreCliente.classList.add('is-invalid');
+                                    }
+                                    if (response.errores.includes("apellidos")) {
+                                        apellidos.classList.add('is-invalid');
+                                    }
+                                    if (response.errores.includes("edad")) {
+                                        edadCliente.classList.add('is-invalid');
+                                    }
                                     Swal.fire({
                                         icon: 'error',
                                         title: 'Error',
-                                        text: response.message || 'No se pudo eliminar el cliente.'
+                                        text: response.message,
+                                        confirmButtonText: 'Aceptar'
                                     });
                                 }
                             },
-                            error: function () { //Notificacion de error con la conexion con el servidor
+                            error: function (error) {
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Error',
@@ -293,106 +440,11 @@
                             }
                         });
                     }
-                });
+                }, false);
             }
-        }
-    });
-}
+        })();
 
-
-
-(function () {
-    'use strict';
-
-    var form = document.getElementById('formularioModificarCliete');
-    const idCliente = document.getElementById('idClienteModificar');
-    const nombreCliente = document.getElementById("nombreClienteModificar");
-    const apellidoPaterno = document.getElementById("apellidoPaternoModificar");
-    const apellidoMaterno = document.getElementById("apellidoMaternoModificar");
-    const numeroTelefonico = document.getElementById("numeroTelefonicoModificar");
-    const generoCliente = document.getElementById("generoModificar");
-    const contactoAlternativoCliente = document.getElementById("contactoAlternativoModificar");
-    const edadCliente = document.getElementById("edadModificar");
-
-    if (form) {
-        form.addEventListener('submit', function (event) {
-            event.preventDefault(); 
-
-            nombreCliente.classList.remove('is-invalid');
-            apellidoPaterno.classList.remove('is-invalid');
-            apellidoMaterno.classList.remove('is-invalid');
-            numeroTelefonico.classList.remove('is-invalid');
-            edadCliente.classList.remove('is-invalid');
-
-            if (!form.checkValidity()) {
-                event.stopPropagation();
-                form.classList.add('was-validated');
-            } else {
-                $.ajax({
-                    url: '/Clientes/ModificarCliente', 
-                    type: 'POST',
-                    data: {
-                        nombre: nombreCliente.value,
-                        apellidoP: apellidoPaterno.value,
-                        apellidoM: apellidoMaterno.value,
-                        telefono: numeroTelefonico.value,
-                        genero: generoCliente.value,
-                        contactoAlternativo: contactoAlternativoCliente.value,
-                        edad: edadCliente.value,
-                        clienteSeleccionado: idCliente.value
-                    },
-                    success: function (response) {
-                        if (response.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: '¡Cliente modificado!',
-                                text: response.message,
-                                confirmButtonText: 'Aceptar'
-                            }).then((result) => {
-                                form.reset(); 
-                                form.classList.remove('was-validated'); 
-                                $('#modificarCliente').modal('hide'); 
-                                recargarTablaClientes();
-                            });
-                        } else {
-                            if (response.errores.includes("telefono")) {
-                                numeroTelefonico.classList.add('is-invalid');
-                            }
-                            if (response.errores.includes("nombre")) {
-                                nombreCliente.classList.add('is-invalid');
-                            }
-                            if (response.errores.includes("paterno")) {
-                                apellidoPaterno.classList.add('is-invalid');
-                            }
-                            if (response.errores.includes("materno")) {
-                                apellidoMaterno.classList.add('is-invalid');
-                            }
-                            if (response.errores.includes("edad")) {
-                                edadCliente.classList.add('is-invalid');
-                            }
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: response.message,
-                                confirmButtonText: 'Aceptar'
-                            });
-                        }
-                    },
-                    error: function (error) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Hubo un error al comunicarse con el servidor.',
-                            confirmButtonText: 'Aceptar'
-                        });
-                    }
-                });
-            }
-        }, false);
-    }
-})();
-
-document.getElementById('numeroTelefonicoModificar').addEventListener('input', function (e) {
+        document.getElementById('numeroTelefonicoModificar').addEventListener('input', function (e) {
             var value = e.target.value.replace(/[^0-9]/g, '');
 
             if (value.length > 3) {

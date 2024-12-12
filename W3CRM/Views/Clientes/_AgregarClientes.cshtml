@@ -1,0 +1,94 @@
+﻿<div class="modal fade" id="agregarCliente" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-center">
+		<div class="modal-content">
+			<div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Modificar Cliente</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-xl-12">
+                        <div class="form-validation">
+                            <div class="form-validation">
+                                <div class="container-fluid p-0">
+                                    <form class="needs-validation w-100" method="post" novalidate id="formularioAgregarCliente">
+                                        <div class="mb-3 row">
+                                            <label class="col-lg-4 col-form-label" for="nombreCliente">
+                                                Nombre del cliente
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="col-lg-8">
+                                                <input type="text" class="form-control" id="nombreCliente" placeholder="Inserte nombre.." required>
+                                                <div class="invalid-feedback">
+                                                    Porfavor inserte el nombre del cliente.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 row">
+                                            <label class="col-lg-4 col-form-label" for="apellidosCliente">
+                                                Apellido paterno
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="col-lg-8">
+                                                <input type="text" class="form-control" id="apellidosCliente" placeholder="Inserte apellido paterno.." required>
+                                                <div class="invalid-feedback">
+                                                    Porfavor inserte el apellido paterno.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 row">
+                                            <label class="col-lg-4 col-form-label" for="numeroTelefonico">
+                                                Numero telefonico
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="col-lg-8">
+                                                <input type="text" class="form-control" id="numeroTelefonico" placeholder="686-999-0000" required>
+                                                <div class="invalid-feedback">
+                                                    Porfavor inserte el numero telefonico.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 row">
+                                            <label class="col-lg-4 col-form-label" for="genero">
+                                                Genero
+                                            </label>
+                                            <div class="col-lg-8">
+                                                <select class="wide form-control" id="genero" name="genero">
+                                                    <option selected disabled value="" id="Genero_Default">Porfavor seleccione</option>
+                                                    <option value="Hombre" id="Genero_Hombre">Hombre</option>
+                                                    <option value="Mujer" id="Genero_Mujer">Mujer</option>
+                                                    <option value="Otro" id="Genero_Otro">Otro</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 row">
+                                            <label class="col-lg-4 col-form-label" for="contactoAlternativo">
+                                                Contacto alternativo
+                                            </label>
+                                            <div class="col-lg-8">
+                                                <input type="text" class="form-control" id="contactoAlternativo" placeholder="Inserte cualquier forma de contacto alternativo..">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 row">
+                                            <label class="col-lg-4 col-form-label" for="edad">
+                                                Edad
+                                            </label>
+                                            <div class="col-lg-8">
+                                                <input type="number" class="form-control" id="edad" placeholder="Inserte edad del cliente.." step="1" min="0">
+                                            </div>
+                                        </div>
+                                        <div class="mb-12 row">
+                                            <div class="col-lg-12">
+                                                <button type="submit" class="btn btn-primary py-2 w-100" id="boton_agregar">Agregar</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>    

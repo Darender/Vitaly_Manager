@@ -1,4 +1,5 @@
-﻿using System.Data.SqlClient;
+﻿using Microsoft.CodeAnalysis.Differencing;
+using System.Data.SqlClient;
 using Vitaly_Manager.Entidades;
 
 namespace Vitaly_Manager.Data
@@ -20,32 +21,32 @@ namespace Vitaly_Manager.Data
                     conexion.Open();
 
                     string query = @"UPDATE Cliente 
-                             SET nombreCliente = @NombreCliente, 
-                                 apellidoP = @ApellidoP, 
-                                 apellidoM = @ApellidoM, 
+                             SET nombre = @NombreCliente, 
+                                 apellidos = @Apellidos, 
                                  telefono = @Telefono, 
                                  genero = @Genero, 
                                  contactoAlternativo = @Contacto_Alternativo, 
                                  edad = @Edad
-                             WHERE idCliente = @IdCliente";
+                             WHERE idCliente = @idCliente";
 
                     using (SqlCommand comando = new SqlCommand(query, conexion))
                     {
-                        comando.Parameters.AddWithValue("@NombreCliente", clienteModificado.NombreCliente);
-                        comando.Parameters.AddWithValue("@ApellidoP", clienteModificado.ApellidoP);
-                        comando.Parameters.AddWithValue("@ApellidoM", clienteModificado.ApellidoM);
+                        comando.Parameters.AddWithValue("@NombreCliente", clienteModificado.Nombre);
+                        comando.Parameters.AddWithValue("@Apellidos", clienteModificado.Apellidos);
                         comando.Parameters.AddWithValue("@Telefono", clienteModificado.Telefono);
                         comando.Parameters.AddWithValue("@Genero", clienteModificado.Genero ?? (object)DBNull.Value);
                         comando.Parameters.AddWithValue("@Contacto_Alternativo", clienteModificado.ContactoAlternativo ?? (object)DBNull.Value);
                         comando.Parameters.AddWithValue("@Edad", clienteModificado.Edad.HasValue ? (object)clienteModificado.Edad.Value : DBNull.Value);
-                        comando.Parameters.AddWithValue("@IdCliente", clienteModificado.ID_Cliente); // Asegúrate de tener el Id del cliente
+                        comando.Parameters.AddWithValue("@IdCliente", clienteModificado.IdCliente); // Asegúrate de tener el Id del cliente
 
                         comando.ExecuteNonQuery();
                     }
 
                     conexion.Close();
                 }
-                mensaje = $"El cliente {clienteModificado.NombreCliente} ha sido modificado exitosamente.";
+                _cacheClientes.RemoveAll(item => item.IdCliente == clienteModificado.IdCliente);
+                _cacheClientes.Add(clienteModificado);
+                mensaje = $"El cliente {clienteModificado.Nombre} ha sido modificado exitosamente.";
                 return true;
             }
             catch (SqlException ex)
@@ -75,27 +76,32 @@ namespace Vitaly_Manager.Data
                 {
                     conexion.Open();
 
-                    string query = @"INSERT INTO Cliente 
-                            (nombreCliente, apellidoP, apellidoM, telefono, genero, contactoAlternativo, edad, fechaRegistro) 
-                            VALUES (@NombreCliente, @ApellidoP, @ApellidoM, @Telefono, @Genero, @Contacto_Alternativo, @Edad, @Fecha_Registro)";
+                    string query = @"
+                INSERT INTO Cliente 
+                (nombre, apellidos, telefono, genero, contactoAlternativo, edad) 
+                OUTPUT INSERTED.idCliente
+                VALUES (@NombreCliente, @Apellidos, @Telefono, @Genero, @Contacto_Alternativo, @Edad)";
 
                     using (SqlCommand comando = new SqlCommand(query, conexion))
                     {
-                        comando.Parameters.AddWithValue("@NombreCliente", nuevo.NombreCliente);
-                        comando.Parameters.AddWithValue("@ApellidoP", nuevo.ApellidoP);
-                        comando.Parameters.AddWithValue("@ApellidoM", nuevo.ApellidoM);
+                        comando.Parameters.AddWithValue("@NombreCliente", nuevo.Nombre);
+                        comando.Parameters.AddWithValue("@Apellidos", nuevo.Apellidos);
                         comando.Parameters.AddWithValue("@Telefono", nuevo.Telefono);
                         comando.Parameters.AddWithValue("@Genero", nuevo.Genero ?? (object)DBNull.Value);
                         comando.Parameters.AddWithValue("@Contacto_Alternativo", nuevo.ContactoAlternativo ?? (object)DBNull.Value);
                         comando.Parameters.AddWithValue("@Edad", nuevo.Edad.HasValue ? (object)nuevo.Edad.Value : DBNull.Value);
-                        comando.Parameters.AddWithValue("@Fecha_Registro", nuevo.FechaRegistro);
 
-                        comando.ExecuteNonQuery();
+                        // Obtener el ID generado automáticamente
+                        nuevo.IdCliente = (int)comando.ExecuteScalar();
                     }
 
                     conexion.Close();
                 }
-                mensaje = $"El cliente {nuevo.NombreCliente} ha sido agregado exitosamente.";
+
+                // Agregar el nuevo cliente al caché
+                _cacheClientes.Add(nuevo);
+
+                mensaje = $"El cliente {nuevo.Nombre} ha sido agregado exitosamente con el ID {nuevo.IdCliente}.";
                 return true;
             }
             catch (SqlException ex)
@@ -111,14 +117,26 @@ namespace Vitaly_Manager.Data
         }
 
 
+
+        private static List<Cliente> _cacheClientes = new List<Cliente>();
+        private static DateTime _ultimoCache = DateTime.MinValue;
+        private static readonly TimeSpan TiempoCache = TimeSpan.FromMinutes(1);
+
         /// <summary>
-        /// Optiene a todos los clientes de la base de datos y los pone una lista
+        /// Obtiene todos los clientes desde la base de datos o el caché si está vigente.
         /// </summary>
         /// <param name="respuesta">Mensaje de respuesta</param>
-        /// <param name="exito">Booleano de si fue exito o fracaso la consulta</param>
-        /// <returns></returns>
+        /// <param name="exito">Booleano indicando si fue exitoso o no</param>
+        /// <returns>Lista de clientes</returns>
         public static List<Cliente> ListaClientes(out string respuesta, out bool exito)
         {
+            if (_cacheClientes.Count > 0 && (DateTime.Now - _ultimoCache) < TiempoCache)
+            {
+                respuesta = "Datos obtenidos desde el caché.";
+                exito = true;
+                return _cacheClientes;
+            }
+
             List<Cliente> listaClientes = new List<Cliente>();
             try
             {
@@ -131,26 +149,22 @@ namespace Vitaly_Manager.Data
                     while (lector.Read())
                     {
                         int idCliente = lector["idCliente"] != DBNull.Value ? Convert.ToInt32(lector["idCliente"]) : 0;
-                        string nombre = lector["nombreCliente"] != DBNull.Value ? Convert.ToString(lector["nombreCliente"])! : "N/A";
-                        string apellidoP = lector["apellidoP"] != DBNull.Value ? Convert.ToString(lector["apellidoP"])! : "N/A";
-                        string apellidoM = lector["apellidoM"] != DBNull.Value ? Convert.ToString(lector["apellidoM"])! : "N/A";
-                        string? telefono = lector["telefono"] != DBNull.Value ? Convert.ToString(lector["telefono"]) : null;
+                        string nombre = lector["nombre"] != DBNull.Value ? Convert.ToString(lector["nombre"])! : "N/A";
+                        string apellidos = lector["apellidos"] != DBNull.Value ? Convert.ToString(lector["apellidos"])! : "N/A";
+                        string telefono = lector["telefono"] != DBNull.Value ? Convert.ToString(lector["telefono"])! : "N/A";
                         string? genero = lector["genero"] != DBNull.Value ? Convert.ToString(lector["genero"]) : null;
                         string? contactoAlternativo = lector["contactoAlternativo"] != DBNull.Value ? Convert.ToString(lector["contactoAlternativo"]) : null;
                         int? edad = lector["edad"] != DBNull.Value ? Convert.ToInt32(lector["edad"]) : null;
-                        DateTime fechaRegistro = Convert.ToDateTime(lector["fechaRegistro"]);
 
                         Cliente nuevo = new Cliente
                         {
-                            ID_Cliente = idCliente,
-                            NombreCliente = nombre,
-                            ApellidoP = apellidoP,
-                            ApellidoM = apellidoM,
+                            IdCliente = idCliente,
+                            Nombre = nombre,
+                            Apellidos = apellidos,
                             Telefono = telefono,
                             Genero = genero,
                             ContactoAlternativo = contactoAlternativo,
                             Edad = edad,
-                            FechaRegistro = fechaRegistro
                         };
 
                         listaClientes.Add(nuevo);
@@ -158,8 +172,13 @@ namespace Vitaly_Manager.Data
 
                     lector.Close();
                 }
+
+                // Actualizamos el caché
+                _cacheClientes = listaClientes;
+                _ultimoCache = DateTime.Now;
+
                 exito = true;
-                respuesta = "Consulta exitosa";
+                respuesta = "Consulta exitosa desde la base de datos.";
                 return listaClientes;
             }
             catch (SqlException ex)
@@ -181,10 +200,27 @@ namespace Vitaly_Manager.Data
         /// </summary>
         /// <param name="id">El id del cliente a eliminar</param>
         /// <returns>Un boleando que confirma si se pudo o no eliminar el cliente</returns>
-        public static bool Eliminar(int id, out string respuesta)
+        public static bool EliminarCliente(int id, out string respuesta)
         {
             try
             {
+                bool encontrado = false;
+                respuesta = $"El cliente es requerido en una venta o servicio general: ";
+                foreach (Venta venta in DataVenta.ListaVentas(out _, out _))
+                {
+                    if (venta.IdCliente == id)
+                    {
+                        encontrado = true;
+                        respuesta += "\nVenta:" + venta.FolioVenta;
+                    }
+                }
+
+                if (encontrado)
+                {
+                    return false;
+                }
+
+
                 using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
                 {
                     conexion.Open();
@@ -204,6 +240,8 @@ namespace Vitaly_Manager.Data
                     new SqlCommand(queryEliminar, conexion).ExecuteNonQuery();
                     conexion.Close();
                 }
+
+                _cacheClientes.RemoveAll(item => item.IdCliente == id);
                 respuesta = "Se elimino exitosamente el cliente";
                 return true;
             }
@@ -217,27 +255,6 @@ namespace Vitaly_Manager.Data
                 respuesta = $"Error inesperado (Exception): {ex.Message}";
                 return false;
             }
-        }
-
-        public static bool tieneVentas(int id)
-        {
-            using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
-            {
-                conexion.Open();
-                SqlCommand comando = new SqlCommand($"SELECT * FROM Venta WHERE idCliente = {id}", conexion);
-                SqlDataReader lector = comando.ExecuteReader();
-                if (lector.HasRows)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-
-            }
-
-
         }
     }
 }

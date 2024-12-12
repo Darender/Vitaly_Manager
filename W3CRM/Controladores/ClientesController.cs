@@ -19,7 +19,7 @@ namespace Vitaly_Manager.Controladores
         }
 
         [HttpPost]
-        public JsonResult AgregarNuevoCliente(string nombre, string apellidoP, string apellidoM, string telefono, string? genero, string? contactoAlternativo, string? edad)
+        public JsonResult AgregarNuevoCliente(string nombre, string apellidos, string telefono, string? genero, string? contactoAlternativo, string? edad)
         {
             bool resultado = false;
             string mensaje = "Hubo un problema al agregar el cliente.";
@@ -47,41 +47,24 @@ namespace Vitaly_Manager.Controladores
                     fallidos.Add("nombre");
                 }
 
-                // Validación del apellido paterno
-                if (string.IsNullOrWhiteSpace(apellidoP))
+                // Validación del apellidos
+                if (string.IsNullOrWhiteSpace(apellidos))
                 {
                     mensaje = "El apellido paterno no puede estar vacío.";
-                    fallidos.Add("paterno");
+                    fallidos.Add("apellidos");
                 }
-                apellidoP = apellidoP.Trim();
-                if (!regex.IsMatch(apellidoP))
+                apellidos = apellidos.Trim();
+                if (!regex.IsMatch(apellidos))
                 {
                     mensaje = "El apellido paterno solo puede contener letras y espacios.";
-                    fallidos.Add("paterno");
+                    fallidos.Add("apellidos");
                 }
-                else if (apellidoP.Length < 3 || apellidoP.Length > 30)
+                else if (apellidos.Length < 3 || apellidos.Length > 30)
                 {
                     mensaje = "El apellido paterno debe tener entre 3 y 30 caracteres.";
-                    fallidos.Add("paterno");
+                    fallidos.Add("apellidos");
                 }
 
-                // Validación del apellido materno
-                if (string.IsNullOrWhiteSpace(apellidoM))
-                {
-                    mensaje = "El apellido materno no puede estar vacío.";
-                    fallidos.Add("materno");
-                }
-                apellidoM = apellidoM.Trim();
-                if (!regex.IsMatch(apellidoM))
-                {
-                    mensaje = "El apellido materno solo puede contener letras y espacios.";
-                    fallidos.Add("materno");
-                }
-                else if (apellidoM.Length < 3 || apellidoM.Length > 30)
-                {
-                    mensaje = "El apellido materno debe tener entre 3 y 30 caracteres.";
-                    fallidos.Add("materno");
-                }
 
                 // Validación del numero telefonico
                 if (string.IsNullOrWhiteSpace(telefono))
@@ -124,16 +107,12 @@ namespace Vitaly_Manager.Controladores
                 {
                     Cliente nuevo = new Cliente
                     {
-                        NombreCliente = nombre,
-                        ApellidoP = apellidoP,
-                        ApellidoM = apellidoM,
+                        Nombre = nombre,
+                        Apellidos = apellidos,
                         Telefono = telefono,
                         Genero = genero,
                         ContactoAlternativo = contactoAlternativo,
-#pragma warning disable CS8604
                         Edad = edadNumerica,
-#pragma warning restore CS8604
-                        FechaRegistro = DateTime.Now
                     };
 
                     resultado = DataClientes.Agregar(nuevo, out mensaje);
@@ -154,7 +133,7 @@ namespace Vitaly_Manager.Controladores
             Cliente cliente = listaClientes[0];
             foreach (Cliente valor in listaClientes)
             {
-                if (valor.ID_Cliente == id)
+                if (valor.IdCliente == id)
                 {
                     cliente = valor;
                     break;
@@ -165,7 +144,7 @@ namespace Vitaly_Manager.Controladores
         }
 
         [HttpPost]
-        public JsonResult ModificarCliente(string nombre, string apellidoP, string apellidoM, string telefono, string? genero, string? contactoAlternativo, string? edad, int clienteSeleccionado)
+        public JsonResult ModificarCliente(string nombre, string apellidos, string telefono, string? genero, string? contactoAlternativo, string? edad, int clienteSeleccionado)
         {
             bool resultado = false;
             string mensaje = "Hubo un problema al modificar el cliente.";
@@ -194,39 +173,21 @@ namespace Vitaly_Manager.Controladores
                 }
 
                 // Validación del apellido paterno
-                if (string.IsNullOrWhiteSpace(apellidoP))
+                if (string.IsNullOrWhiteSpace(apellidos))
                 {
-                    mensaje = "El apellido paterno no puede estar vacío.";
-                    fallidos.Add("paterno");
+                    mensaje = "El apellido no puede estar vacío.";
+                    fallidos.Add("apellidos");
                 }
-                apellidoP = apellidoP.Trim();
-                if (!regex.IsMatch(apellidoP))
+                apellidos = apellidos.Trim();
+                if (!regex.IsMatch(apellidos))
                 {
-                    mensaje = "El apellido paterno solo puede contener letras y espacios.";
-                    fallidos.Add("paterno");
+                    mensaje = "El apellido solo puede contener letras y espacios.";
+                    fallidos.Add("apellidos");
                 }
-                else if (apellidoP.Length < 3 || apellidoP.Length > 30)
+                else if (apellidos.Length < 3 || apellidos.Length > 30)
                 {
                     mensaje = "El apellido paterno debe tener entre 3 y 30 caracteres.";
-                    fallidos.Add("paterno");
-                }
-
-                // Validación del apellido materno
-                if (string.IsNullOrWhiteSpace(apellidoM))
-                {
-                    mensaje = "El apellido materno no puede estar vacío.";
-                    fallidos.Add("materno");
-                }
-                apellidoM = apellidoM.Trim();
-                if (!regex.IsMatch(apellidoM))
-                {
-                    mensaje = "El apellido materno solo puede contener letras y espacios.";
-                    fallidos.Add("materno");
-                }
-                else if (apellidoM.Length < 3 || apellidoM.Length > 30)
-                {
-                    mensaje = "El apellido materno debe tener entre 3 y 30 caracteres.";
-                    fallidos.Add("materno");
+                    fallidos.Add("apellidos");
                 }
 
                 // Validación del numero telefonico
@@ -242,7 +203,7 @@ namespace Vitaly_Manager.Controladores
                 }
                 foreach (Cliente item in listaClientes)
                 {
-                    if (item.Telefono == telefono && item.ID_Cliente != clienteSeleccionado)
+                    if (item.Telefono == telefono && item.IdCliente != clienteSeleccionado)
                     {
                         fallidos.Add("telefono");
                         mensaje = "Numero de telefono ya existente en la base de datos";
@@ -271,26 +232,14 @@ namespace Vitaly_Manager.Controladores
                 {
                     Cliente modificado = new Cliente
                     {
-                        ID_Cliente = clienteSeleccionado,
-                        NombreCliente = nombre,
-                        ApellidoP = apellidoP,
-                        ApellidoM = apellidoM,
+                        IdCliente = clienteSeleccionado,
+                        Nombre = nombre,
+                        Apellidos = apellidos,
                         Telefono = telefono,
                         Genero = genero,
                         ContactoAlternativo = contactoAlternativo,
-#pragma warning disable CS8604
                         Edad = edadNumerica,
-#pragma warning restore CS8604
-                        FechaRegistro = DateTime.Now
                     };
-
-                    foreach (Cliente cliente in listaClientes)
-                    {
-                        if(cliente.ID_Cliente == clienteSeleccionado)
-                        {
-                            modificado.FechaRegistro = cliente.FechaRegistro;
-                        }
-                    }
 
                     resultado = DataClientes.Modificar(modificado, out mensaje);
                 }
@@ -304,7 +253,7 @@ namespace Vitaly_Manager.Controladores
             return Json(new { success = resultado, message = mensaje, errores = fallidos });
         }
 
-        [HttpPost]
+        [HttpDelete]
         public JsonResult EliminarCliente(int id)
         {
             bool resultado = true;
@@ -312,7 +261,7 @@ namespace Vitaly_Manager.Controladores
             try
             {
                 
-                resultado = DataClientes.Eliminar(id,out mensaje);
+                resultado = DataClientes.EliminarCliente(id,out mensaje);
             }
             catch (Exception ex)
             {
@@ -322,32 +271,6 @@ namespace Vitaly_Manager.Controladores
 
 
             return Json(new { success = resultado, message = mensaje});
-        }
-
-        public JsonResult tieneVentas(int id)
-        {
-            bool resultado;
-            string mensaje;
-            try
-            {
-                if (DataClientes.tieneVentas(id))
-                {
-                    resultado = true;
-                    mensaje = $"El cliente no puede ser eliminado ya que cuenta con ventas relacionadas.";
-                }
-                else
-                {
-                    resultado = false;
-                    mensaje = "";
-                }
-            }
-            catch (Exception ex)
-            {
-                resultado = false;
-                mensaje = $"Error al eliminar el cliente: {ex.Message}";
-            }
-            return Json(new { success = resultado, message = mensaje });
-
         }
 
 

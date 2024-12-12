@@ -5,38 +5,54 @@ namespace Vitaly_Manager.Data
 {
     public static class DataVenta
     {
-        /*
-        //Temporal necesita mas revision
-        public static List<Venta> ListaVentas()
+        public static List<Venta> ListaVentas(out string respuesta, out bool exito)
         {
             List<Venta> listaVentas = new List<Venta>();
-            using (SqlConnection coneccion = new SqlConnection(MainServidor.Servidor))
+            try
             {
-                coneccion.Open();
-                SqlCommand comando = new SqlCommand("SELECT * FROM venta", coneccion);
-                SqlDataReader lector = comando.ExecuteReader();
-
-                while (lector.Read())
+                using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
                 {
-                    int folio = Convert.ToInt32(lector["folio"]);
-                    int IDcliente = Convert.ToInt32(lector["IDcliente"]);
-                    DateOnly fechaVenta = DateOnly.FromDateTime(Convert.ToDateTime(lector["fechaVenta"]));
-                    decimal importeTotal = Convert.ToInt32(lector["importeTotal"]);
+                    conexion.Open();
+                    SqlCommand comando = new SqlCommand("SELECT * FROM Venta", conexion);
+                    SqlDataReader lector = comando.ExecuteReader();
 
-
-                    Venta nuevo = new Venta
+                    while (lector.Read())
                     {
-                        Folio = folio,
-                        ID_Cliente = IDcliente,
-                        Fecha_Venta = fechaVenta,
-                        Importe_Total = importeTotal
-                    };
+                        int folioVenta = lector["folioVenta"] != DBNull.Value ? Convert.ToInt32(lector["folioVenta"]) : 0;
+                        int idCliente = lector["idCliente"] != DBNull.Value ? Convert.ToInt32(lector["idCliente"]) : 0;
+                        decimal ingresoTotal = lector["ingresoTotal"] != DBNull.Value ? Convert.ToDecimal(lector["ingresoTotal"]) : 0;
+                        DateTime fechaRealizado = lector["fechaRealizado"] != DBNull.Value ? Convert.ToDateTime(lector["fechaRealizado"]) : DateTime.MinValue;
 
-                    listaVentas.Add(nuevo);
+                        Venta nuevo = new Venta
+                        {
+                            FolioVenta = folioVenta,
+                            IdCliente = idCliente,
+                            IngresoTotal = ingresoTotal,
+                            FechaRealizado = fechaRealizado
+                        };
+
+                        listaVentas.Add(nuevo);
+                    }
+
+                    lector.Close();
                 }
-                lector.Close();
+                exito = true;
+                respuesta = "Consulta exitosa";
                 return listaVentas;
             }
-        }*/
+            catch (SqlException ex)
+            {
+                exito = false;
+                respuesta = $"Error en la base de datos: {ex.Message}";
+                return new List<Venta>();
+            }
+            catch (Exception ex)
+            {
+                exito = false;
+                respuesta = $"Error inesperado: {ex.Message}";
+                return new List<Venta>();
+            }
+        }
+
     }
 }
