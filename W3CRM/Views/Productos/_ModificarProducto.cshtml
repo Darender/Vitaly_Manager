@@ -1,43 +1,39 @@
-﻿@using System.Globalization
-@using Vitaly_Manager.Entidades
-<div class="modal fade" id="modificarProducto" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-center">
-		<div class="modal-content">
-			<div class="modal-header">
+﻿<div class="modal fade" id="modificarProducto" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
                 <h1 class="modal-title fs-5" id="exampleModalLabel">Modificar Producto</h1>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				<div class="row">
-					<div class="col-xl-12">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xl-12">
                         <div class="form-validation">
                             <div class="container-fluid p-0">
                                 <form class="needs-validation w-100" method="post" novalidate id="formularioModificarProducto">
-                                    <input type="number" class="form-control" id="idProductoModificar" style="visibility: hidden; display: none;">
+                                    <!-- ID del Producto -->
+                                    <input type="hidden" id="idProductoModificar">
+
                                     <div class="mb-3 row">
-                                        <label class="col-lg-5 col-form-label" for="nombreproductoModificar">
-                                            Nombre del producto
-                                            <span class="text-danger">*</span>
+                                        <label class="col-lg-3 col-form-label" for="nombreproductoModificar">
+                                            Nombre del Producto <span class="text-danger">*</span>
                                         </label>
-                                        <div class="col-lg-7">
-                                            <input type="text" class="form-control" id="nombreproductoModificar" placeholder="Inserte nombre.." required>
+                                        <div class="col-lg-9">
+                                            <input type="text" class="form-control" id="nombreproductoModificar" placeholder="Inserte nombre..." required>
                                             <div class="invalid-feedback">
-                                                Porfavor inserte el nombre del producto.
+                                                Por favor inserte el nombre del producto.
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="mb-3 row">
-                                        <label class="col-lg-5 col-form-label" for="proveedorModificar">
-                                            Proveedor
-                                            <span class="text-danger">*</span>
+                                        <label class="col-lg-3 col-form-label" for="proveedorModificar">
+                                            Proveedor <span class="text-danger">*</span>
                                         </label>
-                                        <div class="col-lg-7">
+                                        <div class="col-lg-9">
                                             <select class="form-select" id="proveedorModificar" required>
                                                 <option value="" selected disabled>Seleccione un proveedor</option>
-                                                @foreach (Proveedor proveedor in Vitaly_Manager.Controladores.ProductosController.ListaProveedores)
-                                                {
-                                                    <option value="@proveedor.IdProveedor">@proveedor.Nombre</option>
-                                                }
+                                                <!-- Opciones dinámicas llenadas por JavaScript -->
                                             </select>
                                             <div class="invalid-feedback">
                                                 Por favor seleccione un proveedor.
@@ -46,75 +42,82 @@
                                     </div>
 
                                     <div class="mb-3 row">
-                                        <label class="col-lg-5 col-form-label" for="tipoproductoModificar">
-                                            Tipo de Producto
-                                            <span class="text-danger">*</span>
+                                        <label class="col-lg-3 col-form-label" for="descripcionModificar">
+                                            Descripción
                                         </label>
-                                        <div class="col-lg-7">
+                                        <div class="col-lg-9">
+                                            <textarea class="form-control" id="descripcionModificar" placeholder="Escriba una breve descripción del producto..."></textarea>
+                                            <div class="invalid-feedback">
+                                                Por favor inserte una descripción válida.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-3 col-form-label" for="tipoproductoModificar">
+                                            Tipo de Producto <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-lg-9">
                                             <select class="form-select" id="tipoproductoModificar" required>
                                                 <option value="" selected disabled>Seleccione un tipo de producto</option>
-                                                @foreach (TipoProducto item in Vitaly_Manager.Controladores.ProductosController.ListasTipoProductos)
-                                                {
-                                                    <option value="@item.ID_TipoProducto">@item.Nombre_Tipo_Producto</option>
-                                                }
+                                                <!-- Opciones dinámicas llenadas por JavaScript -->
                                             </select>
                                             <div class="invalid-feedback">
                                                 Por favor seleccione un tipo de producto.
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="mb-3 row">
-                                        <label class="col-lg-5 col-form-label" for="paginaProductoModificar">
+                                        <label class="col-lg-3 col-form-label" for="paginaProductoModificar">
                                             Página del Producto
                                         </label>
-                                        <div class="col-lg-7">
-                                            <textarea class="form-control" id="paginaProductoModificar" placeholder="Escriba información del producto..."></textarea>
+                                        <div class="col-lg-9">
+                                            <textarea class="form-control" id="paginaProductoModificar" placeholder="Inserte URL o información del producto..."></textarea>
                                             <div class="invalid-feedback">
-                                                Por favor escriba información válida del producto.
+                                                Por favor inserte una URL válida o información relevante.
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="mb-3 row">
-                                        <label class="col-lg-5 col-form-label" for="cantidadUnitariaModificar">
-                                            Cantidad Unitaria
-                                            <span class="text-danger">*</span>
+                                        <label class="col-lg-3 col-form-label" for="tipounidadModificar">
+                                            Tipo de Unidad <span class="text-danger">*</span>
                                         </label>
-                                        <div class="col-lg-7">
-                                            <input type="number" class="form-control" id="cantidadUnitariaModificar" placeholder="Inserte cantidad unitaria.." step="0.01" required>
-                                            <div class="invalid-feedback">
-                                                Por favor inserte una cantidad válida.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 row">
-                                        <label class="col-lg-5 col-form-label" for="tipounidadModificar">
-                                            Tipo de Unidad
-                                            <span class="text-danger">*</span>
-                                        </label>
-                                        <div class="col-lg-7">
+                                        <div class="col-lg-9">
                                             <select class="form-select" id="tipounidadModificar" required>
                                                 <option value="" selected disabled>Seleccione un tipo de unidad</option>
-                                                @foreach (TipoUnidad item in Vitaly_Manager.Controladores.ProductosController.ListaTipoUnidades)
-                                                {
-                                                    <option value="@item.ID_TipoUnidad">@item.Unidad_Medida</option>
-                                                }
+                                                <!-- Opciones dinámicas llenadas por JavaScript -->
                                             </select>
                                             <div class="invalid-feedback">
                                                 Por favor seleccione un tipo de unidad.
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-3 col-form-label" for="cantidadPorUnidadModificar">
+                                            Cantidad por Unidad <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-lg-9">
+                                            <input type="number" class="form-control" id="cantidadPorUnidadModificar" placeholder="Inserte cantidad por unidad..." step="0.01" required>
+                                            <div class="invalid-feedback">
+                                                Por favor inserte una cantidad válida.
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="mb-12 row">
                                         <div class="col-lg-12">
-                                            <button type="submit" class="btn btn-primary py-2 w-100" id="boton_agregar">Modificar</button>
+                                            <button type="submit" class="btn btn-primary py-2 w-100" id="boton_modificar">Modificar Producto</button>
                                         </div>
                                     </div>
                                 </form>
                             </div>
                         </div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>    
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

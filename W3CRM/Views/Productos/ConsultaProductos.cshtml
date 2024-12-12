@@ -2,7 +2,7 @@
 @using Vitaly_Manager.Entidades
 @using W3CRM.Controllers
 @{
-    ViewData["Title"] = "Consulta Productos";
+    ViewData["Title"] = "Consulta de Productos";
 }
 <!--**********************************
 	Content body start
@@ -22,13 +22,20 @@
                     Inicio
                 </a>
             </li>
-            <li class="breadcrumb-item active"><a href="javascript:void(0)">Productos</a></li>
             <li class="breadcrumb-item active"><a href="javascript:void(0)">Consulta de Productos</a></li>
         </ol>
     </div>
     <div class="container-fluid">
         <div class="tab-content" id="myTabContent-2">
             <div class="tab-pane fade show active" id="withoutSpace" role="tabpanel" aria-labelledby="home-tab-2">
+                <div class="d-flex justify-content-center">
+                    <a href="javascript:void(0)"
+                       class="btn btn-primary shadow w-40 py-1"
+                       data-bs-toggle="modal"
+                       data-bs-target="#agregarProducto">
+                        <i class="fas fa-plus me-2"></i> Agregar Nuevo Producto al Catalogo
+                    </a>
+                </div>
                 <div class="card-body pt-0">
 		            <div class="table-responsive">
 						<table id="example3" class="display table" style="min-width: 845px">
@@ -39,24 +46,23 @@
                                     <th>Proveedor</th>
 						            <th>Cantidad Unidades</th>
                                     <th>Tipo Unidad</th>
-						            <th>Pagina del Producto</th>
 						            <th>Accion</th>
 					            </tr>
 				            </thead>
 				            <tbody>
                                 @foreach (CatalogoProducto producto in Model.ListaProductos)
                                 {
-                                    <tr id="@producto.ID_CatalogoProducto">
-                                        <td>@producto.Nombre_Producto</td>
-                                        <td>@Model.ObtenerTipoProducto(producto.ID_TipoProducto)</td>
-                                        <td>@Model.ObtenerProveedor(producto.ID_Proveedor)</td>
-                                        <td>@producto.Cantidad_Unidades</td>
-                                        <td>@Model.ObtenerTipoUnidad(producto.ID_TipoUnidad)</td>
-                                        <td>@producto.Pagina_Producto</td>
+                                    <tr id="@producto.IdCatalogoProducto">
+                                        <td>@producto.NombreProducto</td>
+                                        <td>@Model.ObtenerTipoProducto(producto.IdTipoProducto)</td>
+                                        <td>@Model.ObtenerProveedor(producto.IdProveedor)</td>
+                                        <td>@producto.CantidadPorUnidad</td>
+                                        <td>@Model.ObtenerTipoUnidad(producto.IdTipoUnidad)</td>
                                         <td>
                                             <div class="d-flex">
-                                                <a href="#javascript:void(0)" class="btn btn-primary shadow btn-xs sharp me-1" data-bs-toggle="modal" data-bs-target="#modificarProducto" onclick="modificarClientes('@producto.ID_CatalogoProducto')"><i class="fas fa-pencil-alt"></i></a>
-                                                <a href="#" class="btn btn-danger shadow btn-xs sharp" onclick="eliminarProducto('@producto.ID_CatalogoProducto')"><i class="fa fa-trash"></i></a>
+                                                <a href="#javascript:void(0)" class="btn btn-info shadow btn-xs sharp me-1" onclick="informacionProducto('@producto.IdCatalogoProducto')"><i class="fa fa-exclamation"></i></a>
+                                                <a href="#javascript:void(0)" class="btn btn-warning shadow btn-xs sharp me-1" data-bs-toggle="modal" data-bs-target="#modificarProducto" onclick="modificarProducto('@producto.IdCatalogoProducto')"><i class="fas fa-pencil-alt"></i></a>
+                                                <a href="#" class="btn btn-danger shadow btn-xs sharp" onclick="confirmarEliminacionProducto('@producto.IdCatalogoProducto')"><i class="fa fa-trash"></i></a>
                                             </div>
                                         </td>
                                     </tr>
@@ -91,7 +97,7 @@
 		Scripts
 	***********************************-->
 
-    <script src="~/w3crm/vendor/sweetalert2/dist/sweetalert2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="~/w3crm/js/plugins-init/sweetalert.init.js"></script>
     <script src="~/w3crm/js/styleSwitcher.js"></script>
 
@@ -132,7 +138,6 @@
     <script src="~/w3crm/js/deznav-init.js"></script>
     <script src="~/w3crm/js/demo.js"></script>
 
-    
 
     <script>
         hljs.highlightAll();
@@ -149,70 +154,128 @@
     </script>
 
     <script>
-        function modificarClientes(idProducto) {
+        // Obtiene la informacion del producto para desplegarlo en un sweetalert
+        function informacionProducto(idProducto) {
+            $.ajax({
+                url: '/Productos/ObtenerProducto',
+                type: 'GET',
+                data: { id: idProducto },
+                success: function (response) {
+                    if (response.success) {
+                        const producto = response.producto || {};
+
+                        Swal.fire({
+                            title: "Información del Producto",
+                            html: `
+                                <p><strong>ID Producto:</strong> ${producto.idCatalogoProducto || 'No disponible'}</p>
+                                <p><strong>Nombre:</strong> ${producto.nombreProducto || 'No disponible'}</p>
+                                <p><strong>Tipo de Producto:</strong> ${producto.tipoProducto || 'No disponible'}</p>
+                                <p><strong>Proveedor:</strong> ${producto.proveedor || 'No disponible'}</p>
+                                <p><strong>Página Web:</strong> ${producto.paginaWebProducto
+                                    ? `<a href="${producto.paginaWebProducto}" target="_blank">${producto.paginaWebProducto}</a>`
+                                    : 'No disponible'}</p>
+                                <p><strong>Descripción:</strong> ${producto.descripcion || 'No disponible'}</p>
+                                <p><strong>Tipo de Unidad:</strong> ${producto.tipoUnidad || 'No disponible'}</p>
+                                <p><strong>Cantidad por Unidad:</strong> ${producto.cantidadPorUnidad || 'No especificada'}</p>
+                            `,
+                            icon: "info",
+                            confirmButtonText: "Cerrar",
+                            customClass: {
+                                popup: 'animated fadeInDown',
+                                htmlContainer: 'swal-small-text' // Aplica la clase personalizada
+                            }
+                        });
+                    } else {
+                        Swal.fire("Error", response.message || "No se pudo obtener la información del producto.", "error");
+                    }
+                },
+                error: function () {
+                    Swal.fire("Error", "Hubo un problema al obtener la información del producto.", "error");
+                }
+            });
+        }
+
+
+        // Rellena la informacion del modal de modificar producto
+        function modificarProducto(idProducto) {
             $.ajax({
                 url: '/Productos/SeleccionarProductoModificar',
                 type: 'GET',
                 data: { id: idProducto },
                 success: function (response) {
-                    document.getElementById('idProductoModificar').value = idProducto;
-                    document.getElementById('nombreproductoModificar').value = response.nombre_Producto;
-                    document.getElementById('proveedorModificar').value = response.iD_Proveedor;
-                    document.getElementById('tipoproductoModificar').value = response.iD_TipoProducto;
-                    document.getElementById('paginaProductoModificar').value = response.pagina_Producto;
-                    document.getElementById('cantidadUnitariaModificar').value = response.cantidad_Unidades;
-                    document.getElementById('tipounidadModificar').value = response.iD_TipoUnidad;
+                    if (response.success) {
+                        const producto = response.producto; 
+
+                        document.getElementById('idProductoModificar').value = idProducto;
+                        document.getElementById('nombreproductoModificar').value = producto.nombreProducto;
+                        document.getElementById('proveedorModificar').value = producto.idProveedor;
+                        document.getElementById('tipoproductoModificar').value = producto.idTipoProducto;
+                        document.getElementById('paginaProductoModificar').value = producto.paginaWebProducto || '';
+                        document.getElementById('descripcionModificar').value = producto.descripcion || ''; // Nueva propiedad
+                        document.getElementById('cantidadPorUnidadModificar').value = producto.cantidadPorUnidad || 0; // Nueva propiedad
+                        document.getElementById('tipounidadModificar').value = producto.idTipoUnidad;
+                    } else {
+                        console.error('Error al obtener los datos del producto:', response.message);
+                    }
                 },
                 error: function (error) {
-                    console.error('Error al obtener los datos del producto:', error);
+                    console.error('Error al comunicarse con el servidor:', error);
                 }
             });
         }
+
 
         (function () {
             'use strict';
 
             var form = document.getElementById('formularioModificarProducto');
             const idProducto = document.getElementById('idProductoModificar');
-            const nombre_Producto = document.getElementById("nombreproductoModificar");
-            const iD_Proveedor = document.getElementById("proveedorModificar");
-            const iD_TipoProducto = document.getElementById("tipoproductoModificar");
-            const pagina_Producto = document.getElementById("paginaProductoModificar");
-            const cantidad_Unidades = document.getElementById("cantidadUnitariaModificar");
-            const iD_TipoUnidad = document.getElementById("tipounidadModificar");
+            const nombreProducto = document.getElementById("nombreproductoModificar");
+            const proveedor = document.getElementById("proveedorModificar");
+            const tipoProducto = document.getElementById("tipoproductoModificar");
+            const paginaProducto = document.getElementById("paginaProductoModificar");
+            const descripcion = document.getElementById("descripcionModificar");
+            const cantidadPorUnidad = document.getElementById("cantidadPorUnidadModificar");
+            const tipoUnidad = document.getElementById("tipounidadModificar");
 
             if (form) {
                 form.addEventListener('submit', function (event) {
                     event.preventDefault();
 
-                    nombre_Producto.classList.remove('is-invalid');
-                    iD_Proveedor.classList.remove('is-invalid');
-                    iD_TipoProducto.classList.remove('is-invalid');
-                    pagina_Producto.classList.remove('is-invalid');
-                    cantidad_Unidades.classList.remove('is-invalid');
-                    iD_TipoUnidad.classList.remove('is-invalid');
+                    // Remover clases de error
+                    nombreProducto.classList.remove('is-invalid');
+                    proveedor.classList.remove('is-invalid');
+                    tipoProducto.classList.remove('is-invalid');
+                    paginaProducto.classList.remove('is-invalid');
+                    descripcion.classList.remove('is-invalid');
+                    cantidadPorUnidad.classList.remove('is-invalid');
+                    tipoUnidad.classList.remove('is-invalid');
 
+                    // Validar formulario
                     if (!form.checkValidity()) {
                         event.stopPropagation();
                         form.classList.add('was-validated');
                     } else {
+                        // Enviar datos al servidor
                         $.ajax({
                             url: '/Productos/ModificarProducto',
                             type: 'POST',
                             data: {
                                 idSeleccionado: idProducto.value,
-                                nombre: nombre_Producto.value,
-                                tipoProducto: iD_TipoProducto.value,
-                                proveedor: iD_Proveedor.value,
-                                paginaProducto: pagina_Producto.value,
-                                cantidadUnitaria: cantidad_Unidades.value,
-                                tipounidad: iD_TipoUnidad.value,
+                                nombre: nombreProducto.value,
+                                tipoProducto: tipoProducto.value,
+                                proveedor: proveedor.value,
+                                paginaProducto: paginaProducto.value,
+                                descripcion: descripcion.value,
+                                cantidadPorUnidad: cantidadPorUnidad.value,
+                                tipoUnidad: tipoUnidad.value
                             },
                             success: function (response) {
                                 if (response.success) {
                                     Swal.fire({
                                         icon: 'success',
-                                        title: '¡Producto modificado!',
+                                        title: '¡Producto modificado!'
+                                        ,
                                         text: response.message,
                                         confirmButtonText: 'Aceptar'
                                     }).then((result) => {
@@ -222,11 +285,15 @@
                                         recargarTablaProductos();
                                     });
                                 } else {
+                                    // Manejar errores específicos
                                     if (response.errores.includes("nombre")) {
-                                        nombre_Producto.classList.add('is-invalid');
+                                        nombreProducto.classList.add('is-invalid');
                                     }
                                     if (response.errores.includes("cantidad")) {
-                                        cantidad_Unidades.classList.add('is-invalid');
+                                        cantidadPorUnidad.classList.add('is-invalid');
+                                    }
+                                    if (response.errores.includes("descripcion")) {
+                                        descripcion.classList.add('is-invalid');
                                     }
                                     Swal.fire({
                                         icon: 'error',
@@ -261,17 +328,17 @@
 
                         response.data.forEach(function (producto) {
                             var fila = `
-                            <tr id="${producto.iD_CatalogoProducto}">
-                                <td>${producto.nombre_Producto}</td>
+                            <tr id="${producto.idCatalogoProducto}">
+                                <td>${producto.nombreProducto}</td>
                                 <td>${producto.tipoProducto}</td>
                                 <td>${producto.proveedor}</td>
-                                <td>${producto.cantidad_Unidades}</td>
+                                <td>${producto.cantidadPorUnidad}</td>
                                 <td>${producto.tipoUnidad}</td>
-                                <td>${producto.pagina_Producto}</td>
                                 <td>
                                     <div class="d-flex">
-                                        <a href="javascript:void(0)" class="btn btn-primary shadow btn-xs sharp me-1" data-bs-toggle="modal" data-bs-target="#modificarProducto" onclick="modificarClientes('${producto.iD_CatalogoProducto}')"><i class="fas fa-pencil-alt"></i></a>
-                                        <a href="javascript:void(0)" class="btn btn-danger shadow btn-xs sharp" onclick="eliminarProducto('${producto.iD_CatalogoProducto}')"><i class="fa fa-trash"></i></a>
+                                        <a href="javascript:void(0)" class="btn btn-info shadow btn-xs sharp me-1" onclick="informacionProducto('${producto.idCatalogoProducto}')"><i class="fa fa-exclamation"></i></a>
+                                        <a href="javascript:void(0)" class="btn btn-warning shadow btn-xs sharp me-1" data-bs-toggle="modal" data-bs-target="#modificarProducto" onclick="modificarProducto('${producto.idCatalogoProducto}')"><i class="fas fa-pencil-alt"></i></a>
+                                                <a href="javascript:void(0)" class="btn btn-danger shadow btn-xs sharp" onclick="confirmarEliminacionProducto('${producto.idCatalogoProducto}')"><i class="fa fa-trash"></i></a>
                                     </div>
                                 </td>
                             </tr>
@@ -279,7 +346,7 @@
                             tabla.append(fila);
                         });
                     } else {
-                        console.error("Error al obtener los clientes actualizados.");
+                        console.error("Error al obtener los productos actualizados.");
                     }
                 },
                 error: function (error) {
@@ -288,7 +355,26 @@
             });
         }
 
-        // Funcion para eliminar productos de la base de datos
+
+        // Función para confirmar la eliminación de un producto
+        function confirmarEliminacionProducto(idProducto) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "No podrás revertir esto.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    eliminarProducto(idProducto);
+                }
+            });
+        }
+
+        // Función para eliminar productos de la base de datos
         function eliminarProducto(idProducto) {
             $.ajax({
                 url: '/Productos/EliminarProducto',
@@ -303,10 +389,157 @@
                     }
                 },
                 error: function () {
-                    Swal.fire("Error", "Hubo un problema al eliminar a el cliente.", "error");
+                    Swal.fire("Error", "Hubo un problema al eliminar el producto.", "error");
                 }
             });
         }
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Modal para agregar producto
+            const agregarModal = document.getElementById('agregarProducto');
+            // Modal para modificar producto
+            const modificarModal = document.getElementById('modificarProducto');
+
+            // Función para llenar opciones dinámicamente
+            async function llenarOpciones(proveedorSelect, tipoProductoSelect, tipoUnidadSelect) {
+                // Restablecer las opciones
+                proveedorSelect.innerHTML = '<option value="" selected disabled>Seleccione un proveedor</option>';
+                tipoProductoSelect.innerHTML = '<option value="" selected disabled>Seleccione un tipo de producto</option>';
+                tipoUnidadSelect.innerHTML = '<option value="" selected disabled>Seleccione un tipo de unidad</option>';
+
+                // Fetch Proveedores
+                const proveedores = await fetch('/Productos/ObtenerProveedores')
+                    .then(response => response.json())
+                    .catch(error => console.error('Error al obtener proveedores:', error));
+
+                if (proveedores) {
+                    proveedores.forEach(proveedor => {
+                        const option = document.createElement('option');
+                        option.value = proveedor.idProveedor;
+                        option.textContent = proveedor.nombre;
+                        proveedorSelect.appendChild(option);
+                    });
+                }
+
+                // Fetch Tipos de Productos
+                const tiposProductos = await fetch('/Productos/ObtenerTiposProductos')
+                    .then(response => response.json())
+                    .catch(error => console.error('Error al obtener tipos de productos:', error));
+
+                if (tiposProductos) {
+                    tiposProductos.forEach(tipo => {
+                        const option = document.createElement('option');
+                        option.value = tipo.idTipoProducto;
+                        option.textContent = tipo.nombreTipoProducto;
+                        tipoProductoSelect.appendChild(option);
+                    });
+                }
+
+                // Fetch Tipos de Unidades
+                const tiposUnidades = await fetch('/Productos/ObtenerTiposUnidades')
+                    .then(response => response.json())
+                    .catch(error => console.error('Error al obtener tipos de unidades:', error));
+
+                if (tiposUnidades) {
+                    tiposUnidades.forEach(unidad => {
+                        const option = document.createElement('option');
+                        option.value = unidad.idTipoUnidad;
+                        option.textContent = unidad.nombreTipoUnidad + " (" + unidad.abreviatura + ")";
+                        tipoUnidadSelect.appendChild(option);
+                    });
+                }
+            }
+
+            // Llenar opciones al mostrar el modal de agregar
+            agregarModal.addEventListener('shown.bs.modal', async function () {
+                const proveedorSelect = document.getElementById('proveedor');
+                const tipoProductoSelect = document.getElementById('tipoproducto');
+                const tipoUnidadSelect = document.getElementById('tipounidad');
+
+                await llenarOpciones(proveedorSelect, tipoProductoSelect, tipoUnidadSelect);
+            });
+
+            // Llenar opciones al mostrar el modal de modificar
+            modificarModal.addEventListener('shown.bs.modal', async function () {
+                const proveedorSelect = document.getElementById('proveedorModificar');
+                const tipoProductoSelect = document.getElementById('tipoproductoModificar');
+                const tipoUnidadSelect = document.getElementById('tipounidadModificar');
+
+                // Llenar las opciones dinámicamente
+                proveedorSelect.innerHTML = '<option value="" selected disabled>Seleccione un proveedor</option>';
+                tipoProductoSelect.innerHTML = '<option value="" selected disabled>Seleccione un tipo de producto</option>';
+                tipoUnidadSelect.innerHTML = '<option value="" selected disabled>Seleccione un tipo de unidad</option>';
+
+                // Fetch Proveedores
+                const proveedores = await fetch('/Productos/ObtenerProveedores')
+                    .then(response => response.json())
+                    .catch(error => console.error('Error al obtener proveedores:', error));
+
+                if (proveedores) {
+                    proveedores.forEach(proveedor => {
+                        const option = document.createElement('option');
+                        option.value = proveedor.idProveedor;
+                        option.textContent = proveedor.nombre;
+                        proveedorSelect.appendChild(option);
+                    });
+                }
+
+                // Fetch Tipos de Productos
+                const tiposProductos = await fetch('/Productos/ObtenerTiposProductos')
+                    .then(response => response.json())
+                    .catch(error => console.error('Error al obtener tipos de productos:', error));
+
+                if (tiposProductos) {
+                    tiposProductos.forEach(tipo => {
+                        const option = document.createElement('option');
+                        option.value = tipo.idTipoProducto;
+                        option.textContent = tipo.nombreTipoProducto;
+                        tipoProductoSelect.appendChild(option);
+                    });
+                }
+
+                // Fetch Tipos de Unidades
+                const tiposUnidades = await fetch('/Productos/ObtenerTiposUnidades')
+                    .then(response => response.json())
+                    .catch(error => console.error('Error al obtener tipos de unidades:', error));
+
+                if (tiposUnidades) {
+                    tiposUnidades.forEach(unidad => {
+                        const option = document.createElement('option');
+                        option.value = unidad.idTipoUnidad;
+                        option.textContent = unidad.nombreTipoUnidad + " (" + unidad.abreviatura + ")";
+                        tipoUnidadSelect.appendChild(option);
+                    });
+                }
+
+                // Pre-cargar valores seleccionados del producto
+                const idProducto = document.getElementById('idProductoModificar').value;
+
+                if (idProducto) {
+                    // Obtener los detalles del producto actual
+                    const producto = await fetch(`/Productos/SeleccionarProductoModificar?id=${idProducto}`)
+                        .then(response => response.json())
+                        .catch(error => console.error('Error al obtener el producto:', error));
+
+                    if (producto.success) {
+                        // Establecer valores seleccionados en los desplegables
+                        proveedorSelect.value = producto.producto.idProveedor;
+                        tipoProductoSelect.value = producto.producto.idTipoProducto;
+                        tipoUnidadSelect.value = producto.producto.idTipoUnidad;
+
+                        // Establecer los valores en los demás campos
+                        document.getElementById('nombreproductoModificar').value = producto.producto.nombreProducto;
+                        document.getElementById('descripcionModificar').value = producto.producto.descripcion || '';
+                        document.getElementById('paginaProductoModificar').value = producto.producto.paginaWebProducto || '';
+                        document.getElementById('cantidadPorUnidadModificar').value = producto.producto.cantidadPorUnidad || '';
+                    } else {
+                        console.error('Producto no encontrado:', producto.message);
+                    }
+                }
+            });
+        });
+
     </script>
 
 

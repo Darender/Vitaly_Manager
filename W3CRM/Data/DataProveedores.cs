@@ -122,6 +122,23 @@ namespace Vitaly_Manager.Data
         {
             try
             {
+                bool encontrado = false;
+                respuesta = $"El cliente es requerido en un producto: ";
+                foreach (CatalogoProducto producto in DataCatalogoProducto.ListaCatalogoProductos(out _, out _))
+                {
+                    if (producto.IdProveedor == idProveedor)
+                    {
+                        encontrado = true;
+                        respuesta += "\nProducto:" + producto.NombreProducto;
+                    }
+                }
+
+                if (encontrado)
+                {
+                    exito = true;
+                    return;
+                }
+
                 using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
                 {
                     conexion.Open();

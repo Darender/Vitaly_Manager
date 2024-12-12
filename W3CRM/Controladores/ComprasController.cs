@@ -16,63 +16,64 @@ namespace Vitaly_Manager.Controladores
         public JsonResult ObtenerProductosPorTipo(int tipoId)
         {
             var productosFiltrados = ListaProductos
-                .Where(p => p.ID_TipoProducto == tipoId)
+                .Where(p => p.IdTipoProducto == tipoId)
                 .Select(p => new
                 {
-                    p.ID_CatalogoProducto,
-                    p.Nombre_Producto
+                    p.IdCatalogoProducto,
+                    p.NombreProducto
                 })
                 .ToList();
 
             return Json(new { success = true, data = productosFiltrados });
         }
         [HttpPost]
-        public JsonResult AgregarNuevoLoteProducto( int tipo, int producto, int cantidad, decimal costo, string vencimiento, bool esMaterial, decimal margen, decimal? precio = null)
+        public JsonResult AgregarNuevoLoteProducto(int tipo, int producto, int cantidad, decimal costo, string vencimiento, bool esMaterial, decimal margen, decimal? precio = null)
         {
             bool resultado = false;
             string mensaje = "Hubo un problema al agregar el lote de producto.";
             List<string> fallidos = new List<string>();
-            DateTime fechaVencimiento = DateTime.Now;
+            DateTime temp = DateTime.MinValue;
+
             try
             {
                 // Validaciones básicas
                 if (tipo <= 0)
                 {
-                    mensaje = "El tipo de producto es obligatorio.";
                     fallidos.Add("tipo");
+                    mensaje = "El tipo de producto es obligatorio.";
                 }
 
                 if (producto <= 0)
                 {
-                    mensaje = "El producto es obligatorio.";
                     fallidos.Add("producto");
+                    mensaje = "El producto es obligatorio.";
                 }
 
                 if (cantidad <= 0)
                 {
-                    mensaje = "La cantidad debe ser mayor a cero.";
                     fallidos.Add("cantidad");
+                    mensaje = "La cantidad debe ser mayor a cero.";
                 }
 
                 if (costo <= 0)
                 {
-                    mensaje = "El costo debe ser mayor a cero.";
                     fallidos.Add("costo");
+                    mensaje = "El costo debe ser mayor a cero.";
                 }
 
-                if (string.IsNullOrWhiteSpace(vencimiento) || !DateTime.TryParse(vencimiento, out fechaVencimiento))
+                if (string.IsNullOrWhiteSpace(vencimiento) || !DateTime.TryParse(vencimiento, out temp))
                 {
-                    mensaje = "La fecha de vencimiento es inválida.";
                     fallidos.Add("vencimiento");
+                    mensaje = "La fecha de vencimiento es inválida.";
                 }
 
                 if (margen < 0)
                 {
-                    mensaje = "El margen de ganancia no puede ser negativo.";
                     fallidos.Add("margen");
+                    mensaje = "El margen de ganancia no puede ser negativo.";
                 }
 
-                // Si hay fallos, retornamos el mensaje
+                // Si hay errores, retornamos inmediatamente
                 if (fallidos.Count > 0)
                 {
                     return Json(new { success = false, message = mensaje, errores = fallidos });
@@ -87,28 +88,30 @@ namespace Vitaly_Manager.Controladores
                 // Validar el precio de venta
                 if (precio <= 0)
                 {
-                    mensaje = "El precio de venta calculado es inválido.";
                     fallidos.Add("precio");
+                    mensaje = "El precio de venta calculado es inválido.";
                     return Json(new { success = false, message = mensaje, errores = fallidos });
                 }
 
+                DateTime? fechaVencimiento = null;
+
+                if (temp != DateTime.MinValue)
+                    fechaVencimiento = temp;
+
                 // Crear el nuevo lote
-                LoteProducto nuevoLote = new LoteProducto
+                CompraLote nuevoLote = new CompraLote
                 {
-                    ID_CatalogoProducto = producto,
-                    Fecha_Ingreso = DateTime.Now,
-                    Fecha_Vencimiento = fechaVencimiento,
-                    Cantidad = cantidad,
-                    Precio_Compra = costo,
-                    Precio_Venta = precio.Value,
-                    Margen_Ganancia = margen,
-                    IVA = 0.16m * costo, // Ejemplo de cálculo de IVA
-                    EsMaterial = esMaterial
+                    IdCatalogoProducto = producto,
+                    CantidadUnidades = cantidad,
+                    CostoTotal = costo * cantidad,
+                    FechaVencimiento = fechaVencimiento,
+                    EsMaterial = esMaterial,
+                    PorcentajeMargenGanancia = margen,
+                    PrecioVentaSugerido = precio.Value
                 };
 
-                // Simular la lógica de guardado en la base de datos
-                // Aquí podrías llamar a tu capa de datos o DbContext para guardar
-                bool guardado = DataLoteProducto.Agregar(nuevoLote, out mensaje);
+                // Guardar en la base de datos
+                bool guardado = DataCompraLote.Agregar(nuevoLote, out mensaje);
 
                 if (guardado)
                 {
@@ -124,6 +127,7 @@ namespace Vitaly_Manager.Controladores
 
             return Json(new { success = resultado, message = mensaje, errores = fallidos });
         }
+
 
     }
 }

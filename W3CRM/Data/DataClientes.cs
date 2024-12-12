@@ -215,6 +215,15 @@ namespace Vitaly_Manager.Data
                     }
                 }
 
+                foreach (ServicioGeneral servicio in DataServicioGeneral.ListaServicioGeneral(out _, out _))
+                {
+                    if (servicio.IdCliente == id)
+                    {
+                        encontrado = true;
+                        respuesta += "\nServicio general:" + servicio.IdServGeneral;
+                    }
+                }
+
                 if (encontrado)
                 {
                     return false;

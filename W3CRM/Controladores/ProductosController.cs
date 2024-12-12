@@ -6,26 +6,21 @@ namespace Vitaly_Manager.Controladores
 {
     public class ProductosController : Controller
     {
-        public static List<Proveedor> ListaProveedores = DataProveedores.ListaProveedores(out _, out _);
-        public static List<TipoProducto> ListasTipoProductos = DataTipoProducto.ListaTiposProductos(out _, out _);
-        public static List<TipoUnidad> ListaTipoUnidades = DataTipoUnidad.ListaTiposUnidades(out _, out _);
-        public static List<CatalogoProducto> ListaProductos = DataCatalogoProducto.ListaCatalogoProductos(out _, out _);
+        public List<Proveedor> ListaProveedores = DataProveedores.ListaProveedores(out _, out _);
+        public List<TipoProducto> ListasTipoProductos = DataTipoProducto.ListaTiposProductos(out _, out _);
+        public List<TipoUnidad> ListaTipoUnidades = DataTipoUnidad.ListaTiposUnidades(out _, out _);
+        public List<CatalogoProducto> ListaProductos = DataCatalogoProducto.ListaCatalogoProductos(out _, out _);
 
         public IActionResult ConsultaProductos()
         {
             return View(this);
         }
 
-        public IActionResult AgregarProductos()
-        {
-            return View(this);
-        }
-
         [HttpPost]
-        public JsonResult AgregarNuevoProducto(string nombre, int tipoProducto, int proveedor, string? paginaProducto, string cantidadUnitaria, int tipounidad)
+        public JsonResult AgregarNuevoProducto(string nombre, int tipoProducto, int proveedor, string? paginaProducto, string? descripcion, string cantidadPorUnidad, int tipoUnidad)
         {
             bool resultado = false;
-            string mensaje = "Hubo un problema al agregar el cliente.";
+            string mensaje = "Hubo un problema al agregar el producto.";
             List<string> fallidos = new List<string>();
 
             try
@@ -36,37 +31,34 @@ namespace Vitaly_Manager.Controladores
                     mensaje = "El nombre no puede estar vacío.";
                     fallidos.Add("nombre");
                 }
-                else if (nombre.Length < 3 || nombre.Length > 100)
+                else if (nombre.Length < 3 || nombre.Length > 255)
                 {
-                    mensaje = "El nombre debe tener entre 3 y 100 caracteres.";
+                    mensaje = "El nombre debe tener entre 3 y 255 caracteres.";
                     fallidos.Add("nombre");
                 }
 
-                int cantidadNumerica = 0;
-                // Validación de edad
-                if (!string.IsNullOrWhiteSpace(cantidadUnitaria))
+                decimal cantidadNumerica = 0;
+                // Validación de cantidad por unidad
+                if (!string.IsNullOrWhiteSpace(cantidadPorUnidad))
                 {
-                    int temp;
-                    if (!int.TryParse(cantidadUnitaria, out temp))
+                    if (!decimal.TryParse(cantidadPorUnidad, out cantidadNumerica))
                     {
                         mensaje = "La cantidad debe ser un número válido.";
                         fallidos.Add("cantidad");
                     }
-                    cantidadNumerica = temp;
                 }
-
 
                 if (fallidos.Count == 0)
                 {
                     CatalogoProducto nuevo = new CatalogoProducto
                     {
-                        Nombre_Producto = nombre,
-                        Cantidad_Unidades = cantidadNumerica,
-                        Pagina_Producto = paginaProducto,
-                        ID_Proveedor = proveedor,
-                        ID_TipoUnidad = tipounidad,
-                        ID_TipoProducto = tipoProducto
-
+                        NombreProducto = nombre,
+                        IdTipoProducto = tipoProducto,
+                        IdProveedor = proveedor,
+                        PaginaWebProducto = paginaProducto,
+                        Descripcion = descripcion,
+                        CantidadPorUnidad = cantidadNumerica,
+                        IdTipoUnidad = tipoUnidad
                     };
 
                     resultado = DataCatalogoProducto.Agregar(nuevo, out mensaje);
@@ -87,9 +79,9 @@ namespace Vitaly_Manager.Controladores
             bool success = false;
             string mensaje = "Error al eliminar el producto";
 
-            foreach(LoteProducto lote in DataLoteProducto.ListaLoteProducto(out _, out _))
+            foreach (CompraLote lote in DataCompraLote.ListaCompraLotes(out _, out _))
             {
-                if(lote.ID_CatalogoProducto == id)
+                if (lote.IdCompraLote == id)
                 {
                     return Json(new { success = false, message = "Error: el producto ya es utilizado en un lote de producto" });
                 }
@@ -99,23 +91,16 @@ namespace Vitaly_Manager.Controladores
             return Json(new { success, message = mensaje });
         }
 
-        /// <summary>
-        /// Metodo encargado de conbertir el id de un tipo de producto al nombre de dicho tipo de producto
-        /// </summary>
-        /// <param name="idTipoProducto">El id el tipo de producto a buscar</param>
-        /// <returns>El nombre del tipo de producto segun el id dado</returns>
-        public string ObtenerTipoProducto(int idTipoProducto) { 
+        public string ObtenerTipoProducto(int idTipoProducto)
+        {
             foreach (TipoProducto item in ListasTipoProductos)
             {
-                if (item.ID_TipoProducto == idTipoProducto)
-                    return item.Nombre_Tipo_Producto;
+                if (item.IdTipoProducto == idTipoProducto)
+                    return item.NombreTipoProducto;
             }
             return "ERROR NO ENCONTRADO";
         }
 
-        /// <summary>
-        /// Metodo encargado de conbertir el id de un proveedor al nombre de dicho proveedor
-        /// </summary>
         public string ObtenerProveedor(int idProveedor)
         {
             foreach (Proveedor item in ListaProveedores)
@@ -126,15 +111,12 @@ namespace Vitaly_Manager.Controladores
             return "ERROR NO ENCONTRADO";
         }
 
-        /// <summary>
-        /// Metodo encargado de conbertir el id de un tipo de unidad al nombre de dicho tipo de unidad
-        /// </summary>
         public string ObtenerTipoUnidad(int idTipoUnidad)
         {
             foreach (TipoUnidad item in ListaTipoUnidades)
             {
-                if (item.ID_TipoUnidad == idTipoUnidad)
-                    return item.Unidad_Medida;
+                if (item.IdTipoUnidad == idTipoUnidad)
+                    return item.NombreTipoUnidad;
             }
             return "ERROR NO ENCONTRADO";
         }
@@ -144,40 +126,37 @@ namespace Vitaly_Manager.Controladores
         {
             var productosActualizados = ListaProductos.Select(producto => new
             {
-                producto.ID_CatalogoProducto,
-                producto.Nombre_Producto,
-                TipoProducto = ObtenerTipoProducto(producto.ID_TipoProducto), // Convertir ID a nombre
-                Proveedor = ObtenerProveedor(producto.ID_Proveedor),         // Convertir ID a nombre
-                producto.Cantidad_Unidades,
-                TipoUnidad = ObtenerTipoUnidad(producto.ID_TipoUnidad),      // Convertir ID a nombre
-                producto.Pagina_Producto
+                producto.IdCatalogoProducto,
+                producto.NombreProducto,
+                TipoProducto = ObtenerTipoProducto(producto.IdTipoProducto),
+                Proveedor = ObtenerProveedor(producto.IdProveedor),
+                producto.CantidadPorUnidad,
+                TipoUnidad = ObtenerTipoUnidad(producto.IdTipoUnidad),
+                producto.PaginaWebProducto,
+                producto.Descripcion
             }).ToList();
 
             return Json(new { success = true, data = productosActualizados });
         }
 
-
         [HttpGet]
         public IActionResult SeleccionarProductoModificar(int id)
         {
-            CatalogoProducto producto = ListaProductos[0];
-            foreach (CatalogoProducto valor in ListaProductos)
+            var producto = ListaProductos.FirstOrDefault(p => p.IdCatalogoProducto == id);
+
+            if (producto == null)
             {
-                if (valor.ID_CatalogoProducto == id)
-                {
-                    producto = valor;
-                    break;
-                }
+                return Json(new { success = false, message = "Producto no encontrado." });
             }
 
-            return Json(producto);
+            return Json(new { success = true, producto });
         }
 
         [HttpPost]
-        public JsonResult ModificarProducto(int idSeleccionado, string nombre, int tipoProducto, int proveedor, string? paginaProducto, string cantidadUnitaria, int tipounidad)
+        public JsonResult ModificarProducto(int idSeleccionado, string nombre, int tipoProducto, int proveedor, string? paginaProducto, string? descripcion, string cantidadPorUnidad, int tipoUnidad)
         {
             bool resultado = false;
-            string mensaje = "Hubo un problema al agregar el cliente.";
+            string mensaje = "Hubo un problema al modificar el producto.";
             List<string> fallidos = new List<string>();
 
             try
@@ -188,41 +167,38 @@ namespace Vitaly_Manager.Controladores
                     mensaje = "El nombre no puede estar vacío.";
                     fallidos.Add("nombre");
                 }
-                else if (nombre.Length < 3 || nombre.Length > 100)
+                else if (nombre.Length < 3 || nombre.Length > 255)
                 {
-                    mensaje = "El nombre debe tener entre 3 y 100 caracteres.";
+                    mensaje = "El nombre debe tener entre 3 y 255 caracteres.";
                     fallidos.Add("nombre");
                 }
 
-                int cantidadNumerica = 0;
-                // Validación de edad
-                if (!string.IsNullOrWhiteSpace(cantidadUnitaria))
+                decimal cantidadNumerica = 0;
+                // Validación de cantidad por unidad
+                if (!string.IsNullOrWhiteSpace(cantidadPorUnidad))
                 {
-                    int temp;
-                    if (!int.TryParse(cantidadUnitaria, out temp))
+                    if (!decimal.TryParse(cantidadPorUnidad, out cantidadNumerica))
                     {
                         mensaje = "La cantidad debe ser un número válido.";
                         fallidos.Add("cantidad");
                     }
-                    cantidadNumerica = temp;
                 }
-
 
                 if (fallidos.Count == 0)
                 {
-                    CatalogoProducto nuevo = new CatalogoProducto
+                    CatalogoProducto modificado = new CatalogoProducto
                     {
-                        ID_CatalogoProducto = idSeleccionado,
-                        Nombre_Producto = nombre,
-                        Cantidad_Unidades = cantidadNumerica,
-                        Pagina_Producto = paginaProducto,
-                        ID_Proveedor = proveedor,
-                        ID_TipoUnidad = tipounidad,
-                        ID_TipoProducto = tipoProducto
-
+                        IdCatalogoProducto = idSeleccionado,
+                        NombreProducto = nombre,
+                        IdTipoProducto = tipoProducto,
+                        IdProveedor = proveedor,
+                        PaginaWebProducto = paginaProducto,
+                        Descripcion = descripcion,
+                        CantidadPorUnidad = cantidadNumerica,
+                        IdTipoUnidad = tipoUnidad
                     };
 
-                    resultado = DataCatalogoProducto.Modificar(nuevo, out mensaje);
+                    resultado = DataCatalogoProducto.Modificar(modificado, out mensaje);
                 }
             }
             catch (Exception ex)
@@ -234,5 +210,57 @@ namespace Vitaly_Manager.Controladores
             return Json(new { success = resultado, message = mensaje, errores = fallidos });
         }
 
+        [HttpGet]
+        public JsonResult ObtenerProveedores()
+        {
+            var proveedores = DataProveedores.ListaProveedores(out _, out _);
+            return Json(proveedores);
+        }
+
+        [HttpGet]
+        public JsonResult ObtenerTiposProductos()
+        {
+            var tiposProductos = DataTipoProducto.ListaTiposProductos(out _, out _);
+            return Json(tiposProductos);
+        }
+
+        [HttpGet]
+        public JsonResult ObtenerTiposUnidades()
+        {
+            var tiposUnidades = DataTipoUnidad.ListaTiposUnidades(out _, out _);
+            return Json(tiposUnidades);
+        }
+
+
+        [HttpGet]
+        public IActionResult ObtenerProducto(int id)
+        {
+            CatalogoProducto? producto = ListaProductos.FirstOrDefault(c => c.IdCatalogoProducto == id);
+
+            if (producto == null)
+            {
+                return Json(new { success = false, message = "Producto no encontrado." });
+            }
+
+            var clienteInfo = new
+            {
+                success = true,
+                producto = new
+                {
+                    producto.IdCatalogoProducto,
+                    producto.NombreProducto,
+                    TipoProducto = ObtenerTipoProducto(producto.IdTipoProducto),
+                    Proveedor = ObtenerProveedor(producto.IdProveedor),        
+                    producto.PaginaWebProducto,
+                    producto.Descripcion,
+                    TipoUnidad = ObtenerTipoUnidad(producto.IdTipoUnidad),      
+                    producto.CantidadPorUnidad
+                }
+            };
+
+            return Json(clienteInfo);
+        }
+
     }
+
 }

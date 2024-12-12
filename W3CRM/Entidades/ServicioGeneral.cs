@@ -2,7 +2,7 @@
 
 namespace Vitaly_Manager.Entidades
 {
-    public class ServGeneral
+    public class ServicioGeneral
     {
         [Key]
         public int IdServGeneral { get; set; }

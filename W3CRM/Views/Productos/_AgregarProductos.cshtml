@@ -1,0 +1,224 @@
+﻿@using System.Globalization
+@using Vitaly_Manager.Entidades
+
+<div class="modal fade" id="agregarProducto" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Agregar Nuevo Producto</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="form-validation">
+                            <div class="container-fluid p-0">
+                                <form class="needs-validation w-100" method="post" novalidate id="formularioAgregarProducto">
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-3 col-form-label" for="nombreproducto">
+                                            Nombre del Producto <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-lg-9">
+                                            <input type="text" class="form-control" id="nombreproducto" placeholder="Inserte nombre..." required>
+                                            <div class="invalid-feedback">
+                                                Por favor inserte el nombre del producto.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-3 col-form-label" for="proveedor">
+                                            Proveedor <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-lg-9">
+                                            <select class="form-select" id="proveedor" required>
+                                                <option value="" selected disabled>Seleccione un proveedor</option>
+                                                <!-- Opciones dinámicas llenadas por JavaScript -->
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Por favor seleccione un proveedor.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-3 col-form-label" for="descripcion">
+                                            Descripción
+                                        </label>
+                                        <div class="col-lg-9">
+                                            <textarea class="form-control" id="descripcion" placeholder="Escriba una breve descripción del producto..."></textarea>
+                                            <div class="invalid-feedback">
+                                                Por favor inserte una descripción válida.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-3 col-form-label" for="tipoproducto">
+                                            Tipo de Producto <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-lg-9">
+                                            <select class="form-select" id="tipoproducto" required>
+                                                <option value="" selected disabled>Seleccione un tipo de producto</option>
+                                                <!-- Opciones dinámicas llenadas por JavaScript -->
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Por favor seleccione un tipo de producto.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-3 col-form-label" for="paginaProducto">
+                                            Página del Producto
+                                        </label>
+                                        <div class="col-lg-9">
+                                            <textarea class="form-control" id="paginaProducto" placeholder="Inserte URL o información del producto..."></textarea>
+                                            <div class="invalid-feedback">
+                                                Por favor inserte una URL válida o información relevante.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-3 col-form-label" for="tipounidad">
+                                            Tipo de Unidad <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-lg-9">
+                                            <select class="form-select" id="tipounidad" required>
+                                                <option value="" selected disabled>Seleccione un tipo de unidad</option>
+                                                <!-- Opciones dinámicas llenadas por JavaScript -->
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Por favor seleccione un tipo de unidad.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-3 col-form-label" for="cantidadPorUnidad">
+                                            Cantidad por Unidad <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-lg-9">
+                                            <input type="number" class="form-control" id="cantidadPorUnidad" placeholder="Inserte cantidad por unidad..." step="0.01" required>
+                                            <div class="invalid-feedback">
+                                                Por favor inserte una cantidad válida.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-12 row">
+                                        <div class="col-lg-12">
+                                            <button type="submit" class="btn btn-primary py-2 w-100" id="boton_agregar">Agregar Producto</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        'use strict';
+
+        var form = document.getElementById('formularioAgregarProducto');
+        const nombreProducto = document.getElementById("nombreproducto");
+        const tipoproducto = document.getElementById("tipoproducto");
+        const proveedor = document.getElementById("proveedor");
+        const paginaProducto = document.getElementById("paginaProducto");
+        const descripcion = document.getElementById("descripcion");
+        const cantidadPorUnidad = document.getElementById("cantidadPorUnidad");
+        const tipounidad = document.getElementById("tipounidad");
+
+        if (form) {
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                // Eliminar clases de error previas
+                nombreProducto.classList.remove('is-invalid');
+                tipoproducto.classList.remove('is-invalid');
+                proveedor.classList.remove('is-invalid');
+                paginaProducto.classList.remove('is-invalid');
+                descripcion.classList.remove('is-invalid');
+                cantidadPorUnidad.classList.remove('is-invalid');
+                tipounidad.classList.remove('is-invalid');
+
+                if (!form.checkValidity()) {
+                    event.stopPropagation();
+                } else {
+                    // Realizar la solicitud AJAX
+                    $.ajax({
+                        url: '/Productos/AgregarNuevoProducto',
+                        type: 'POST',
+                        data: {
+                            nombre: nombreProducto.value,
+                            tipoProducto: tipoproducto.value,
+                            proveedor: proveedor.value,
+                            paginaProducto: paginaProducto.value,
+                            descripcion: descripcion.value,
+                            cantidadPorUnidad: cantidadPorUnidad.value,
+                            tipounidad: tipounidad.value
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: '¡Producto agregado!',
+                                    text: response.message,
+                                    confirmButtonText: 'Aceptar'
+                                }).then((result) => {
+                                    form.reset();
+                                    form.classList.remove('was-validated');
+                                    recargarTablaProductos();
+                                });
+                            } else {
+                                // Marcar los campos con errores
+                                if (response.errores.includes("nombre")) {
+                                    nombreProducto.classList.add('is-invalid');
+                                }
+                                if (response.errores.includes("cantidad")) {
+                                    cantidadPorUnidad.classList.add('is-invalid');
+                                }
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: response.message,
+                                    confirmButtonText: 'Aceptar'
+                                });
+                            }
+                        },
+                        error: function (error) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Hubo un error al comunicarse con el servidor.',
+                                confirmButtonText: 'Aceptar'
+                            });
+                        }
+                    });
+                }
+
+                form.classList.add('was-validated'); // Aplicar las clases de validación
+            }, false);
+        }
+    })();
+
+    // Validación adicional para el campo "Cantidad por Unidad"
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const cantidadPorUnidadInput = document.getElementById('cantidadPorUnidad');
+
+        cantidadPorUnidadInput.addEventListener('input', (e) => {
+            const value = e.target.value;
+            // Permitir solo números y puntos decimales
+            const sanitizedValue = value.replace(/[^0-9.]/g, '');
+            e.target.value = sanitizedValue;
+        });
+    });
+</script>
+
