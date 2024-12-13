@@ -78,7 +78,7 @@ ViewData["Title"] = "Proveedores";
                                             <td>
                                                 <div class="d-flex">
                                                     <!-- Botón de modificar -->
-                                                    <a href="#javascript:void(0)" class="btn btn-primary shadow btn-xs sharp me-1" data-bs-toggle="modal" data-bs-target="#modificarProveedor" onclick="modificarProveedor('@proveedor.IdProveedor')"><i class="fas fa-pencil-alt"></i></a>
+                                                <a href="#javascript:void(0)" class="btn btn-warning shadow btn-xs sharp me-1" data-bs-toggle="modal" data-bs-target="#modificarProveedor" onclick="modificarProveedor('@proveedor.IdProveedor')"><i class="fas fa-pencil-alt"></i></a>
                                                     <!-- Botón de eliminar -->
                                                     <button class="btn btn-danger shadow btn-xs sharp btn-eliminar" onclick="confirmarEliminar('@proveedor.IdProveedor')">
                                                         <i class="fa fa-trash"></i>
@@ -222,7 +222,7 @@ ViewData["Title"] = "Proveedores";
                                                 <td>${proveedor.contactoAlternativo || 'No disponible'}</td>
                                     <td>
                                         <div class="d-flex">
-                                                    <a href="#javascript:void(0)" class="btn btn-primary shadow btn-xs sharp me-1" data-bs-toggle="modal" data-bs-target="#modificarProveedor" onclick="modificarProveedor('${proveedor.iD_Proveedor}')"><i class="fas fa-pencil-alt"></i></a>
+                                                            <a href="#javascript:void(0)" class="btn btn-warning shadow btn-xs sharp me-1" data-bs-toggle="modal" data-bs-target="#modificarProveedor" onclick="modificarProveedor('${proveedor.iD_Proveedor}')"><i class="fas fa-pencil-alt"></i></a>
                                                     <button class="btn btn-danger shadow btn-xs sharp btn-eliminar" onclick="confirmarEliminar('${proveedor.iD_Proveedor}')">
                                                                 <i class="fa fa-trash"></i>
                                                     </button>

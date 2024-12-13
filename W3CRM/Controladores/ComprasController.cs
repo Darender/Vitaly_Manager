@@ -12,6 +12,11 @@ namespace Vitaly_Manager.Controladores
             return View(this);
         }
 
+        public IActionResult ConsultaCompras()
+        {
+            return View(this);
+        }
+        
         [HttpGet]
         public JsonResult ObtenerProductosPorTipo(int tipoId)
         {
