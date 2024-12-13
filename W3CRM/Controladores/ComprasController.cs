@@ -16,7 +16,45 @@ namespace Vitaly_Manager.Controladores
         {
             return View(this);
         }
-        
+
+        [HttpGet]
+        public JsonResult ObtenerCompras()
+        {
+            try
+            {
+                // Simular la obtención de datos desde una base de datos
+                var listaCompras = DataCompraLote.ListaCompraLotes(out string mensaje, out bool exito);
+
+                if (!exito)
+                {
+                    return Json(new { success = false, message = mensaje });
+                }
+
+                // Formatear los datos para enviarlos al frontend
+                var comprasFormateadas = listaCompras.Select(compra => new
+                {
+                    idCompraLote = compra.IdCompraLote,
+                    nombreProducto = ObtenerNombreProducto(compra.IdCatalogoProducto),
+                    cantidadUnidades = compra.CantidadUnidades,
+                    costoTotal = compra.CostoTotal,
+                    fechaVencimiento = compra.FechaVencimiento?.ToString("yyyy-MM-dd"),
+                    esMaterial = compra.EsMaterial
+                });
+
+                return Json(new { success = true, data = comprasFormateadas });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error al obtener las compras: {ex.Message}" });
+            }
+        }
+
+        public static string ObtenerNombreProducto(int idProducto)
+        {
+            var producto = DataCatalogoProducto.ListaCatalogoProductos(out _, out _).FirstOrDefault(p => p.IdCatalogoProducto == idProducto);
+            return producto != null ? producto.NombreProducto : "Producto no encontrado";
+        }
+
         [HttpGet]
         public JsonResult ObtenerProductosPorTipo(int tipoId)
         {
@@ -131,6 +169,89 @@ namespace Vitaly_Manager.Controladores
             }
 
             return Json(new { success = resultado, message = mensaje, errores = fallidos });
+        }
+
+        [HttpGet]
+        public JsonResult ObtenerProductosFiltrados(int? proveedorId = null, int? tipoProductoId = null)
+        {
+            try
+            {
+                string mensaje;
+                bool exito;
+
+                // Obtener todos los productos desde la base de datos o caché
+                var productos = DataCatalogoProducto.ListaCatalogoProductos(out mensaje, out exito);
+
+                if (!exito)
+                {
+                    return Json(new { success = false, message = mensaje });
+                }
+
+                // Filtrar productos si se proporcionan filtros
+                if (proveedorId.HasValue)
+                {
+                    productos = productos.Where(p => p.IdProveedor == proveedorId.Value).ToList();
+                }
+
+                if (tipoProductoId.HasValue)
+                {
+                    productos = productos.Where(p => p.IdTipoProducto == tipoProductoId.Value).ToList();
+                }
+
+                return Json(new { success = true, data = productos });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error al filtrar productos: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        public JsonResult ObtenerProveedores()
+        {
+            try
+            {
+                string mensaje;
+                bool exito;
+
+                // Obtener la lista de proveedores desde la base de datos o caché
+                var proveedores = DataProveedores.ListaProveedores(out mensaje, out exito);
+
+                if (!exito)
+                {
+                    return Json(new { success = false, message = mensaje });
+                }
+
+                return Json(new { success = true, data = proveedores });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error al obtener proveedores: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        public JsonResult ObtenerTiposProductos()
+        {
+            try
+            {
+                string mensaje;
+                bool exito;
+
+                // Obtener la lista de tipos de productos desde la base de datos o caché
+                var tiposProductos = DataTipoProducto.ListaTiposProductos(out mensaje, out exito);
+
+                if (!exito)
+                {
+                    return Json(new { success = false, message = mensaje });
+                }
+
+                return Json(new { success = true, data = tiposProductos });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error al obtener tipos de productos: {ex.Message}" });
+            }
         }
 
 

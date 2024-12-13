@@ -1,0 +1,310 @@
+﻿<div class="modal fade" id="agregarCompra" tabindex="-1" aria-labelledby="agregarCompraLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="agregarCompraLabel">Nueva Compra de Producto</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <form class="needs-validation" method="post" novalidate id="formularioAgregarLoteProducto">
+                    <!-- ID oculto -->
+                    <input type="hidden" id="formulario_id" name="ID" value="0">
+
+                    <div class="row mb-3">
+                        <label class="col-md-2 col-form-label" for="formulario_proveedor">Proveedor</label>
+                        <div class="col-md-10">
+                            <select class="form-control" id="formulario_proveedor" name="Proveedor">
+                                <option value="" selected disabled>Seleccione un proveedor</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-md-2 col-form-label" for="formulario_tipo">Tipo de Producto</label>
+                        <div class="col-md-10">
+                            <select class="form-control" id="formulario_tipo" name="TipoProducto">
+                                <option value="" selected disabled>Seleccione un tipo de producto</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label class="col-md-2 col-form-label" for="formulario_producto">Producto</label>
+                        <div class="col-md-10">
+                            <select class="form-control" id="formulario_producto" name="Producto" required>
+                                <option value="" selected disabled>Seleccione un producto</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <!-- Cantidad -->
+                    <div class="mb-3">
+                        <label class="form-label" for="formulario_cantidad">Cantidad de Unidades <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="formulario_cantidad" name="Cantidad" placeholder="Ingrese la cantidad" min="1" required oninput="calcularCostos()">
+                        <div class="invalid-feedback">Por favor ingrese una cantidad válida.</div>
+                    </div>
+
+                    <!-- Selector de costo -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="costoOpciones" id="opcionCostoUnidad" value="unidad" checked onchange="toggleCostoInputs()">
+                                <label class="form-check-label" for="opcionCostoUnidad">Costo por Unidad</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="costoOpciones" id="opcionCostoTotal" value="total" onchange="toggleCostoInputs()">
+                                <label class="form-check-label" for="opcionCostoTotal">Costo Total</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Costo por unidad -->
+                    <div class="mb-3" id="costoUnidadDiv">
+                        <label class="form-label" for="formulario_costoUnidad">Costo por Unidad <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" id="formulario_costoUnidad" name="CostoUnidad" placeholder="Ingrese el costo por unidad" step="0.01" min="0" required oninput="calcularCostos()">
+                        </div>
+                        <div class="invalid-feedback">Por favor ingrese un costo válido.</div>
+                    </div>
+
+                    <!-- Costo total -->
+                    <div class="mb-3 d-none" id="costoTotalDiv">
+                        <label class="form-label" for="formulario_costoTotal">Costo Total <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" id="formulario_costoTotal" name="CostoTotal" placeholder="Ingrese el costo total" step="0.01" min="0" oninput="calcularCostos()">
+                        </div>
+                        <div class="invalid-feedback">Por favor ingrese un costo válido.</div>
+                    </div>
+
+                    <!-- Fecha de vencimiento -->
+                    <div class="mb-3">
+                        <label class="form-label" for="formulario_vencimiento">Fecha de Vencimiento (Opcional)</label>
+                        <input type="date" class="form-control" id="formulario_vencimiento" name="Vencimiento">
+                    </div>
+
+                    <!-- Es material -->
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="formulario_material" name="EsMaterial">
+                            <label class="form-check-label" for="formulario_material">Marque si es material</label>
+                        </div>
+                    </div>
+
+                    <!-- Margen de ganancia y precio de venta -->
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="formulario_margen">Margen de Ganancia (%)</label>
+                            <input type="number" class="form-control text-center" id="formulario_margen" name="MargenGanancia" placeholder="Ingrese el margen" step="0.01" oninput="calcularPrecioVenta()">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="formulario_precio">Precio de Venta</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="text" class="form-control text-center" id="formulario_precio" name="PrecioVenta" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botón de "Agregar" -->
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary w-100" id="boton_subir">Agregar Compra</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('agregarCompra').addEventListener('shown.bs.modal', function () {
+        filtrarProductos(); // Llamar a la función para rellenar los productos al abrir el modal
+    });
+
+
+    function calcularPrecioVenta() {
+        const cantidad = parseFloat(document.getElementById('formulario_cantidad').value) || 0;
+        const costoUnidad = parseFloat(document.getElementById('formulario_costoUnidad').value) || 0;
+        const costoTotal = parseFloat(document.getElementById('formulario_costoTotal').value) || 0;
+        const margenGanancia = parseFloat(document.getElementById('formulario_margen').value) || 0;
+        const iva = 0.16; // IVA del 16%
+
+        let costoBase = 0;
+
+        // Determinar el costo base según la selección
+        if (document.getElementById('opcionCostoUnidad').checked) {
+            costoBase = costoUnidad * cantidad;
+        } else if (document.getElementById('opcionCostoTotal').checked) {
+            costoBase = costoTotal;
+        }
+
+        if (costoBase > 0) {
+            const ganancia = (costoBase * margenGanancia) / 100;
+            const precioConIVA = costoBase + ganancia + (costoBase * iva);
+            document.getElementById('formulario_precio').value = precioConIVA.toFixed(2);
+        } else {
+            document.getElementById('formulario_precio').value = '';
+        }
+    }
+
+
+    document.getElementById('formulario_producto').addEventListener('change', function () {
+        const productoSelect = this;
+        const selectedOption = productoSelect.options[productoSelect.selectedIndex];
+
+        if (selectedOption) {
+            // Obtener los datos del producto seleccionado
+            const proveedorId = selectedOption.dataset.proveedorId;
+            const tipoProductoId = selectedOption.dataset.tipoProductoId;
+
+            // Rellenar los campos de proveedor y tipo de producto
+            document.getElementById('formulario_proveedor').value = proveedorId;
+            document.getElementById('formulario_tipo').value = tipoProductoId;
+        }
+    });
+
+
+    function toggleCostoInputs() {
+        const opcionUnidad = document.getElementById('opcionCostoUnidad').checked;
+        document.getElementById('costoUnidadDiv').classList.toggle('d-none', !opcionUnidad);
+        document.getElementById('costoTotalDiv').classList.toggle('d-none', opcionUnidad);
+
+        // Limpiar los valores no seleccionados
+        if (opcionUnidad) {
+            document.getElementById('formulario_costoTotal').value = '';
+        } else {
+            document.getElementById('formulario_costoUnidad').value = '';
+        }
+    }
+
+    function calcularCostos() {
+        const cantidad = parseFloat(document.getElementById('formulario_cantidad').value) || 0;
+        const costoUnidad = parseFloat(document.getElementById('formulario_costoUnidad').value) || 0;
+        const costoTotal = parseFloat(document.getElementById('formulario_costoTotal').value) || 0;
+
+        if (document.getElementById('opcionCostoUnidad').checked && cantidad > 0) {
+            // Calcular el costo total basado en costo por unidad
+            document.getElementById('formulario_costoTotal').value = (costoUnidad * cantidad).toFixed(2);
+        } else if (document.getElementById('opcionCostoTotal').checked && cantidad > 0) {
+            // Calcular el costo por unidad basado en costo total
+            document.getElementById('formulario_costoUnidad').value = (costoTotal / cantidad).toFixed(2);
+        }
+
+        // Actualizar el precio de venta basado en el costo actual
+        calcularPrecioVenta();
+    }
+
+    function cargarProductos() {
+        const tipoSeleccionado = document.getElementById('formulario_tipo').value;
+        const productoSelect = document.getElementById('formulario_producto');
+
+        if (!tipoSeleccionado) {
+            productoSelect.innerHTML = '<option value="" disabled selected>Por favor seleccione</option>';
+            return;
+        }
+
+        $.ajax({
+            url: `/Compras/ObtenerProductosPorTipo?tipoId=${tipoSeleccionado}`,
+            type: 'GET',
+            success: function (response) {
+                if (response.success) {
+                    // Limpia las opciones actuales
+                    productoSelect.innerHTML = '<option value="" disabled selected>Seleccione un producto</option>';
+
+                    // Agrega los productos filtrados
+                    response.data.forEach(function (producto) {
+                        const option = document.createElement('option');
+                        option.value = producto.iD_CatalogoProducto;
+                        option.textContent = producto.nombre_Producto;
+                        productoSelect.appendChild(option);
+                    });
+                } else {
+                    console.error('Error al obtener los productos:', response.message);
+                }
+            },
+            error: function (error) {
+                console.error('Error en la solicitud AJAX:', error);
+            }
+        });
+    }
+
+    async function filtrarProductos() {
+        const proveedorId = document.getElementById('formulario_proveedor').value;
+        const tipoProductoId = document.getElementById('formulario_tipo').value;
+        const productoSelect = document.getElementById('formulario_producto');
+
+        try {
+            // Enviar los filtros al backend
+            const response = await fetch(`/Compras/ObtenerProductosFiltrados?proveedorId=${proveedorId || ''}&tipoProductoId=${tipoProductoId || ''}`);
+            const data = await response.json();
+
+            if (data.success) {
+                // Limpiar las opciones actuales
+                productoSelect.innerHTML = '<option value="" selected disabled>Seleccione un producto</option>';
+
+                // Añadir las nuevas opciones con información adicional
+                data.data.forEach(producto => {
+                    const option = document.createElement('option');
+                    option.value = producto.idCatalogoProducto; // ID del producto
+                    option.textContent = producto.nombreProducto; // Nombre del producto
+                    option.dataset.proveedorId = producto.idProveedor; // ID del proveedor
+                    option.dataset.tipoProductoId = producto.idTipoProducto; // ID del tipo de producto
+                    productoSelect.appendChild(option);
+                });
+            } else {
+                console.error('Error al cargar productos:', data.message);
+            }
+        } catch (error) {
+            console.error('Error al conectarse con el servidor:', error);
+        }
+    }
+
+
+
+    document.getElementById('formulario_proveedor').addEventListener('change', filtrarProductos);
+    document.getElementById('formulario_tipo').addEventListener('change', filtrarProductos);
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const proveedorSelect = document.getElementById('formulario_proveedor');
+        const tipoProductoSelect = document.getElementById('formulario_tipo');
+
+        try {
+            // Llenar proveedores
+            const proveedoresResponse = await fetch('/Compras/ObtenerProveedores');
+            const proveedoresData = await proveedoresResponse.json();
+
+            if (proveedoresData.success) {
+                proveedoresData.data.forEach(proveedor => {
+                    const option = document.createElement('option');
+                    option.value = proveedor.idProveedor; // ID del proveedor
+                    option.textContent = proveedor.nombre; // Nombre del proveedor
+                    proveedorSelect.appendChild(option);
+                });
+            } else {
+                console.error('Error al obtener proveedores:', proveedoresData.message);
+            }
+
+            // Llenar tipos de productos
+            const tiposProductosResponse = await fetch('/Compras/ObtenerTiposProductos');
+            const tiposProductosData = await tiposProductosResponse.json();
+
+            if (tiposProductosData.success) {
+                tiposProductosData.data.forEach(tipo => {
+                    const option = document.createElement('option');
+                    option.value = tipo.idTipoProducto; // ID del tipo de producto
+                    option.textContent = tipo.nombreTipoProducto; // Nombre del tipo de producto
+                    tipoProductoSelect.appendChild(option);
+                });
+            } else {
+                console.error('Error al obtener tipos de productos:', tiposProductosData.message);
+            }
+        } catch (error) {
+            console.error('Error al cargar los datos dinámicamente:', error);
+        }
+    });
+
+</script>
