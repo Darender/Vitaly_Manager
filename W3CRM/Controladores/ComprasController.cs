@@ -17,6 +17,110 @@ namespace Vitaly_Manager.Controladores
             return View(this);
         }
 
+        [HttpPost]
+        public JsonResult AgregarNuevaCompra(
+        string producto,
+        int cantidadUnidades,
+        decimal costoTotal,
+        string? fechaVencimiento,
+        bool esMaterial,
+        decimal porcentajeMargenGanancia)
+        {
+            bool resultado = false;
+            string mensaje = "Hubo un problema al agregar la compra.";
+            List<string> fallidos = new List<string>();
+            int idProducto;
+
+            try
+            {
+                if(!int.TryParse(producto, out idProducto))
+                {
+                    mensaje = "Erro al validar el producto.";
+                    fallidos.Add("producto");
+                } else if (idProducto <= 0)
+                {
+                    mensaje = "Debe seleccionar un producto válido.";
+                    fallidos.Add("producto");
+                }
+
+                // Validación de cantidad
+                if (cantidadUnidades <= 0)
+                {
+                    mensaje = "La cantidad debe ser mayor a 0.";
+                    fallidos.Add("cantidadUnidades");
+                }
+
+                // Validación del costo total
+                if (costoTotal <= 0)
+                {
+                    mensaje = "El costo total debe ser mayor a 0.";
+                    fallidos.Add("costoTotal");
+                }
+
+                // Validación del margen de ganancia
+                if (porcentajeMargenGanancia < 0)
+                {
+                    mensaje = "El margen de ganancia no puede ser negativo.";
+                    fallidos.Add("porcentajeMargenGanancia");
+                }
+
+                // Validación de fecha de vencimiento (opcional)
+                DateTime? fechaVencimientoParsed = null;
+                if (!string.IsNullOrWhiteSpace(fechaVencimiento))
+                {
+                    if (DateTime.TryParse(fechaVencimiento, out DateTime parsedDate))
+                    {
+                        fechaVencimientoParsed = parsedDate;
+                    }
+                    else
+                    {
+                        mensaje = "La fecha de vencimiento no es válida.";
+                        fallidos.Add("fechaVencimiento");
+                    }
+                }
+
+                if (fallidos.Count == 0)
+                {
+                    Gasto nuevoGasto = new Gasto
+                    {
+                        Monto = costoTotal,
+                        Descripcion = $"Compra de {cantidadUnidades} {ObtenerNombreProducto(idProducto)}",
+                        IdTipoGasto = 1,
+                        FechaRealizado = DateTime.Now
+                    };
+
+                    int idGastoGenerado;
+
+                    if (!DataGasto.Agregar(nuevoGasto, out mensaje, out idGastoGenerado))
+                        return Json(new { success = false, message = mensaje, errores = fallidos });
+
+                    // Crear la nueva compra
+                    CompraLote nuevaCompra = new CompraLote
+                    {
+                        IdCatalogoProducto = idProducto,
+                        CantidadUnidades = cantidadUnidades,
+                        CostoTotal = costoTotal,
+                        FechaVencimiento = fechaVencimientoParsed,
+                        EsMaterial = esMaterial,
+                        PorcentajeMargenGanancia = porcentajeMargenGanancia,
+                        IdParametros = 1,
+                        IdGasto = idGastoGenerado
+                    };
+
+                    // Lógica para guardar la compra en la base de datos
+                    resultado = DataCompraLote.Agregar(nuevaCompra, out mensaje);
+                }
+            }
+            catch (Exception ex)
+            {
+                resultado = false;
+                mensaje = $"Error al agregar la compra: {ex.Message}";
+            }
+
+            return Json(new { success = resultado, message = mensaje, errores = fallidos });
+        }
+
+
         [HttpGet]
         public JsonResult ObtenerCompras()
         {
@@ -68,107 +172,6 @@ namespace Vitaly_Manager.Controladores
                 .ToList();
 
             return Json(new { success = true, data = productosFiltrados });
-        }
-        [HttpPost]
-        public JsonResult AgregarNuevoLoteProducto(int tipo, int producto, int cantidad, decimal costo, string vencimiento, bool esMaterial, decimal margen, decimal? precio = null)
-        {
-            bool resultado = false;
-            string mensaje = "Hubo un problema al agregar el lote de producto.";
-            List<string> fallidos = new List<string>();
-            DateTime temp = DateTime.MinValue;
-
-            try
-            {
-                // Validaciones básicas
-                if (tipo <= 0)
-                {
-                    fallidos.Add("tipo");
-                    mensaje = "El tipo de producto es obligatorio.";
-                }
-
-                if (producto <= 0)
-                {
-                    fallidos.Add("producto");
-                    mensaje = "El producto es obligatorio.";
-                }
-
-                if (cantidad <= 0)
-                {
-                    fallidos.Add("cantidad");
-                    mensaje = "La cantidad debe ser mayor a cero.";
-                }
-
-                if (costo <= 0)
-                {
-                    fallidos.Add("costo");
-                    mensaje = "El costo debe ser mayor a cero.";
-                }
-
-                if (string.IsNullOrWhiteSpace(vencimiento) || !DateTime.TryParse(vencimiento, out temp))
-                {
-                    fallidos.Add("vencimiento");
-                    mensaje = "La fecha de vencimiento es inválida.";
-                }
-
-                if (margen < 0)
-                {
-                    fallidos.Add("margen");
-                    mensaje = "El margen de ganancia no puede ser negativo.";
-                }
-
-                // Si hay errores, retornamos inmediatamente
-                if (fallidos.Count > 0)
-                {
-                    return Json(new { success = false, message = mensaje, errores = fallidos });
-                }
-
-                // Calcular el precio de venta si no está proporcionado
-                if (!precio.HasValue)
-                {
-                    precio = costo + (costo * margen / 100);
-                }
-
-                // Validar el precio de venta
-                if (precio <= 0)
-                {
-                    fallidos.Add("precio");
-                    mensaje = "El precio de venta calculado es inválido.";
-                    return Json(new { success = false, message = mensaje, errores = fallidos });
-                }
-
-                DateTime? fechaVencimiento = null;
-
-                if (temp != DateTime.MinValue)
-                    fechaVencimiento = temp;
-
-                // Crear el nuevo lote
-                CompraLote nuevoLote = new CompraLote
-                {
-                    IdCatalogoProducto = producto,
-                    CantidadUnidades = cantidad,
-                    CostoTotal = costo * cantidad,
-                    FechaVencimiento = fechaVencimiento,
-                    EsMaterial = esMaterial,
-                    PorcentajeMargenGanancia = margen,
-                    PrecioVentaSugerido = precio.Value
-                };
-
-                // Guardar en la base de datos
-                bool guardado = DataCompraLote.Agregar(nuevoLote, out mensaje);
-
-                if (guardado)
-                {
-                    resultado = true;
-                    mensaje = "Lote de producto agregado correctamente.";
-                }
-            }
-            catch (Exception ex)
-            {
-                resultado = false;
-                mensaje = $"Error al agregar el lote: {ex.Message}";
-            }
-
-            return Json(new { success = resultado, message = mensaje, errores = fallidos });
         }
 
         [HttpGet]
@@ -254,6 +257,18 @@ namespace Vitaly_Manager.Controladores
             }
         }
 
+        [HttpGet]
+        public IActionResult ObtenerIVA()
+        {
+            // Obtén el IVA desde la configuración o base de datos
+            decimal iva = 0.16m; // Por ejemplo, un valor fijo o dinámico
+
+            return Json(new
+            {
+                success = true,
+                iva
+            });
+        }
 
     }
 }

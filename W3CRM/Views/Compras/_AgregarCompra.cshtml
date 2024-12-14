@@ -125,13 +125,121 @@
         filtrarProductos(); // Llamar a la función para rellenar los productos al abrir el modal
     });
 
+    (function () {
+        'use strict';
+
+        var form = document.getElementById('formularioAgregarLoteProducto');
+        const producto = document.getElementById("formulario_producto");
+        const cantidad = document.getElementById("formulario_cantidad");
+        const costoTotal = document.getElementById("formulario_costoTotal");
+        const vencimiento = document.getElementById("formulario_vencimiento");
+        const esMaterial = document.getElementById("formulario_material");
+        const margenGanancia = document.getElementById("formulario_margen");
+
+        if (form) {
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                // Eliminar clases de error previas
+                producto.classList.remove('is-invalid');
+                cantidad.classList.remove('is-invalid');
+                costoTotal.classList.remove('is-invalid');
+                margenGanancia.classList.remove('is-invalid');
+
+
+                if (!form.checkValidity()) {
+                    event.stopPropagation();
+                } else {
+                    // Realizar la solicitud AJAX
+                    $.ajax({
+                        url: '/Compras/AgregarNuevaCompra',
+                        type: 'POST',
+                        data: {
+                            producto: producto.value,
+                            cantidadUnidades: parseInt(cantidad.value),
+                            costoTotal: parseFloat(costoTotal.value),
+                            fechaVencimiento: vencimiento.value,
+                            esMaterial: esMaterial.checked,
+                            porcentajeMargenGanancia: parseFloat(margenGanancia.value),
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: '¡Compra registrada!',
+                                    text: response.message,
+                                    confirmButtonText: 'Aceptar'
+                                }).then((result) => {
+                                    form.reset();
+                                    form.classList.remove('was-validated');
+                                    cargarProductos();
+                                });
+                            } else {
+                                // Marcar los campos con errores específicos
+                                if (response.errores.includes("idCatalogoProducto")) {
+                                    producto.classList.add('is-invalid');
+                                }
+                                if (response.errores.includes("cantidadUnidades")) {
+                                    cantidad.classList.add('is-invalid');
+                                }
+                                if (response.errores.includes("costoTotal")) {
+                                    costoTotal.classList.add('is-invalid');
+                                }
+                                if (response.errores.includes("porcentajeMargenGanancia")) {
+                                    margenGanancia.classList.add('is-invalid');
+                                }
+                                if (response.errores.includes("fechaVencimiento")) {
+                                    vencimiento.classList.add('is-invalid');
+                                }
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: response.message,
+                                    confirmButtonText: 'Aceptar'
+                                });
+                            }
+                        },
+                        error: function (error) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Hubo un error al comunicarse con el servidor.',
+                                confirmButtonText: 'Aceptar'
+                            });
+                        }
+                    });
+                }
+
+                form.classList.add('was-validated'); // Aplicar las clases de validación
+            }, false);
+        }
+    })();
+
+    let ivaGlobal = 0;
+
+    async function obtenerIVA() {
+        try {
+            const response = await fetch('/Compras/ObtenerIVA');
+            const data = await response.json();
+
+            if (data.success) {
+                ivaGlobal = parseFloat(data.iva);
+            } else {
+                console.error('Error al obtener el IVA:', data.message);
+                ivaGlobal = 0.16; // Valor por defecto en caso de error
+            }
+        } catch (error) {
+            console.error('Error en la solicitud para obtener el IVA:', error);
+            ivaGlobal = 0.16; // Valor por defecto en caso de error
+        }
+    }
+
 
     function calcularPrecioVenta() {
         const cantidad = parseFloat(document.getElementById('formulario_cantidad').value) || 0;
         const costoUnidad = parseFloat(document.getElementById('formulario_costoUnidad').value) || 0;
         const costoTotal = parseFloat(document.getElementById('formulario_costoTotal').value) || 0;
         const margenGanancia = parseFloat(document.getElementById('formulario_margen').value) || 0;
-        const iva = 0.16; // IVA del 16%
 
         let costoBase = 0;
 
@@ -144,7 +252,7 @@
 
         if (costoBase > 0) {
             const ganancia = (costoBase * margenGanancia) / 100;
-            const precioConIVA = costoBase + ganancia + (costoBase * iva);
+            const precioConIVA = costoBase + ganancia + (costoBase * ivaGlobal);
             document.getElementById('formulario_precio').value = precioConIVA.toFixed(2);
         } else {
             document.getElementById('formulario_precio').value = '';
@@ -166,7 +274,6 @@
             document.getElementById('formulario_tipo').value = tipoProductoId;
         }
     });
-
 
     function toggleCostoInputs() {
         const opcionUnidad = document.getElementById('opcionCostoUnidad').checked;
@@ -271,6 +378,7 @@
     document.addEventListener('DOMContentLoaded', async () => {
         const proveedorSelect = document.getElementById('formulario_proveedor');
         const tipoProductoSelect = document.getElementById('formulario_tipo');
+        await obtenerIVA();
 
         try {
             // Llenar proveedores

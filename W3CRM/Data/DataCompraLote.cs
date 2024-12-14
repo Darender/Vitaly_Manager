@@ -42,7 +42,6 @@ namespace Vitaly_Manager.Data
                                 FechaVencimiento = lector["fechaVencimiento"] != DBNull.Value ? Convert.ToDateTime(lector["fechaVencimiento"]) : null,
                                 EsMaterial = Convert.ToBoolean(lector["esMaterial"]),
                                 PorcentajeMargenGanancia = Convert.ToDecimal(lector["porcentajeMargenGanancia"]),
-                                PrecioVentaSugerido = Convert.ToDecimal(lector["precioVentaSugerido"]),
                                 IdParametros = Convert.ToInt32(lector["idParametros"])
                             };
                             lista.Add(compra);
@@ -71,8 +70,8 @@ namespace Vitaly_Manager.Data
                 using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
                 {
                     conexion.Open();
-                    string query = @"INSERT INTO CompraLote (idCatalogoProducto, cantidadUnidades, costoTotal, idGasto, fechaVencimiento, esMaterial, porcentajeMargenGanancia, precioVentaSugerido, idParametros)
-                                     VALUES (@IdCatalogoProducto, @CantidadUnidades, @CostoTotal, @IdGasto, @FechaVencimiento, @EsMaterial, @PorcentajeMargenGanancia, @PrecioVentaSugerido, @IdParametros)";
+                    string query = @"INSERT INTO CompraLote (idCatalogoProducto, cantidadUnidades, costoTotal, idGasto, fechaVencimiento, esMaterial, porcentajeMargenGanancia, idParametros)
+                                     VALUES (@IdCatalogoProducto, @CantidadUnidades, @CostoTotal, @IdGasto, @FechaVencimiento, @EsMaterial, @PorcentajeMargenGanancia, @IdParametros)";
 
                     using (SqlCommand comando = new SqlCommand(query, conexion))
                     {
@@ -83,7 +82,6 @@ namespace Vitaly_Manager.Data
                         comando.Parameters.AddWithValue("@FechaVencimiento", nuevo.FechaVencimiento ?? (object)DBNull.Value);
                         comando.Parameters.AddWithValue("@EsMaterial", nuevo.EsMaterial);
                         comando.Parameters.AddWithValue("@PorcentajeMargenGanancia", nuevo.PorcentajeMargenGanancia);
-                        comando.Parameters.AddWithValue("@PrecioVentaSugerido", nuevo.PrecioVentaSugerido);
                         comando.Parameters.AddWithValue("@IdParametros", nuevo.IdParametros);
 
                         comando.ExecuteNonQuery();
@@ -110,7 +108,7 @@ namespace Vitaly_Manager.Data
                     string query = @"UPDATE CompraLote
                                      SET idCatalogoProducto = @IdCatalogoProducto, cantidadUnidades = @CantidadUnidades, costoTotal = @CostoTotal,
                                          idGasto = @IdGasto, fechaVencimiento = @FechaVencimiento, esMaterial = @EsMaterial,
-                                         porcentajeMargenGanancia = @PorcentajeMargenGanancia, precioVentaSugerido = @PrecioVentaSugerido, idParametros = @IdParametros
+                                         porcentajeMargenGanancia = @PorcentajeMargenGanancia, idParametros = @IdParametros
                                      WHERE idCompraLote = @IdCompraLote";
 
                     using (SqlCommand comando = new SqlCommand(query, conexion))
@@ -123,7 +121,6 @@ namespace Vitaly_Manager.Data
                         comando.Parameters.AddWithValue("@FechaVencimiento", modificado.FechaVencimiento ?? (object)DBNull.Value);
                         comando.Parameters.AddWithValue("@EsMaterial", modificado.EsMaterial);
                         comando.Parameters.AddWithValue("@PorcentajeMargenGanancia", modificado.PorcentajeMargenGanancia);
-                        comando.Parameters.AddWithValue("@PrecioVentaSugerido", modificado.PrecioVentaSugerido);
                         comando.Parameters.AddWithValue("@IdParametros", modificado.IdParametros);
 
                         comando.ExecuteNonQuery();
