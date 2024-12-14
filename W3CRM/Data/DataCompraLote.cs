@@ -11,6 +11,40 @@ namespace Vitaly_Manager.Data
         private static DateTime _ultimoCache = DateTime.MinValue;
         private static readonly TimeSpan TiempoCache = TimeSpan.FromMinutes(1);
 
+        public static CompraLote? ObtenerPorId(int idCompraLote, out string mensaje)
+        {
+            try
+            {
+                // Obtiene la lista de compras en memoria
+                bool exito;
+                var listaCompras = ListaCompraLotes(out mensaje, out exito);
+
+                if (!exito)
+                {
+                    mensaje = $"Error al obtener la lista de compras: {mensaje}";
+                    return null;
+                }
+
+                // Busca la compra específica por ID
+                var compra = listaCompras.FirstOrDefault(c => c.IdCompraLote == idCompraLote);
+
+                if (compra != null)
+                {
+                    mensaje = "Compra encontrada exitosamente.";
+                    return compra;
+                }
+
+                // Si no encuentra la compra
+                mensaje = "Compra no encontrada en la lista.";
+                return null;
+            }
+            catch (Exception ex)
+            {
+                mensaje = $"Error al buscar la compra por ID: {ex.Message}";
+                return null;
+            }
+        }
+
         public static List<CompraLote> ListaCompraLotes(out string respuesta, out bool exito)
         {
             if (_cacheCompraLotes.Count > 0 && (DateTime.Now - _ultimoCache) < TiempoCache)
@@ -70,8 +104,10 @@ namespace Vitaly_Manager.Data
                 using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
                 {
                     conexion.Open();
-                    string query = @"INSERT INTO CompraLote (idCatalogoProducto, cantidadUnidades, costoTotal, idGasto, fechaVencimiento, esMaterial, porcentajeMargenGanancia, idParametros)
-                                     VALUES (@IdCatalogoProducto, @CantidadUnidades, @CostoTotal, @IdGasto, @FechaVencimiento, @EsMaterial, @PorcentajeMargenGanancia, @IdParametros)";
+                    string query = @"INSERT INTO CompraLote 
+                            (idCatalogoProducto, cantidadUnidades, costoTotal, idGasto, fechaVencimiento, esMaterial, porcentajeMargenGanancia, idParametros)
+                             VALUES (@IdCatalogoProducto, @CantidadUnidades, @CostoTotal, @IdGasto, @FechaVencimiento, @EsMaterial, @PorcentajeMargenGanancia, @IdParametros);
+                             SELECT SCOPE_IDENTITY();";
 
                     using (SqlCommand comando = new SqlCommand(query, conexion))
                     {
@@ -84,9 +120,21 @@ namespace Vitaly_Manager.Data
                         comando.Parameters.AddWithValue("@PorcentajeMargenGanancia", nuevo.PorcentajeMargenGanancia);
                         comando.Parameters.AddWithValue("@IdParametros", nuevo.IdParametros);
 
-                        comando.ExecuteNonQuery();
+                        // Obtener el ID generado automáticamente
+                        object result = comando.ExecuteScalar();
+                        if (result != null && int.TryParse(result.ToString(), out int generatedId))
+                        {
+                            nuevo.IdCompraLote = generatedId; // Asignar el ID generado
+                        }
+                        else
+                        {
+                            mensaje = "Error al obtener el ID generado.";
+                            return false;
+                        }
                     }
                 }
+
+                // Agregar al caché con el ID generado
                 _cacheCompraLotes.Add(nuevo);
                 mensaje = "Compra lote agregada exitosamente.";
                 return true;
@@ -97,6 +145,7 @@ namespace Vitaly_Manager.Data
                 return false;
             }
         }
+
 
         public static bool Modificar(CompraLote modificado, out string mensaje)
         {
@@ -146,6 +195,32 @@ namespace Vitaly_Manager.Data
         {
             try
             {
+                bool encontrado = false;
+                mensaje = $"El lote es requerido en un material utilizado o en una venta: ";
+                foreach (MaterialUtilizado material in DataMaterialUtilizado.ListaMaterialesUtilizados(out _, out _))
+                {
+                    if (material.IdCompraLote == id)
+                    {
+                        encontrado = true;
+                        mensaje += "\nMaterial servicio realizado: " + material.IdServicioRealizado;
+                    }
+                }
+
+                foreach (VentaProducto venta in DataVentaProducto.ListaVentasProductos(out _, out _))
+                {
+                    if (venta.IdCompraLote == id)
+                    {
+                        encontrado = true;
+                        mensaje += "\nVenta: " + venta.FolioVenta;
+                    }
+                }
+
+                if (encontrado)
+                {
+                    return false;
+                }
+
+
                 using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
                 {
                     conexion.Open();

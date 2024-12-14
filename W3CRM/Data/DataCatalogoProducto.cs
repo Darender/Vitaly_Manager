@@ -10,6 +10,40 @@ namespace Vitaly_Manager.Data
         private static DateTime _ultimoCache = DateTime.MinValue;
         private static readonly TimeSpan TiempoCache = TimeSpan.FromMinutes(1);
 
+        public static CatalogoProducto? ObtenerPorId(int idCatalogoProducto, out string mensaje)
+        {
+            try
+            {
+                // Obtener la lista de productos en memoria
+                bool exito;
+                var listaProductos = ListaCatalogoProductos(out mensaje, out exito);
+
+                if (!exito)
+                {
+                    mensaje = $"Error al obtener la lista de productos: {mensaje}";
+                    return null;
+                }
+
+                // Buscar el producto específico por ID
+                var producto = listaProductos.FirstOrDefault(p => p.IdCatalogoProducto == idCatalogoProducto);
+
+                if (producto != null)
+                {
+                    mensaje = "Producto encontrado exitosamente.";
+                    return producto;
+                }
+
+                // Si no encuentra el producto
+                mensaje = "Producto no encontrado en la lista.";
+                return null;
+            }
+            catch (Exception ex)
+            {
+                mensaje = $"Error al buscar el producto por ID: {ex.Message}";
+                return null;
+            }
+        }
+
         public static List<CatalogoProducto> ListaCatalogoProductos(out string respuesta, out bool exito)
         {
             if (_cacheCatalogoProductos.Count > 0 && (DateTime.Now - _ultimoCache) < TiempoCache)

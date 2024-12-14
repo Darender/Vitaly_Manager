@@ -270,5 +270,78 @@ namespace Vitaly_Manager.Controladores
             });
         }
 
+        [HttpGet]
+        public JsonResult ObtenerCompra(int id)
+        {
+            try
+            {
+                string mensaje;
+                CompraLote? compra = DataCompraLote.ObtenerPorId(id, out mensaje); 
+                if (compra == null)
+                {
+                    return Json(new { success = false, message = mensaje });
+                }
+
+                CatalogoProducto? producto = DataCatalogoProducto.ObtenerPorId(compra.IdCatalogoProducto, out mensaje);
+                if (producto == null)
+                {
+                    return Json(new { success = false, message = mensaje });
+                }
+
+                Proveedor? proveedor = DataProveedores.ObtenerPorId(producto.IdProveedor, out mensaje);
+                if (proveedor == null)
+                {
+                    return Json(new { success = false, message = mensaje });
+                }
+
+                return Json(new
+                {
+                    success = true,
+                    compra = new
+                    {
+                        idCompra = compra.IdCompraLote,
+                        producto = producto.NombreProducto, // Debe mapearse con el nombre del producto
+                        proveedor = proveedor.Nombre, // Debe mapearse con el nombre del proveedor
+                        cantidadUnidades = compra.CantidadUnidades,
+                        costoTotal = compra.CostoTotal,
+                        fechaVencimiento = compra.FechaVencimiento?.ToString("yyyy-MM-dd"),
+                        esMaterial = compra.EsMaterial,
+                        porcentajeMargenGanancia = compra.PorcentajeMargenGanancia,
+                        fechaCompra = compra.FechaVencimiento?.ToString("yyyy-MM-dd")
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error al obtener la compra: {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult EliminarCompra(int id)
+        {
+            string mensaje;
+            bool resultado;
+
+            try
+            {
+                // Eliminar la compra utilizando el método de DataCompraLote
+                resultado = DataCompraLote.Eliminar(id, out mensaje);
+
+                if (resultado)
+                {
+                    return Json(new { success = true, message = "Compra eliminada exitosamente." });
+                }
+                else
+                {
+                    return Json(new { success = false, message = mensaje });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error al eliminar la compra: {ex.Message}" });
+            }
+        }
+
     }
 }
