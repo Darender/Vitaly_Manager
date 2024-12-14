@@ -138,6 +138,9 @@
     </script>
 
     <script>
+        
+
+
         // Elimina una compra con confirmación
         function eliminarCompra(idCompra) {
             Swal.fire({
@@ -249,7 +252,7 @@
                                         <td>
                                             <div class="d-flex">
                                                         <a href="javascript:void(0)" class="btn btn-info shadow btn-xs sharp me-1" onclick="informacionCompra(${producto.idCompraLote})"><i class="fa fa-eye"></i></a>
-                                                <a href="javascript:void(0)" class="btn btn-warning shadow btn-xs sharp me-1" data-bs-toggle="modal" data-bs-target="#modificarProducto" onclick="modificarProducto(${producto.idCompraLote})"><i class="fas fa-pencil-alt"></i></a>
+                                                                <a href="javascript:void(0)" class="btn btn-warning shadow btn-xs sharp me-1" data-bs-toggle="modal" data-bs-target="#agregarCompra" onclick="modificarCompra(${producto.idCompraLote})"><i class="fas fa-pencil-alt"></i></a>
                                                 <a href="javascript:void(0)" class="btn btn-danger shadow btn-xs sharp" onclick="eliminarCompra(${producto.idCompraLote})"><i class="fa fa-trash"></i></a>
                                             </div>
                                         </td>

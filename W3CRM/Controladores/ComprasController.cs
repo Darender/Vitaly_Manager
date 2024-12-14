@@ -318,6 +318,144 @@ namespace Vitaly_Manager.Controladores
         }
 
         [HttpPost]
+        public JsonResult ModificarCompra(
+            int id,
+            int producto,
+            int cantidadUnidades,
+            decimal costoTotal,
+            string? fechaVencimiento,
+            bool esMaterial,
+            decimal porcentajeMargenGanancia)
+        {
+            string mensaje;
+            try
+            {
+                // Validar la entrada
+                if (id <= 0)
+                {
+                    return Json(new { success = false, message = "ID de compra no válido.", errores = new List<string> { "id" } });
+                }
+                if (producto <= 0)
+                {
+                    return Json(new { success = false, message = "Debe seleccionar un producto válido.", errores = new List<string> { "idCatalogoProducto" } });
+                }
+                if (cantidadUnidades <= 0)
+                {
+                    return Json(new { success = false, message = "La cantidad debe ser mayor a 0.", errores = new List<string> { "cantidadUnidades" } });
+                }
+                if (costoTotal <= 0)
+                {
+                    return Json(new { success = false, message = "El costo total debe ser mayor a 0.", errores = new List<string> { "costoTotal" } });
+                }
+                if (porcentajeMargenGanancia < 0)
+                {
+                    return Json(new { success = false, message = "El margen de ganancia no puede ser negativo.", errores = new List<string> { "porcentajeMargenGanancia" } });
+                }
+
+                DateTime? fechaParsed = null;
+                if (!string.IsNullOrWhiteSpace(fechaVencimiento))
+                {
+                    if (DateTime.TryParse(fechaVencimiento, out DateTime fecha))
+                    {
+                        fechaParsed = fecha;
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = "La fecha de vencimiento no es válida.", errores = new List<string> { "fechaVencimiento" } });
+                    }
+                }
+
+                CompraLote? antiguo = DataCompraLote.ObtenerPorId(id, out mensaje);
+                if(antiguo == null)
+                    return Json(new { success = false, message = mensaje, errores = new List<string>() });
+
+                Gasto nuevoGasto = new Gasto
+                {
+                    IdGasto = antiguo.IdGasto,
+                    Monto = costoTotal,
+                    Descripcion = $"Compra de {cantidadUnidades} {ObtenerNombreProducto(antiguo.IdCatalogoProducto)}",
+                    IdTipoGasto = 1,
+                    FechaRealizado = DateTime.Now
+                };
+
+                if (!DataGasto.Modificar(nuevoGasto, out mensaje))
+                    return Json(new { success = false, message = mensaje, errores = new List<string>() });
+
+                // Crear un objeto con los datos actualizados
+                CompraLote compraModificada = new CompraLote
+                {
+                    IdCompraLote = id,
+                    IdCatalogoProducto = producto,
+                    CantidadUnidades = cantidadUnidades,
+                    CostoTotal = costoTotal,
+                    FechaVencimiento = fechaParsed,
+                    EsMaterial = esMaterial,
+                    PorcentajeMargenGanancia = porcentajeMargenGanancia,
+                    IdParametros = 1,
+                    IdGasto = antiguo.IdGasto
+                };
+
+                // Actualizar la compra en la base de datos
+                bool resultado = DataCompraLote.Modificar(compraModificada, out mensaje);
+
+                if (resultado)
+                {
+                    return Json(new { success = true, message = "Compra modificada exitosamente." });
+                }
+                else
+                {
+                    return Json(new { success = false, message = mensaje, errores = new List<string>() });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error al modificar la compra: {ex.Message}", errores = new List<string>() });
+            }
+        }
+
+
+        [HttpGet]
+        public JsonResult ObtenerCompraParaModificar(int id)
+        {
+            try
+            {
+                string mensaje;
+                CompraLote? compra = DataCompraLote.ObtenerPorId(id, out mensaje);
+                if (compra == null)
+                {
+                    return Json(new { success = false, message = mensaje });
+                }
+
+                CatalogoProducto? producto = DataCatalogoProducto.ObtenerPorId(compra.IdCatalogoProducto, out mensaje);
+                if (producto == null)
+                {
+                    return Json(new { success = false, message = mensaje });
+                }
+
+                return Json(new
+                {
+                    success = true,
+                    compra = new
+                    {
+                        proveedor = producto.IdProveedor, 
+                        tipo = producto.IdTipoProducto, // Debe mapearse con el nombre del producto
+                        producto = producto.IdCatalogoProducto,
+                        cantidadUnidades = compra.CantidadUnidades,
+                        costoTotal = compra.CostoTotal,
+                        fechaVencimiento = compra.FechaVencimiento?.ToString("yyyy-MM-dd"),
+                        esMaterial = compra.EsMaterial,
+                        porcentajeMargenGanancia = compra.PorcentajeMargenGanancia,
+                        fechaCompra = compra.FechaVencimiento?.ToString("yyyy-MM-dd")
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error al obtener la compra: {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
         public JsonResult EliminarCompra(int id)
         {
             string mensaje;

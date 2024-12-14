@@ -49,30 +49,30 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="costoOpciones" id="opcionCostoUnidad" value="unidad" checked onchange="toggleCostoInputs()">
+                                <input class="form-check-input" type="radio" name="costoOpciones" id="opcionCostoUnidad" value="unidad" onchange="toggleCostoInputs()">
                                 <label class="form-check-label" for="opcionCostoUnidad">Costo por Unidad</label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="costoOpciones" id="opcionCostoTotal" value="total" onchange="toggleCostoInputs()">
+                                <input class="form-check-input" type="radio" name="costoOpciones" id="opcionCostoTotal" value="total" checked onchange="toggleCostoInputs()">
                                 <label class="form-check-label" for="opcionCostoTotal">Costo Total</label>
                             </div>
                         </div>
                     </div>
 
                     <!-- Costo por unidad -->
-                    <div class="mb-3" id="costoUnidadDiv">
+                    <div class="mb-3 d-none" id="costoUnidadDiv">
                         <label class="form-label" for="formulario_costoUnidad">Costo por Unidad <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <span class="input-group-text">$</span>
-                            <input type="number" class="form-control" id="formulario_costoUnidad" name="CostoUnidad" placeholder="Ingrese el costo por unidad" step="0.01" min="0" required oninput="calcularCostos()">
+                            <input type="number" class="form-control" id="formulario_costoUnidad" name="CostoUnidad" placeholder="Ingrese el costo por unidad" step="0.01" min="0" oninput="calcularCostos()">
                         </div>
                         <div class="invalid-feedback">Por favor ingrese un costo válido.</div>
                     </div>
 
                     <!-- Costo total -->
-                    <div class="mb-3 d-none" id="costoTotalDiv">
+                    <div class="mb-3" id="costoTotalDiv">
                         <label class="form-label" for="formulario_costoTotal">Costo Total <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <span class="input-group-text">$</span>
@@ -80,6 +80,7 @@
                         </div>
                         <div class="invalid-feedback">Por favor ingrese un costo válido.</div>
                     </div>
+
 
                     <!-- Fecha de vencimiento -->
                     <div class="mb-3">
@@ -121,9 +122,77 @@
 </div>
 
 <script>
+    let esModificacion = false; // Indica si el formulario está en modo "modificar"
+
     document.getElementById('agregarCompra').addEventListener('shown.bs.modal', function () {
-        filtrarProductos(); // Llamar a la función para rellenar los productos al abrir el modal
+        if (!esModificacion) {
+            filtrarProductos(); // Solo filtra productos al agregar
+        }
     });
+
+
+    function modificarCompra(idCompra) {
+        esModificacion = true; // Indicar que estamos en modo "modificar"
+
+        const tituloModal = document.getElementById('agregarCompraLabel');
+        const botonSubmit = document.getElementById('boton_subir');
+        const formulario = document.getElementById('formularioAgregarLoteProducto');
+
+        // Resetear el formulario
+        formulario.reset();
+        formulario.classList.remove('was-validated');
+        tituloModal.textContent = 'Modificar Compra de Producto';
+        botonSubmit.textContent = 'Guardar Cambios';
+
+        $.ajax({
+            url: '/Compras/ObtenerCompraParaModificar',
+            type: 'GET',
+            data: { id: idCompra },
+            success: function (response) {
+                if (response.success) {
+                    const compra = response.compra;
+
+                    // Llenar los campos del formulario
+                    document.getElementById('formulario_id').value = idCompra;
+                    document.getElementById('formulario_proveedor').value = compra.proveedor;
+                    document.getElementById('formulario_tipo').value = compra.tipo;
+                    document.getElementById('formulario_cantidad').value = compra.cantidadUnidades;
+                    document.getElementById('opcionCostoTotal').checked = true;
+                    document.getElementById('formulario_costoTotal').value = compra.costoTotal;
+                    document.getElementById('formulario_vencimiento').value = compra.fechaVencimiento;
+                    document.getElementById('formulario_material').checked = compra.esMaterial;
+                    document.getElementById('formulario_margen').value = compra.porcentajeMargenGanancia;
+
+                    // Cargar y seleccionar el producto
+                    filtrarProductos(compra.producto);
+
+                    // Calcular y mostrar el precio de venta
+                    calcularPrecioVenta();
+                } else {
+                    console.error('Error al obtener los datos del producto:', response.message);
+                }
+            },
+            error: function (error) {
+                console.error('Error al comunicarse con el servidor:', error);
+            }
+        });
+    }
+
+    document.getElementById('agregarCompra').addEventListener('hidden.bs.modal', function () {
+        // Cambiar el título del modal al cerrarlo
+        const modalTitle = document.getElementById('agregarCompraLabel');
+        modalTitle.textContent = 'Nueva Compra de Producto';
+        const botonSubmit = document.getElementById('boton_subir');
+        botonSubmit.textContent = 'Agregar Compra';
+
+        // Reiniciar el formulario si es necesario
+        const form = document.getElementById('formularioAgregarLoteProducto');
+        form.reset(); // Limpia los valores del formulario
+        form.classList.remove('was-validated'); // Elimina las clases de validación
+        esModificacion = false; // Reinicia el modo a "agregar"
+    });
+
+
 
     (function () {
         'use strict';
@@ -135,7 +204,8 @@
         const vencimiento = document.getElementById("formulario_vencimiento");
         const esMaterial = document.getElementById("formulario_material");
         const margenGanancia = document.getElementById("formulario_margen");
-
+        const tituloModal = document.getElementById('agregarCompraLabel');
+        const botonSubmit = document.getElementById('boton_subir');
         if (form) {
             form.addEventListener('submit', function (event) {
                 event.preventDefault();
@@ -146,33 +216,40 @@
                 costoTotal.classList.remove('is-invalid');
                 margenGanancia.classList.remove('is-invalid');
 
-
                 if (!form.checkValidity()) {
                     event.stopPropagation();
                 } else {
+                    // Configuración dinámica según el modo
+                    const url = esModificacion ? '/Compras/ModificarCompra' : '/Compras/AgregarNuevaCompra';
+                    const data = {
+                        id: document.getElementById("formulario_id").value,
+                        producto: producto.value,
+                        cantidadUnidades: parseInt(cantidad.value),
+                        costoTotal: parseFloat(costoTotal.value),
+                        fechaVencimiento: vencimiento.value,
+                        esMaterial: esMaterial.checked,
+                        porcentajeMargenGanancia: parseFloat(margenGanancia.value),
+                    };
+
                     // Realizar la solicitud AJAX
                     $.ajax({
-                        url: '/Compras/AgregarNuevaCompra',
+                        url: url,
                         type: 'POST',
-                        data: {
-                            producto: producto.value,
-                            cantidadUnidades: parseInt(cantidad.value),
-                            costoTotal: parseFloat(costoTotal.value),
-                            fechaVencimiento: vencimiento.value,
-                            esMaterial: esMaterial.checked,
-                            porcentajeMargenGanancia: parseFloat(margenGanancia.value),
-                        },
+                        data: data,
                         success: function (response) {
                             if (response.success) {
                                 Swal.fire({
                                     icon: 'success',
-                                    title: '¡Compra registrada!',
+                                    title: esModificacion ? '¡Compra modificada!' : '¡Compra registrada!',
                                     text: response.message,
                                     confirmButtonText: 'Aceptar'
-                                }).then((result) => {
+                                }).then(() => {
                                     form.reset();
                                     form.classList.remove('was-validated');
                                     cargarProductos();
+                                    esModificacion = false; // Resetear a modo "Agregar"
+                                    tituloModal.textContent = 'Nueva Compra de Producto';
+                                    botonSubmit.textContent = 'Agregar Compra';
                                 });
                             } else {
                                 // Marcar los campos con errores específicos
@@ -199,7 +276,7 @@
                                 });
                             }
                         },
-                        error: function (error) {
+                        error: function () {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error',
@@ -214,6 +291,7 @@
             }, false);
         }
     })();
+
 
     let ivaGlobal = 0;
 
@@ -277,16 +355,24 @@
 
     function toggleCostoInputs() {
         const opcionUnidad = document.getElementById('opcionCostoUnidad').checked;
+
+        // Mostrar/Ocultar campos según la opción seleccionada
         document.getElementById('costoUnidadDiv').classList.toggle('d-none', !opcionUnidad);
         document.getElementById('costoTotalDiv').classList.toggle('d-none', opcionUnidad);
 
-        // Limpiar los valores no seleccionados
+        // Limpiar valores no seleccionados
         if (opcionUnidad) {
             document.getElementById('formulario_costoTotal').value = '';
         } else {
             document.getElementById('formulario_costoUnidad').value = '';
         }
     }
+
+    // Asegurar que el campo por defecto esté configurado al cargar la página
+    document.addEventListener('DOMContentLoaded', () => {
+        toggleCostoInputs(); // Asegura que se muestren los campos correctos al cargar
+    });
+
 
     function calcularCostos() {
         const cantidad = parseFloat(document.getElementById('formulario_cantidad').value) || 0;
@@ -339,7 +425,7 @@
         });
     }
 
-    async function filtrarProductos() {
+    async function filtrarProductos(idProductoSeleccionado = null) {
         const proveedorId = document.getElementById('formulario_proveedor').value;
         const tipoProductoId = document.getElementById('formulario_tipo').value;
         const productoSelect = document.getElementById('formulario_producto');
@@ -362,6 +448,11 @@
                     option.dataset.tipoProductoId = producto.idTipoProducto; // ID del tipo de producto
                     productoSelect.appendChild(option);
                 });
+
+                // Seleccionar el producto si está definido
+                if (idProductoSeleccionado) {
+                    productoSelect.value = idProductoSeleccionado;
+                }
             } else {
                 console.error('Error al cargar productos:', data.message);
             }
@@ -369,6 +460,7 @@
             console.error('Error al conectarse con el servidor:', error);
         }
     }
+
 
 
 
