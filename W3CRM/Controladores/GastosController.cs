@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
 using Vitaly_Manager.Data;
 using Vitaly_Manager.Entidades;
 
@@ -8,48 +6,70 @@ namespace Vitaly_Manager.Controladores
 {
     public class GastosController : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public GastosController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
-        // GET: Gastos/Create
-        public IActionResult RegistrarGasto()
-        {
-            return View();
-        }
-
-        // POST: Gastos/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult RegistrarGasto(Gasto gasto)
+        public IActionResult ConsultarGastos()
         {
-            if (ModelState.IsValid)
+            string respuesta;
+            bool exito;
+
+            List<Gasto> gastos = DataGasto.ListaGastos(out respuesta, out exito);
+
+            if (!exito)
             {
-                try
-                {
-                    gasto.Fecha = DateTime.Now; // Registrar fecha actual automáticamente
-                    _context.Gastos.Add(gasto);
-                    _context.SaveChanges();
-                    TempData["Mensaje"] = "Gasto registrado exitosamente.";
-                    return RedirectToAction("RegistrarGasto");
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", $"Ocurrió un error al registrar el gasto: {ex.Message}");
-                }
+                ViewBag.Error = respuesta;
+                return View("Error");
             }
-            return View(gasto);
+
+            ViewBag.Mensaje = respuesta;
+            return View(gastos);
         }
 
-        // MÉTODO OPCIONAL: Listar Gastos
-        public IActionResult ListarGastos()
+        [HttpPost]
+        public JsonResult Agregar(decimal monto, string descripcion, int idTipoGasto, DateTime fechaRealizado)
         {
-            var gastos = _context.Gastos.ToList();
-            return View(gastos);
+            string mensaje;
+            int id;
+
+            Gasto nuevoGasto = new Gasto
+            {
+                Monto = monto,
+                Descripcion = descripcion,
+                IdTipoGasto = idTipoGasto,
+                FechaRealizado = fechaRealizado
+            };
+
+            bool resultado = DataGasto.Agregar(nuevoGasto, out mensaje, out id);
+
+            return Json(new { success = resultado, message = mensaje, id });
+        }
+
+        [HttpPost]
+        public JsonResult Modificar(int idGasto, decimal monto, string descripcion, int idTipoGasto, DateTime fechaRealizado)
+        {
+            string mensaje;
+
+            Gasto gastoModificado = new Gasto
+            {
+                IdGasto = idGasto,
+                Monto = monto,
+                Descripcion = descripcion,
+                IdTipoGasto = idTipoGasto,
+                FechaRealizado = fechaRealizado
+            };
+
+            bool resultado = DataGasto.Modificar(gastoModificado, out mensaje);
+
+            return Json(new { success = resultado, message = mensaje });
+        }
+
+        [HttpPost]
+        public JsonResult Eliminar(int idGasto)
+        {
+            string mensaje;
+
+            bool resultado = DataGasto.Eliminar(idGasto, out mensaje);
+
+            return Json(new { success = resultado, message = mensaje });
         }
     }
 }
-

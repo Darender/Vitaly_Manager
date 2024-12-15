@@ -2,7 +2,7 @@
 @using Vitaly_Manager.Entidades
 @using W3CRM.Controllers
 @{
-    ViewData["Title"] = "RegistrarGasto";
+    ViewData["Title"] = "RegistrarGastos";
 }
 <!--**********************************
     Content body start
@@ -94,8 +94,84 @@
 <!--**********************************
     Content body end
 ***********************************-->
+
+<!-- Sección de estilos personalizados. -->
+    @section w3crm_style
+{
+        <link href="~/w3crm/vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+        <link href="~/w3crm/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+
+    <!-- Selector de intervalo de fechas -->
+        <link href="~/w3crm/vendor/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+
+    <!-- Fecha de elección -->
+        <link rel="stylesheet" href="~/w3crm/vendor/pickadate/themes/default.css">
+        <link rel="stylesheet" href="~/w3crm/vendor/pickadate/themes/default.date.css">
+
+    }
+
+
 @section w3crm_script
 {
+    <!--**********************************
+         Scripts
+     ***********************************-->
+
+     <script src="~/w3crm/vendor/sweetalert2/dist/sweetalert2.min.js"></script>
+     <script src="~/w3crm/js/plugins-init/sweetalert.init.js"></script>
+     <script src="~/w3crm/js/styleSwitcher.js"></script>
+
+    <!-- Proveedores requeridos -->
+     <script src="~/w3crm/vendor/global/global.min.js"></script>
+     <script src="~/w3crm/vendor/chart.js/Chart.bundle.min.js"></script>
+     <script src="~/w3crm/vendor/tagify/dist/tagify.min.js"></script>
+
+    <!-- Gráfico de vértice -->
+     <script src="~/w3crm/vendor/apexchart/apexchart.js"></script>
+
+    <!-- Tabla de datos -->
+     <script src="~/w3crm/vendor/datatables/js/jquery.dataTables.min.js"></script>
+     <script src="~/w3crm/js/plugins-init/datatables.init.js"></script>
+     <script src="~/w3crm/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+
+    <!-- código -luz alta -->
+     <script src="~/w3crm/js/highlight.min.js"></script>
+
+    <!-- momento js es imprescindible -->
+     <script src="~/w3crm/vendor/moment/moment.min.js"></script>
+     <script src="~/w3crm/vendor/bootstrap-daterangepicker/daterangepicker.js"></script>
+
+    <!-- Fecha de elección -->
+     <script src="~/w3crm/vendor/pickadate/picker.js"></script>
+     <script src="~/w3crm/vendor/pickadate/picker.time.js"></script>
+     <script src="~/w3crm/vendor/pickadate/picker.date.js"></script>
+
+    <!-- Fecha de elección -->
+     <script src="~/w3crm/js/plugins-init/pickadate-init.js"></script>
+     <script src="~/w3crm/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+     <script src="~/w3crm/js/custom.js"></script>
+     <script src="~/w3crm/js/deznav-init.js"></script>
+     <script src="~/w3crm/js/demo.js"></script>
+     <script src="~/w3crm/js/styleSwitcher.js"></script>
+
+     <script src="~/w3crm/js/custom.js"></script>
+     <script src="~/w3crm/js/deznav-init.js"></script>
+     <script src="~/w3crm/js/demo.js"></script>
+
+     <script>
+         hljs.highlightAll();
+         hljs.configure({ ignoreUnescapedHTML: true })
+
+     </script>
+
+     <script>
+         document.addEventListener('DOMContentLoaded', (event) => {
+             document.querySelectorAll('pre code').forEach((el) => {
+                hljs.highlightElement(el);
+            });
+          });
+     </script>
+
     <script>
         document.getElementById("formulario").addEventListener("submit", function(event) {
             event.preventDefault();
@@ -113,7 +189,7 @@
                 return;
             }
 
-            const url = `/GastosController/RegistrarGasto?Concepto=${encodeURIComponent(concepto)}&Monto=${encodeURIComponent(monto)}&Fecha=${encodeURIComponent(fecha)}&Categoria=${encodeURIComponent(categoria)}`;
+            const url = `/GastosController/RegistrarGastos?Concepto=${encodeURIComponent(concepto)}&Monto=${encodeURIComponent(monto)}&Fecha=${encodeURIComponent(fecha)}&Categoria=${encodeURIComponent(categoria)}`;
 
             fetch(url, {
                 method: 'POST'
@@ -127,5 +203,26 @@
             document.getElementById("formulario").reset();
         }
     </script>
+    <script>
+         (function () {
+             'use strict'
+
+           // Obtener todos los formularios a los que queremos aplicar estilos de validación de Bootstrap personalizados
+            var forms = document.querySelectorAll('.needs-validation')
+
+           //Bucle sobre ellos y evitar la sumisión
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+     </script>
 }
 
