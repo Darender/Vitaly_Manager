@@ -43,6 +43,7 @@ namespace Vitaly_Manager.Controladores
             return Json(new { success = resultado, message = mensaje, id });
         }
 
+        //Funcionamiento para modificar el gasto, obtener una lista.
         [HttpPost]
         public JsonResult Modificar(int idGasto, decimal monto, string descripcion, int idTipoGasto, DateTime fechaRealizado)
         {
