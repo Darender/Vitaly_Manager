@@ -36,24 +36,22 @@
                                 <tr>
                                     <th>Monto</th>
                                     <th>Descripción</th>
-                                    <th>Tipo de Gasto</th>
                                     <th>Fecha de Realización</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var gasto in Model.Gastos)
+                                @foreach (var Gasto in Model)
                                 {
                                     <tr>
-                                        <td>@gasto.Monto.ToString("C", CultureInfo.CurrentCulture)</td>
-                                        <td>@gasto.Descripcion</td>
-                                        <td>@gasto.TipoGasto.NombreTipoGasto</td>
-                                        <td>@gasto.FechaRealizacion.ToString("dd/MM/yyyy")</td>
+                                        <td>@Gasto.Monto.ToString("C", CultureInfo.CurrentCulture)</td>
+                                        <td>@Gasto.Descripcion</td>
+                                        <td>@Gasto.FechaRealizado.ToString("dd/MM/yyyy")</td>
                                         <td>
                                             <!-- Botón de Modificar -->
-                                            <a href="@Url.Action("Modificar", "Gastos", new { id = gasto.IdGasto })" class="btn btn-warning btn-sm">Modificar</a>
+                                            <a href="@Url.Action("Modificar", "Gastos", new { id = Gasto.IdGasto })" class="btn btn-warning btn-sm">Modificar</a>
                                             <!-- Botón de Eliminar los Gastos -->
-                                            <button class="btn btn-danger btn-sm" onclick="eliminarGasto(@gasto.IdGasto)">Eliminar</button>
+                                            <button class="btn btn-danger btn-sm" onclick="eliminarGasto(@Gasto.IdGasto)">Eliminar</button>
                                         </td>
                                     </tr>
                                 }
@@ -65,6 +63,7 @@
         </div>
     </div>
 </div>
+
 <!--**********************************
     Content body end
 ***********************************-->

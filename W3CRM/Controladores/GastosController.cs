@@ -6,7 +6,12 @@ namespace Vitaly_Manager.Controladores
 {
     public class GastosController : Controller
     {
-        [HttpPost]
+
+        public IActionResult RegistrarGastos() 
+        {
+            return View(this);
+        }
+
         public IActionResult ConsultarGastos()
         {
             string respuesta;
