@@ -52,7 +52,7 @@
                                         <td>
                                             <!-- Botón de Modificar -->
                                             <a href="@Url.Action("Modificar", "Gastos", new { id = gasto.IdGasto })" class="btn btn-warning btn-sm">Modificar</a>
-                                            <!-- Botón de Eliminar -->
+                                            <!-- Botón de Eliminar los Gastos -->
                                             <button class="btn btn-danger btn-sm" onclick="eliminarGasto(@gasto.IdGasto)">Eliminar</button>
                                         </td>
                                     </tr>
@@ -146,6 +146,7 @@
 
     <script>
         // Función para manejar la eliminación de un gasto
+        //Mensajes de confirmacion
         function eliminarGasto(id) {
             Swal.fire({
                 title: '¿Estás seguro?',
