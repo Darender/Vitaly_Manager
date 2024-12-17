@@ -23,7 +23,6 @@ namespace Vitaly_Manager.Controladores
         int cantidadUnidades,
         decimal costoTotal,
         string? fechaVencimiento,
-        bool esMaterial,
         decimal porcentajeMargenGanancia)
         {
             bool resultado = false;
@@ -101,7 +100,6 @@ namespace Vitaly_Manager.Controladores
                         CantidadUnidades = cantidadUnidades,
                         CostoTotal = costoTotal,
                         FechaVencimiento = fechaVencimientoParsed,
-                        EsMaterial = esMaterial,
                         PorcentajeMargenGanancia = porcentajeMargenGanancia,
                         IdParametros = 1,
                         IdGasto = idGastoGenerado
@@ -142,7 +140,6 @@ namespace Vitaly_Manager.Controladores
                     cantidadUnidades = compra.CantidadUnidades,
                     costoTotal = compra.CostoTotal,
                     fechaVencimiento = compra.FechaVencimiento?.ToString("yyyy-MM-dd"),
-                    esMaterial = compra.EsMaterial
                 });
 
                 return Json(new { success = true, data = comprasFormateadas });
@@ -305,7 +302,6 @@ namespace Vitaly_Manager.Controladores
                         cantidadUnidades = compra.CantidadUnidades,
                         costoTotal = compra.CostoTotal,
                         fechaVencimiento = compra.FechaVencimiento?.ToString("yyyy-MM-dd"),
-                        esMaterial = compra.EsMaterial,
                         porcentajeMargenGanancia = compra.PorcentajeMargenGanancia,
                         fechaCompra = compra.FechaVencimiento?.ToString("yyyy-MM-dd")
                     }
@@ -324,7 +320,6 @@ namespace Vitaly_Manager.Controladores
             int cantidadUnidades,
             decimal costoTotal,
             string? fechaVencimiento,
-            bool esMaterial,
             decimal porcentajeMargenGanancia)
         {
             string mensaje;
@@ -389,7 +384,6 @@ namespace Vitaly_Manager.Controladores
                     CantidadUnidades = cantidadUnidades,
                     CostoTotal = costoTotal,
                     FechaVencimiento = fechaParsed,
-                    EsMaterial = esMaterial,
                     PorcentajeMargenGanancia = porcentajeMargenGanancia,
                     IdParametros = 1,
                     IdGasto = antiguo.IdGasto
@@ -443,7 +437,6 @@ namespace Vitaly_Manager.Controladores
                         cantidadUnidades = compra.CantidadUnidades,
                         costoTotal = compra.CostoTotal,
                         fechaVencimiento = compra.FechaVencimiento?.ToString("yyyy-MM-dd"),
-                        esMaterial = compra.EsMaterial,
                         porcentajeMargenGanancia = compra.PorcentajeMargenGanancia,
                         fechaCompra = compra.FechaVencimiento?.ToString("yyyy-MM-dd")
                     }

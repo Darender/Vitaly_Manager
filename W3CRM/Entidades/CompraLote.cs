@@ -15,6 +15,9 @@ namespace Vitaly_Manager.Entidades
         [Range(1, int.MaxValue, ErrorMessage = "La cantidad de unidades debe ser mayor a 0.")]
         public required int CantidadUnidades { get; set; }
 
+        [Range(0, int.MaxValue, ErrorMessage = "La cantidad de unidades disponibles no puede ser negativa.")]
+        public int? CantidadUnidadesDisponibles { get; set; }
+
         [Required(ErrorMessage = "El costo total es obligatorio.")]
         [Range(0.01, double.MaxValue, ErrorMessage = "El costo total debe ser un valor positivo.")]
         public required decimal CostoTotal { get; set; }
@@ -23,9 +26,6 @@ namespace Vitaly_Manager.Entidades
         public required int IdGasto { get; set; }
 
         public DateTime? FechaVencimiento { get; set; }
-
-        [Required(ErrorMessage = "El campo 'esMaterial' es obligatorio.")]
-        public required bool EsMaterial { get; set; }
 
         [Required(ErrorMessage = "El porcentaje de margen de ganancia es obligatorio.")]
         [Range(0, 100, ErrorMessage = "El porcentaje de margen de ganancia debe estar entre 0 y 100.")]

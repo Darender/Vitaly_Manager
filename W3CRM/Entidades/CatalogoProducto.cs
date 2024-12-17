@@ -27,5 +27,8 @@ namespace Vitaly_Manager.Entidades
         [Range(0, double.MaxValue, ErrorMessage = "El ingreso total debe ser un valor positivo.")]
         [DataType(DataType.Currency)]
         public decimal? CantidadPorUnidad { get; set; }
+
+        [Required(ErrorMessage = "El campo 'esMaterial' es obligatorio.")]
+        public required bool EsMaterial { get; set; }
     }
 }

@@ -40,8 +40,8 @@
 
                     <!-- Cantidad -->
                     <div class="mb-3">
-                        <label class="form-label" for="formulario_cantidad">Cantidad de Unidades <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control" id="formulario_cantidad" name="Cantidad" placeholder="Ingrese la cantidad" min="1" required oninput="calcularCostos()">
+                        <label class="form-label" for="formulario_cantidad_compra">Cantidad de Unidades <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="formulario_cantidad_compra" name="Cantidad" placeholder="Ingrese la cantidad" min="1" required oninput="calcularCostos()">
                         <div class="invalid-feedback">Por favor ingrese una cantidad válida.</div>
                     </div>
 
@@ -86,14 +86,6 @@
                     <div class="mb-3">
                         <label class="form-label" for="formulario_vencimiento">Fecha de Vencimiento (Opcional)</label>
                         <input type="date" class="form-control" id="formulario_vencimiento" name="Vencimiento">
-                    </div>
-
-                    <!-- Es material -->
-                    <div class="mb-3">
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="formulario_material" name="EsMaterial">
-                            <label class="form-check-label" for="formulario_material">Marque si es material</label>
-                        </div>
                     </div>
 
                     <!-- Margen de ganancia y precio de venta -->
@@ -156,11 +148,10 @@
                     document.getElementById('formulario_id').value = idCompra;
                     document.getElementById('formulario_proveedor').value = compra.proveedor;
                     document.getElementById('formulario_tipo').value = compra.tipo;
-                    document.getElementById('formulario_cantidad').value = compra.cantidadUnidades;
+                    document.getElementById('formulario_cantidad_compra').value = compra.cantidadUnidades;
                     document.getElementById('opcionCostoTotal').checked = true;
                     document.getElementById('formulario_costoTotal').value = compra.costoTotal;
                     document.getElementById('formulario_vencimiento').value = compra.fechaVencimiento;
-                    document.getElementById('formulario_material').checked = compra.esMaterial;
                     document.getElementById('formulario_margen').value = compra.porcentajeMargenGanancia;
 
                     // Cargar y seleccionar el producto
@@ -199,16 +190,19 @@
 
         var form = document.getElementById('formularioAgregarLoteProducto');
         const producto = document.getElementById("formulario_producto");
-        const cantidad = document.getElementById("formulario_cantidad");
+        const cantidad = document.getElementById("formulario_cantidad_compra");
         const costoTotal = document.getElementById("formulario_costoTotal");
         const vencimiento = document.getElementById("formulario_vencimiento");
-        const esMaterial = document.getElementById("formulario_material");
         const margenGanancia = document.getElementById("formulario_margen");
         const tituloModal = document.getElementById('agregarCompraLabel');
         const botonSubmit = document.getElementById('boton_subir');
         if (form) {
             form.addEventListener('submit', function (event) {
                 event.preventDefault();
+
+                console.log("Cantidad de Unidades:", cantidad.value);
+                console.log("Tipo de dato:", typeof cantidad.value);
+
 
                 // Eliminar clases de error previas
                 producto.classList.remove('is-invalid');
@@ -227,7 +221,6 @@
                         cantidadUnidades: parseInt(cantidad.value),
                         costoTotal: parseFloat(costoTotal.value),
                         fechaVencimiento: vencimiento.value,
-                        esMaterial: esMaterial.checked,
                         porcentajeMargenGanancia: parseFloat(margenGanancia.value),
                     };
 
@@ -314,7 +307,7 @@
 
 
     function calcularPrecioVenta() {
-        const cantidad = parseFloat(document.getElementById('formulario_cantidad').value) || 0;
+        const cantidad = parseFloat(document.getElementById('formulario_cantidad_compra').value) || 0;
         const costoUnidad = parseFloat(document.getElementById('formulario_costoUnidad').value) || 0;
         const costoTotal = parseFloat(document.getElementById('formulario_costoTotal').value) || 0;
         const margenGanancia = parseFloat(document.getElementById('formulario_margen').value) || 0;
@@ -375,7 +368,7 @@
 
 
     function calcularCostos() {
-        const cantidad = parseFloat(document.getElementById('formulario_cantidad').value) || 0;
+        const cantidad = parseFloat(document.getElementById('formulario_cantidad_compra').value) || 0;
         const costoUnidad = parseFloat(document.getElementById('formulario_costoUnidad').value) || 0;
         const costoTotal = parseFloat(document.getElementById('formulario_costoTotal').value) || 0;
 

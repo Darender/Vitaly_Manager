@@ -1,5 +1,4 @@
-﻿using Microsoft.CodeAnalysis.Differencing;
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 using Vitaly_Manager.Entidades;
 
 namespace Vitaly_Manager.Data
@@ -14,7 +13,6 @@ namespace Vitaly_Manager.Data
         {
             try
             {
-                // Obtener la lista de productos en memoria
                 bool exito;
                 var listaProductos = ListaCatalogoProductos(out mensaje, out exito);
 
@@ -24,18 +22,10 @@ namespace Vitaly_Manager.Data
                     return null;
                 }
 
-                // Buscar el producto específico por ID
                 var producto = listaProductos.FirstOrDefault(p => p.IdCatalogoProducto == idCatalogoProducto);
 
-                if (producto != null)
-                {
-                    mensaje = "Producto encontrado exitosamente.";
-                    return producto;
-                }
-
-                // Si no encuentra el producto
-                mensaje = "Producto no encontrado en la lista.";
-                return null;
+                mensaje = producto != null ? "Producto encontrado exitosamente." : "Producto no encontrado.";
+                return producto;
             }
             catch (Exception ex)
             {
@@ -66,20 +56,19 @@ namespace Vitaly_Manager.Data
                     {
                         CatalogoProducto nuevo = new CatalogoProducto
                         {
-                            IdCatalogoProducto = lector["idCatalogoProducto"] != DBNull.Value ? Convert.ToInt32(lector["idCatalogoProducto"]) : 0,
-                            IdTipoProducto = lector["idTipoProducto"] != DBNull.Value ? Convert.ToInt32(lector["idTipoProducto"]) : 0,
-                            NombreProducto = lector["nombreProducto"] != DBNull.Value ? Convert.ToString(lector["nombreProducto"])! : string.Empty,
-                            IdProveedor = lector["idProveedor"] != DBNull.Value ? Convert.ToInt32(lector["idProveedor"]) : 0,
+                            IdCatalogoProducto = Convert.ToInt32(lector["idCatalogoProducto"]),
+                            IdTipoProducto = Convert.ToInt32(lector["idTipoProducto"]),
+                            NombreProducto = Convert.ToString(lector["nombreProducto"])!,
+                            IdProveedor = Convert.ToInt32(lector["idProveedor"]),
                             PaginaWebProducto = lector["paginaWebProducto"] != DBNull.Value ? Convert.ToString(lector["paginaWebProducto"]) : null,
                             Descripcion = lector["descripcion"] != DBNull.Value ? Convert.ToString(lector["descripcion"]) : null,
-                            IdTipoUnidad = lector["idTipoUnidad"] != DBNull.Value ? Convert.ToInt32(lector["idTipoUnidad"]) : 0,
-                            CantidadPorUnidad = lector["cantidadPorUnidad"] != DBNull.Value ? Convert.ToDecimal(lector["cantidadPorUnidad"]) : null
+                            IdTipoUnidad = Convert.ToInt32(lector["idTipoUnidad"]),
+                            CantidadPorUnidad = lector["cantidadPorUnidad"] != DBNull.Value ? Convert.ToDecimal(lector["cantidadPorUnidad"]) : null,
+                            EsMaterial = lector["esMaterial"] != DBNull.Value && Convert.ToBoolean(lector["esMaterial"]) // Nuevo campo
                         };
 
                         listaCatalogoProductos.Add(nuevo);
                     }
-
-                    lector.Close();
                 }
 
                 _cacheCatalogoProductos = listaCatalogoProductos;
@@ -88,12 +77,6 @@ namespace Vitaly_Manager.Data
                 exito = true;
                 respuesta = "Consulta exitosa desde la base de datos.";
                 return listaCatalogoProductos;
-            }
-            catch (SqlException ex)
-            {
-                exito = false;
-                respuesta = $"Error en la base de datos: {ex.Message}";
-                return new List<CatalogoProducto>();
             }
             catch (Exception ex)
             {
@@ -112,9 +95,9 @@ namespace Vitaly_Manager.Data
                     conexion.Open();
 
                     string query = @"INSERT INTO CatalogoProducto 
-                            (idTipoProducto, nombreProducto, idProveedor, paginaWebProducto, descripcion, idTipoUnidad, cantidadPorUnidad)
+                            (idTipoProducto, nombreProducto, idProveedor, paginaWebProducto, descripcion, idTipoUnidad, cantidadPorUnidad, esMaterial)
                             OUTPUT INSERTED.idCatalogoProducto
-                            VALUES (@IdTipoProducto, @NombreProducto, @IdProveedor, @PaginaWebProducto, @Descripcion, @IdTipoUnidad, @CantidadPorUnidad)";
+                            VALUES (@IdTipoProducto, @NombreProducto, @IdProveedor, @PaginaWebProducto, @Descripcion, @IdTipoUnidad, @CantidadPorUnidad, @EsMaterial)";
 
                     using (SqlCommand comando = new SqlCommand(query, conexion))
                     {
@@ -124,12 +107,11 @@ namespace Vitaly_Manager.Data
                         comando.Parameters.AddWithValue("@PaginaWebProducto", nuevo.PaginaWebProducto ?? (object)DBNull.Value);
                         comando.Parameters.AddWithValue("@Descripcion", nuevo.Descripcion ?? (object)DBNull.Value);
                         comando.Parameters.AddWithValue("@IdTipoUnidad", nuevo.IdTipoUnidad);
-                        comando.Parameters.AddWithValue("@CantidadPorUnidad", nuevo.CantidadPorUnidad.HasValue ? nuevo.CantidadPorUnidad.Value : (object)DBNull.Value);
+                        comando.Parameters.AddWithValue("@CantidadPorUnidad", nuevo.CantidadPorUnidad ?? (object)DBNull.Value);
+                        comando.Parameters.AddWithValue("@EsMaterial", nuevo.EsMaterial); // Nuevo campo
 
                         nuevo.IdCatalogoProducto = (int)comando.ExecuteScalar();
                     }
-
-                    conexion.Close();
                 }
 
                 _cacheCatalogoProductos.Add(nuevo);
@@ -137,14 +119,9 @@ namespace Vitaly_Manager.Data
                 mensaje = $"El producto {nuevo.NombreProducto} ha sido agregado exitosamente.";
                 return true;
             }
-            catch (SqlException ex)
-            {
-                mensaje = $"Error en la base de datos: {ex.Message}";
-                return false;
-            }
             catch (Exception ex)
             {
-                mensaje = $"Error inesperado: {ex.Message}";
+                mensaje = $"Error al agregar el producto: {ex.Message}";
                 return false;
             }
         }
@@ -164,7 +141,8 @@ namespace Vitaly_Manager.Data
                                 paginaWebProducto = @PaginaWebProducto, 
                                 descripcion = @Descripcion, 
                                 idTipoUnidad = @IdTipoUnidad, 
-                                cantidadPorUnidad = @CantidadPorUnidad
+                                cantidadPorUnidad = @CantidadPorUnidad,
+                                esMaterial = @EsMaterial
                             WHERE idCatalogoProducto = @IdCatalogoProducto";
 
                     using (SqlCommand comando = new SqlCommand(query, conexion))
@@ -175,37 +153,26 @@ namespace Vitaly_Manager.Data
                         comando.Parameters.AddWithValue("@PaginaWebProducto", modificado.PaginaWebProducto ?? (object)DBNull.Value);
                         comando.Parameters.AddWithValue("@Descripcion", modificado.Descripcion ?? (object)DBNull.Value);
                         comando.Parameters.AddWithValue("@IdTipoUnidad", modificado.IdTipoUnidad);
-                        comando.Parameters.AddWithValue("@CantidadPorUnidad", modificado.CantidadPorUnidad.HasValue ? modificado.CantidadPorUnidad.Value : (object)DBNull.Value);
+                        comando.Parameters.AddWithValue("@CantidadPorUnidad", modificado.CantidadPorUnidad ?? (object)DBNull.Value);
+                        comando.Parameters.AddWithValue("@EsMaterial", modificado.EsMaterial);
                         comando.Parameters.AddWithValue("@IdCatalogoProducto", modificado.IdCatalogoProducto);
+
                         comando.ExecuteNonQuery();
                     }
-
-                    conexion.Close();
                 }
 
                 var productoEnCache = _cacheCatalogoProductos.FirstOrDefault(p => p.IdCatalogoProducto == modificado.IdCatalogoProducto);
                 if (productoEnCache != null)
                 {
-                    productoEnCache.IdTipoProducto = modificado.IdTipoProducto;
-                    productoEnCache.NombreProducto = modificado.NombreProducto;
-                    productoEnCache.IdProveedor = modificado.IdProveedor;
-                    productoEnCache.PaginaWebProducto = modificado.PaginaWebProducto;
-                    productoEnCache.Descripcion = modificado.Descripcion;
-                    productoEnCache.IdTipoUnidad = modificado.IdTipoUnidad;
-                    productoEnCache.CantidadPorUnidad = modificado.CantidadPorUnidad;
+                    productoEnCache.EsMaterial = modificado.EsMaterial; // Actualiza el campo
                 }
 
                 mensaje = $"El producto {modificado.NombreProducto} ha sido modificado exitosamente.";
                 return true;
             }
-            catch (SqlException ex)
-            {
-                mensaje = $"Error en la base de datos: {ex.Message}";
-                return false;
-            }
             catch (Exception ex)
             {
-                mensaje = $"Error inesperado: {ex.Message}";
+                mensaje = $"Error al modificar el producto: {ex.Message}";
                 return false;
             }
         }
@@ -215,22 +182,25 @@ namespace Vitaly_Manager.Data
             try
             {
                 bool encontrado = false;
-                respuesta = $"El cliente es requerido en un lote: ";
+                respuesta = "El producto no se puede eliminar porque está siendo utilizado en los siguientes registros:";
+
+                // Validar si el producto está asociado a algún lote de compra
                 foreach (CompraLote lote in DataCompraLote.ListaCompraLotes(out _, out _))
                 {
                     if (lote.IdCatalogoProducto == id)
                     {
                         encontrado = true;
-                        respuesta += "\nLote:" + lote.IdCompraLote;
+                        respuesta += $"\n - Lote ID: {lote.IdCompraLote}";
                     }
                 }
 
+                // Si se encuentra asociado, no permitir la eliminación
                 if (encontrado)
                 {
                     return false;
                 }
 
-
+                // Eliminar el producto de la base de datos
                 using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
                 {
                     conexion.Open();
@@ -248,10 +218,9 @@ namespace Vitaly_Manager.Data
                             return false;
                         }
                     }
-
-                    conexion.Close();
                 }
 
+                // Eliminar el producto del caché
                 _cacheCatalogoProductos.RemoveAll(p => p.IdCatalogoProducto == id);
 
                 respuesta = "El producto ha sido eliminado exitosamente.";
@@ -268,5 +237,6 @@ namespace Vitaly_Manager.Data
                 return false;
             }
         }
+
     }
 }

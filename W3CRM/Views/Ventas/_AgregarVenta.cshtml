@@ -1,0 +1,299 @@
+﻿<div class="modal fade" id="agregarVenta" tabindex="-1" aria-labelledby="agregarVentaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="agregarVentaLabel">Nueva Venta</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <form class="needs-validation" method="post" novalidate id="formularioVenta">
+                    <!-- ID oculto -->
+                    <input type="hidden" id="formulario_folioVenta" name="folioVenta" value="0">
+
+                    <!-- Cliente -->
+                    <div class="mb-3">
+                        <label class="form-label" for="formulario_cliente_Venta">Cliente</label>
+                        <select class="form-control" id="formulario_cliente_Venta" name="idCliente" required>
+                            <option value="" selected disabled>Seleccione un cliente</option>
+                        </select>
+                    </div>
+
+                    <!-- Producto -->
+                    <div class="mb-3">
+                        <label class="form-label" for="formulario_producto_venta">Producto</label>
+                        <select class="form-control" id="formulario_producto_venta" name="idProducto" required>
+                            <option value="" selected disabled>Seleccione un producto</option>
+                        </select>
+                    </div>
+
+                    <!-- Cantidad en Stock y Cantidad Vendida -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="formulario_stock">Cantidad en Stock</label>
+                            <input type="number" class="form-control" id="formulario_stock" name="cantidadStock" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="formulario_cantidad">Cantidad Vendida</label>
+                            <input type="number" class="form-control" id="formulario_cantidad" name="cantidadVendida" placeholder="Ingrese cantidad" min="1" required>
+                        </div>
+                    </div>
+
+                    <!-- Precio Total Recomendado -->
+                    <div class="mb-3">
+                        <label class="form-label" for="formulario_precio_recomendado">Precio Total Recomendado</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" id="formulario_precio_recomendado" name="precioRecomendado" readonly>
+                        </div>
+                    </div>
+
+                    <!-- Ingreso Total -->
+                    <div class="mb-3">
+                        <label class="form-label" for="formulario_ingreso_total">Ingreso Total</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input type="number" class="form-control" id="formulario_ingreso_total" name="ingresoTotal" placeholder="Ingrese el total" step="0.01" min="0" required>
+                        </div>
+                    </div>
+
+                    <!-- Fecha de Realización -->
+                    <div class="mb-3">
+                        <label class="form-label" for="formulario_fecha_realizado">Fecha de Realización (Opcional)</label>
+                        <input type="date" class="form-control" id="formulario_fecha_realizado" name="fechaRealizado">
+                    </div>
+
+                    <!-- Botón de Acción -->
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary w-100" id="boton_submit">Agregar Venta</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    let esModificacionVenta = false;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('agregarVenta').addEventListener('shown.bs.modal', function () {
+            cargarProductosVentas();
+            cargarClientes();
+        });
+    });
+
+    document.getElementById('agregarVenta').addEventListener('hidden.bs.modal', function () {
+        resetearFormularioVenta();
+    });
+
+    function resetearFormularioVenta() {
+        const titulo = document.getElementById('agregarVentaLabel');
+        const boton = document.getElementById('boton_submit');
+        const form = document.getElementById('formularioVenta');
+
+        form.reset();
+        form.classList.remove('was-validated');
+        esModificacionVenta = false;
+
+        titulo.textContent = "Nueva Venta";
+        boton.textContent = "Agregar Venta";
+    }
+
+    function modificarVenta(folioVenta) {
+        esModificacionVenta = true;
+
+        const titulo = document.getElementById('agregarVentaLabel');
+        const boton = document.getElementById('boton_submit');
+        titulo.textContent = "Modificar Venta";
+        boton.textContent = "Guardar Cambios";
+
+        $.ajax({
+            url: '/Ventas/ObtenerVenta',
+            type: 'GET',
+            data: { folioVenta: folioVenta },
+            success: function (response) {
+                if (response.success) {
+                    const venta = response.venta;
+
+                    document.getElementById('formulario_folioVenta').value = venta.folioVenta;
+                    document.getElementById('formulario_cliente_Venta').value = venta.idCliente;
+                    document.getElementById('formulario_producto_venta').value = venta.idProducto;
+                    document.getElementById('formulario_cantidad').value = venta.cantidadVendida;
+                    document.getElementById('formulario_ingreso_total').value = venta.ingresoTotal;
+                }
+            },
+            error: function () {
+                console.error("Error al obtener los datos de la venta.");
+            }
+        });
+    }
+
+    (function () {
+        'use strict';
+
+        const form = document.getElementById('formularioVenta');
+        const cliente = document.getElementById("formulario_cliente_Venta");
+        const producto = document.getElementById("formulario_producto_venta");
+        const cantidad = document.getElementById("formulario_cantidad");
+        const ingresoTotal = document.getElementById("formulario_ingreso_total");
+        const fechaRealizado = document.getElementById("formulario_fecha_realizado"); // Nuevo input de fecha
+
+        if (form) {
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                // Eliminar clases de error previas
+                [cliente, producto, cantidad, ingresoTotal, fechaRealizado].forEach(el => el.classList.remove('is-invalid'));
+
+                // Validar valores
+                const cantidadVendida = parseInt(cantidad.value) || 0;
+                const ingresoTotalValue = parseFloat(ingresoTotal.value) || 0;
+                const fecha = fechaRealizado.value;
+
+                if (!form.checkValidity() || cantidadVendida <= 0 || ingresoTotalValue <= 0) {
+                    event.stopPropagation();
+                    if (cantidadVendida <= 0) cantidad.classList.add('is-invalid');
+                    if (ingresoTotalValue <= 0) ingresoTotal.classList.add('is-invalid');
+                    if (!fecha) fechaRealizado.classList.add('is-invalid');
+                    form.classList.add('was-validated');
+                    return;
+                }
+                const url = esModificacionVenta ? '/Ventas/ModificarVenta' : '/Ventas/AgregarVenta';
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: {
+                        folioVenta: document.getElementById("formulario_folioVenta").value,
+                        idCliente: cliente.value,
+                        idProducto: producto.value,
+                        cantidadVendida: cantidadVendida,
+                        ingresoTotal: ingresoTotalValue,
+                        fechaRealizado: fecha // Nuevo parámetro de fecha
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: esModificacionVenta ? '¡Venta modificada!' : '¡Venta agregada!',
+                                text: response.message,
+                                confirmButtonText: 'Aceptar'
+                            }).then(() => {
+                                resetearFormularioVenta();
+                                $('#agregarVenta').modal('hide');
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.message,
+                                confirmButtonText: 'Aceptar'
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error en la solicitud AJAX:", error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Hubo un error al comunicarse con el servidor.',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
+                });
+
+                form.classList.add('was-validated');
+            }, false);
+        }
+    })();
+
+    async function cargarClientes() {
+        try {
+            const response = await fetch('/Ventas/ObtenerClientes');
+            const data = await response.json();
+
+            const clienteSelect = document.getElementById('formulario_cliente_Venta');
+            clienteSelect.innerHTML = '<option value="" disabled selected>Seleccione un cliente</option>';
+
+            if (data.success) {
+                data.data.forEach(cliente => {
+                    const option = document.createElement('option');
+                    option.value = cliente.idCliente;
+                    option.textContent = cliente.nombre;
+                    clienteSelect.appendChild(option);
+                });
+            } else {
+                console.error('Error al obtener clientes:', data.message);
+            }
+        } catch (error) {
+            console.error('Error al conectarse con el servidor:', error);
+        }
+    }
+
+    async function cargarProductosVentas() {
+        try {
+            const response = await fetch('/Ventas/ObtenerProductos');
+
+            if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+
+            const data = await response.json();
+            const productoSelect = document.getElementById('formulario_producto_venta');
+
+            productoSelect.innerHTML = '<option value="" disabled selected>Seleccione un producto</option>';
+
+            if (data.success) {
+                data.data.forEach(producto => {
+                    const option = document.createElement('option');
+                    option.value = producto.idCatalogoProducto;
+                    option.textContent = producto.nombreProducto;
+                    productoSelect.appendChild(option);
+                });
+            } else {
+                console.error('Error al obtener productos:', data.message);
+            }
+        } catch (error) {
+            console.error('Error al cargar productos:', error.message);
+        }
+    }
+
+    document.getElementById('formulario_producto_venta').addEventListener('change', function () {
+        const idProducto = this.value;
+
+        if (idProducto) {
+            $.ajax({
+                url: '/Ventas/ObtenerDatosProducto',
+                type: 'GET',
+                data: { idProducto: idProducto },
+                success: function (response) {
+                    if (response.success) {
+                        // Actualizar cantidad en stock
+                        document.getElementById('formulario_stock').value = response.cantidadStock;
+
+                        // Guardar el precio unitario como un atributo oculto
+                        document.getElementById('formulario_precio_recomendado').dataset.precioUnitario = response.precioUnitario;
+
+                        // Calcular el precio recomendado
+                        const cantidadVendida = parseInt(document.getElementById('formulario_cantidad').value) || 0;
+                        document.getElementById('formulario_precio_recomendado').value = (response.precioUnitario * cantidadVendida).toFixed(2);
+                    }
+                }
+            });
+        }
+    });
+
+
+    // Función para actualizar el precio total recomendado
+    document.getElementById('formulario_cantidad').addEventListener('input', function () {
+        const cantidadVendida = parseInt(this.value) || 0;
+        const precioUnitario = parseFloat(document.getElementById('formulario_precio_recomendado').dataset.precioUnitario) || 0;
+
+        actualizarPrecioRecomendado(cantidadVendida, precioUnitario);
+    });
+
+    function actualizarPrecioRecomendado(cantidad, precioUnitario) {
+        const precioTotalRecomendado = cantidad * precioUnitario;
+        document.getElementById('formulario_precio_recomendado').value = precioTotalRecomendado.toFixed(2);
+    }
+
+</script>
