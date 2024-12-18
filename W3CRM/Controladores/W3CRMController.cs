@@ -7,7 +7,32 @@ using Vitaly_Manager.Entidades;
 namespace Vitaly_Manager.Controladores
 {
     public class W3CRMController : Controller
-    { 
+    {
+        [HttpPost]
+        public JsonResult InicioSesion(string Correo, string Password)
+        {
+            if (string.IsNullOrWhiteSpace(Correo) || string.IsNullOrWhiteSpace(Password))
+            {
+                return Json(new { success = false, message = "El correo y la contraseña son obligatorios." });
+            }
+
+            Usuario? usuario = DataUsuarios.ListaUsuarios(out _, out _)
+                .FirstOrDefault(u => u.CorreoElectronico == Correo && u.Password == Password);
+
+            if (usuario != null)
+            {
+                return Json(new { success = true, redirectUrl = Url.Action("ConsultaCompras", "Compras") });
+            }
+            else
+            {
+                return Json(new { success = false, message = "Correo o contraseña incorrectos." });
+            }
+        }
+
+        public IActionResult Login()
+        {
+            return View();
+        }
 
         #region Extra Pages
         public IActionResult Profile()

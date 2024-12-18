@@ -73,3 +73,50 @@
 	<script src="~/w3crm/js/demo.js"></script>
 	<script src="~/w3crm/js/custom.js"></script>
 }
+
+<script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const loginForm = document.querySelector("form");
+
+            if (loginForm) {
+                loginForm.addEventListener("submit", function (event) {
+                    event.preventDefault();
+
+                    // Obtener los valores del formulario
+                    const email = document.querySelector("input[name='Correo']").value.trim();
+                    const password = document.querySelector("input[name='Password']").value.trim();
+
+                    // Validar que los campos no estén vacíos
+                    if (!email || !password) {
+                        alert("Por favor, complete todos los campos.");
+                        return;
+                    }
+
+                    // Realizar la solicitud AJAX
+                    fetch("/W3CRM/InicioSesion", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        body: new URLSearchParams({
+                            Correo: email,
+                            Password: password
+                        })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                window.location.href = data.redirectUrl; // Redirigir en caso de éxito
+                            } else {
+                                alert(data.message); // Mostrar mensaje de error
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error en la solicitud de inicio de sesión:", error);
+                            alert("Hubo un error al intentar iniciar sesión.");
+                        });
+                });
+            }
+        });
+
+</script>

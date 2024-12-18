@@ -11,6 +11,44 @@ namespace Vitaly_Manager.Data
         private static DateTime _ultimoCache = DateTime.MinValue;
         private static readonly TimeSpan TiempoCache = TimeSpan.FromMinutes(1);
 
+        public static bool Modificar(Gasto modificado, out string mensaje)
+        {
+            try
+            {
+                using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
+                {
+                    conexion.Open();
+                    string query = @"UPDATE Gasto
+                                     SET monto = @Monto, descripcion = @Descripcion, idTipoGasto = @IdTipoGasto, fechaRealizado = @FechaRealizado
+                                     WHERE idGasto = @IdGasto";
+
+                    using (SqlCommand comando = new SqlCommand(query, conexion))
+                    {
+                        comando.Parameters.AddWithValue("@IdGasto", modificado.IdGasto);
+                        comando.Parameters.AddWithValue("@Monto", modificado.Monto);
+                        comando.Parameters.AddWithValue("@Descripcion", (object)modificado.Descripcion ?? DBNull.Value);
+                        comando.Parameters.AddWithValue("@IdTipoGasto", modificado.IdTipoGasto);
+                        comando.Parameters.AddWithValue("@FechaRealizado", modificado.FechaRealizado);
+
+                        comando.ExecuteNonQuery();
+                    }
+                }
+                var gastoEnCache = _cacheGastos.Find(g => g.IdGasto == modificado.IdGasto);
+                if (gastoEnCache != null)
+                {
+                    _cacheGastos.Remove(gastoEnCache);
+                    _cacheGastos.Add(modificado);
+                }
+                mensaje = "Gasto modificado exitosamente.";
+                return true;
+            }
+            catch (Exception ex)
+            {
+                mensaje = "Error: " + ex.Message;
+                return false;
+            }
+        }
+
         public static List<Gasto> ListaGastos(out string respuesta, out bool exito)
         {
             if (_cacheGastos.Count > 0 && (DateTime.Now - _ultimoCache) < TiempoCache)

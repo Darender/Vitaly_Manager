@@ -1,0 +1,227 @@
+﻿<div class="modal fade" id="agregarUsuario" tabindex="-1" aria-labelledby="agregarUsuarioLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="agregarUsuarioLabel">Agregar Nuevo Usuario</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <form class="needs-validation" method="post" enctype="multipart/form-data" novalidate id="formularioAgregarUsuario">
+                    <!-- ID oculto -->
+                    <input type="hidden" id="formulario_id" name="idUsuario" value="0">
+
+                    <!-- Nombre -->
+                    <div class="mb-3">
+                        <label class="form-label" for="formulario_nombre">Nombre</label>
+                        <input type="text" class="form-control" id="formulario_nombre" name="nombre" placeholder="Ingrese el nombre" required>
+                        <div class="invalid-feedback">Por favor, ingrese el nombre del usuario.</div>
+                    </div>
+
+                    <!-- Apellidos -->
+                    <div class="mb-3">
+                        <label class="form-label" for="formulario_apellidos">Apellidos</label>
+                        <input type="text" class="form-control" id="formulario_apellidos" name="apellidos" placeholder="Ingrese los apellidos" required>
+                        <div class="invalid-feedback">Por favor, ingrese los apellidos del usuario.</div>
+                    </div>
+
+                    <!-- Correo Electrónico -->
+                    <div class="mb-3">
+                        <label class="form-label" for="formulario_correo">Correo Electrónico</label>
+                        <input type="email" class="form-control" id="formulario_correo" name="correoElectronico" placeholder="Ingrese el correo electrónico" required>
+                        <div class="invalid-feedback">Por favor, ingrese un correo válido.</div>
+                    </div>
+
+                    <!-- Teléfono -->
+                    <div class="mb-3">
+                        <label class="form-label" for="formulario_telefono">Teléfono</label>
+                        <input type="text" class="form-control" id="formulario_telefono" name="telefono" placeholder="Ingrese el teléfono" required>
+                        <div class="invalid-feedback">Por favor, ingrese el teléfono del usuario.</div>
+                    </div>
+
+                    <!-- Es Administrador -->
+                    <div class="mb-3">
+                        <label class="form-label">Es Administrador</label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="formulario_esAdministrador" name="esAdministrador">
+                            <label class="form-check-label" for="formulario_esAdministrador">Administrador</label>
+                        </div>
+                    </div>
+
+                    <!-- Contraseña -->
+                    <div class="mb-3">
+                        <label class="form-label" for="formulario_password">Contraseña</label>
+                        <input type="password" class="form-control" id="formulario_password" name="password" placeholder="Ingrese la contraseña" required>
+                        <div class="invalid-feedback">Por favor, ingrese una contraseña.</div>
+                    </div>
+
+                    <!-- Imagen -->
+                    <div class="mb-3">
+                        <label class="form-label" for="formulario_imagen">Imagen de Usuario</label>
+                        <input type="file" class="form-control" id="formulario_imagen" name="imagenUsuario" accept="image/*" required>
+                        <div class="invalid-feedback">Por favor, seleccione una imagen.</div>
+                    </div>
+
+                    <!-- Botón de "Agregar" -->
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary w-100" id="boton_subir_usuario">Agregar Usuario</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <script>
+        let esModificacionUsuario = false; // Indica si el formulario está en modo "modificar"
+
+    // Evento cuando el modal se muestra
+    document.getElementById('agregarUsuario').addEventListener('shown.bs.modal', function () {
+        if (!esModificacionUsuario) {
+            console.log("Modo agregar usuario");
+        }
+    });
+
+    // Función para manejar la modificación de un usuario
+    function modificarUsuario(idUsuario) {
+        esModificacionUsuario = true;
+
+        const tituloModal = document.getElementById('agregarUsuarioLabel');
+        const botonSubmit = document.getElementById('boton_subir_usuario');
+        const formulario = document.getElementById('formularioAgregarUsuario');
+
+        // Resetear el formulario
+        formulario.reset();
+        formulario.classList.remove('was-validated');
+        tituloModal.textContent = 'Modificar Usuario';
+        botonSubmit.textContent = 'Guardar Cambios';
+
+        // Realizar la solicitud AJAX para obtener los datos del usuario
+        $.ajax({
+            url: '/Usuarios/ObtenerUsuario',
+            type: 'GET',
+            data: { idUsuario: idUsuario },
+            success: function (response) {
+                if (response.success) {
+                    const usuario = response.usuario;
+
+                    // Llenar los campos del formulario
+                    document.getElementById('formulario_id').value = idUsuario;
+                    document.getElementById('formulario_nombre').value = usuario.nombre;
+                    document.getElementById('formulario_apellidos').value = usuario.apellidos;
+                    document.getElementById('formulario_correo').value = usuario.correoElectronico;
+                    document.getElementById('formulario_telefono').value = usuario.telefono;
+                    document.getElementById('formulario_password').value = usuario.password;
+
+                    if (usuario.esAdministrador) {
+                        document.getElementById('formulario_esAdministrador').checked = true;
+                    }
+                } else {
+                    Swal.fire('Error', response.message, 'error');
+                }
+            },
+            error: function (error) {
+                console.error('Error al obtener datos del usuario:', error);
+            }
+        });
+    }
+
+    // Evento cuando el modal se cierra
+    document.getElementById('agregarUsuario').addEventListener('hidden.bs.modal', function () {
+        const tituloModal = document.getElementById('agregarUsuarioLabel');
+        const botonSubmit = document.getElementById('boton_subir_usuario');
+        const formulario = document.getElementById('formularioAgregarUsuario');
+
+        formulario.reset();
+        formulario.classList.remove('was-validated');
+        tituloModal.textContent = 'Agregar Nuevo Usuario';
+        botonSubmit.textContent = 'Agregar Usuario';
+        esModificacionUsuario = false;
+    });
+
+    // Validación y envío del formulario
+    (function () {
+        'use strict';
+
+        const form = document.getElementById('formularioAgregarUsuario');
+        if (form) {
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                if (!form.checkValidity()) {
+                    event.stopPropagation();
+                } else {
+                    // Configuración dinámica según el modo
+                    const url = esModificacionUsuario ? '/Usuarios/ModificarUsuario' : '/Usuarios/AgregarUsuario';
+                    const formData = new FormData(form);
+
+                    // Realizar la solicitud AJAX
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: esModificacionUsuario ? '¡Usuario modificado!' : '¡Usuario agregado!',
+                                    text: response.message,
+                                    confirmButtonText: 'Aceptar'
+                                }).then(() => {
+                                    $('#agregarUsuario').modal('hide');
+                                    form.reset();
+                                    cargarUsuarios();
+                                });
+                            } else {
+                                Swal.fire('Error', response.message, 'error');
+                            }
+                        },
+                        error: function () {
+                            Swal.fire('Error', 'Hubo un problema al comunicarse con el servidor.', 'error');
+                        }
+                    });
+                }
+
+                form.classList.add('was-validated');
+            }, false);
+        }
+    })();
+
+    // Función para eliminar un usuario
+    function eliminarUsuario(idUsuario) {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción eliminará permanentemente al usuario.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/Usuarios/EliminarUsuario',
+                    type: 'POST',
+                    data: { idUsuario },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire('Eliminado', response.message, 'success');
+                            cargarUsuarios();
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.fire('Error', 'Hubo un problema al eliminar el usuario.', 'error');
+                    }
+                });
+            }
+        });
+    }
+
+    // Cargar usuarios al cargar la página
+    document.addEventListener('DOMContentLoaded', cargarUsuarios);
+</script>
