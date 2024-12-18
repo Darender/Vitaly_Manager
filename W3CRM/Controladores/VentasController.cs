@@ -152,8 +152,9 @@ namespace Vitaly_Manager.Controladores
                     });
 
                     // Restar unidades al lote
-                    lote.CantidadUnidades -= cantidadARestar;
-                    DataCompraLote.ActualizarCantidadUnidades(lote.IdCompraLote, lote.CantidadUnidades, out _);
+                    lote.CantidadUnidadesDisponibles -= cantidadARestar;
+                    int disponibleAtual = lote.CantidadUnidadesDisponibles ?? 0;
+                    DataCompraLote.ActualizarCantidadUnidades(lote.IdCompraLote, disponibleAtual, out _);
 
                     cantidadRestante -= cantidadARestar;
                 }
@@ -234,6 +235,119 @@ namespace Vitaly_Manager.Controladores
             }
         }
 
+        [HttpGet]
+public JsonResult ObtenerVentas()
+{
+    bool resultado = false;
+    string mensaje = "Error al obtener las ventas.";
+    List<VentaDetalle?> listaVentas = new List<VentaDetalle?>();
 
+    try
+    {
+        // Obtener listas necesarias
+        List<Venta> ventas = DataVenta.ListaVentas(out _, out _);
+        List<CatalogoProducto> productos = DataCatalogoProducto.ListaCatalogoProductos(out _, out _);
+        List<Cliente> clientes = DataClientes.ListaClientes(out _, out _);
+        List<VentaProducto> vp = DataVentaProducto.ListaVentasProductos(out _, out _);
+
+        if (ventas != null && ventas.Any())
+        {
+                    listaVentas = ventas.Select(v =>
+                    {
+                        var ventaProducto = vp.FirstOrDefault(c => c.FolioVenta == v.FolioVenta);
+                        if (ventaProducto == null) return null;
+
+                        var compraLote = DataCompraLote.ObtenerPorId(ventaProducto.IdCompraLote, out _);
+                        var producto = productos.FirstOrDefault(p => p.IdCatalogoProducto == compraLote?.IdCatalogoProducto);
+
+                        return new VentaDetalle
+                        {
+                            FolioVenta = v.FolioVenta,
+                            ClienteNombre = clientes.FirstOrDefault(c => c.IdCliente == v.IdCliente)?.Nombre ?? "Cliente no encontrado",
+                            NombreProducto = producto?.NombreProducto ?? "Producto no encontrado",
+                            CantidadVendida = vp.Where(c => c.FolioVenta == v.FolioVenta).Sum(c => c.CantidadVendida),
+                            IngresoTotal = v.IngresoTotal,
+                            FechaRealizada = v.FechaRealizado.ToString("yyyy-MM-dd")
+                        };
+                    })
+        .Where(v => v != null)
+        .ToList();
+
+
+                    resultado = true;
+            mensaje = "Ventas obtenidas correctamente.";
+        }
+        else
+        {
+            mensaje = "No hay ventas registradas.";
+        }
     }
+    catch (Exception ex)
+    {
+        mensaje = $"Error: {ex.Message}";
+    }
+
+    return Json(new { success = resultado, message = mensaje, data = listaVentas });
+}
+
+        [HttpGet]
+        public JsonResult ObtenerVentaUnica(int folioVenta)
+        {
+            bool resultado = false;
+            string mensaje = "No se encontró la información de la venta.";
+            object ventaDetalle = null;
+
+            try
+            {
+                // Obtener las listas necesarias
+                List<Venta> ventas = DataVenta.ListaVentas(out _, out _);
+                List<CatalogoProducto> productos = DataCatalogoProducto.ListaCatalogoProductos(out _, out _);
+                List<Cliente> clientes = DataClientes.ListaClientes(out _, out _);
+                List<VentaProducto> vp = DataVentaProducto.ListaVentasProductos(out _, out _);
+
+                // Buscar la venta específica
+                var venta = ventas.FirstOrDefault(v => v.FolioVenta == folioVenta);
+                if (venta != null)
+                {
+                    var ventaProducto = vp.FirstOrDefault(c => c.FolioVenta == folioVenta);
+                    if (ventaProducto != null)
+                    {
+                        var compraLote = DataCompraLote.ObtenerPorId(ventaProducto.IdCompraLote, out _);
+                        var producto = productos.FirstOrDefault(p => p.IdCatalogoProducto == compraLote?.IdCatalogoProducto);
+
+                        // Construir el objeto con los detalles de la venta
+                        ventaDetalle = new
+                        {
+                            clienteNombre = clientes.FirstOrDefault(c => c.IdCliente == venta.IdCliente)?.Nombre ?? "Cliente no encontrado",
+                            nombreProducto = producto?.NombreProducto ?? "Producto no encontrado",
+                            cantidadVendida = vp.Where(c => c.FolioVenta == folioVenta).Sum(c => c.CantidadVendida),
+                            ingresoTotal = venta.IngresoTotal,
+                            fechaRealizada = venta.FechaRealizado.ToString("yyyy-MM-dd")
+                        };
+
+                        resultado = true;
+                        mensaje = "Venta obtenida correctamente.";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                mensaje = $"Error: {ex.Message}";
+            }
+
+            // Devolver respuesta JSON
+            return Json(new { success = resultado, message = mensaje, data = ventaDetalle });
+        }
+    }
+
+}
+
+public class VentaDetalle
+{
+    public int FolioVenta { get; set; }
+    public string ClienteNombre { get; set; }
+    public string NombreProducto { get; set; }
+    public int CantidadVendida { get; set; }
+    public decimal IngresoTotal { get; set; }
+    public string FechaRealizada { get; set; }
 }

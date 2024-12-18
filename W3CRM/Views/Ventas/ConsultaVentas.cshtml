@@ -2,11 +2,8 @@
 @using Vitaly_Manager.Entidades
 @using W3CRM.Controllers
 @{
-    ViewData["Title"] = "Consulta de Productos";
+    ViewData["Title"] = "Consulta de Ventas";
 }
-<!--**********************************
-	Content body start
-***********************************-->
 
 <div class="content-body">
     <div class="page-titles">
@@ -24,41 +21,38 @@
             <li class="breadcrumb-item active"><a href="javascript:void(0)">Consulta de Ventas</a></li>
         </ol>
     </div>
+
     <div class="container-fluid">
-        <div class="tab-content" id="myTabContent-2">
-            <div class="tab-pane fade show active" id="withoutSpace" role="tabpanel" aria-labelledby="home-tab-2">
-                <div class="d-flex justify-content-center"></div>
-                <div class="d-flex justify-content-center">
-                    <a href="javascript:void(0)"
-                       class="btn btn-primary shadow w-40 py-1"
-                       data-bs-toggle="modal"
-                       data-bs-target="#agregarVenta">
-                        <i class="fas fa-plus me-2"></i> Agregar Nueva Venta de Productos
-                    </a>
-                </div>
-                <div class="card-body pt-0">
-                    <div class="table-responsive">
-                        <table id="example3" class="display table" style="min-width: 845px">
-                            <thead>
-                                <tr>
-                                    <th>Nombre del Producto</th>
-                                    <th>Cantidad Unidades</th>
-                                    <th>Costo Total</th>
-                                    <th>Fecha de Vencimiento</th>
-                                    <th>Es Material</th>
-                                    <th>Accion</th>
-                                </tr>
-                            </thead>
-                            <tbody id="productos-tbody">
-                                
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+        <div class="d-flex justify-content-center">
+            <a href="javascript:void(0)"
+               class="btn btn-primary shadow w-40 py-1"
+               data-bs-toggle="modal"
+               data-bs-target="#agregarVenta">
+                <i class="fas fa-plus me-2"></i> Agregar Nueva Venta
+            </a>
+        </div>
+        <div class="card-body pt-0">
+            <div class="table-responsive">
+                <table id="ventasTable" class="display table" style="min-width: 845px">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Producto</th>
+                            <th>Cantidad Vendida</th>
+                            <th>Ingreso Total</th>
+                            <th>Fecha Realizada</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ventas-tbody">
+                        <!-- Datos dinámicos -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
+
 <!--**********************************
 	Content body end
 ***********************************-->
@@ -138,51 +132,57 @@
     </script>
 
     <script>
-        
+        // Mostrar información de una venta
+        function informacionVenta(folioVenta) {
+            $.ajax({
+                url: '/Ventas/ObtenerVentaUnica',
+                type: 'GET',
+                data: { folioVenta },
+                success: function (response) {
+                    if (response.success) {
+                        const venta = response.data;
 
+                        Swal.fire({
+                            title: "Detalles de la Venta",
+                            html: `
+                                        <p><strong>Cliente:</strong> ${venta.clienteNombre}</p>
+                                        <p><strong>Producto:</strong> ${venta.nombreProducto}</p>
+                                        <p><strong>Cantidad Vendida:</strong> ${venta.cantidadVendida}</p>
+                                        <p><strong>Ingreso Total:</strong> $${venta.ingresoTotal.toFixed(2)}</p>
+                                        <p><strong>Fecha Realizada:</strong> ${venta.fechaRealizada.split('T')[0]}</p>
+                                    `,
+                            icon: "info",
+                            confirmButtonText: "Cerrar"
+                        });
+                    } else {
+                        Swal.fire("Error", "No se pudo obtener la información de la venta.", "error");
+                    }
+                }
+            });
+        }
 
-        // Elimina una compra con confirmación
-        function eliminarCompra(idCompra) {
+        // Eliminar una venta
+        function eliminarVenta(folioVenta) {
             Swal.fire({
-                title: '¿Estás seguro?',
-                text: "Esta acción eliminará permanentemente la compra.",
-                icon: 'warning',
+                title: "¿Estás seguro?",
+                text: "Esta acción eliminará permanentemente la venta.",
+                icon: "warning",
                 showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
+                confirmButtonText: "Sí, eliminar",
+                cancelButtonText: "Cancelar"
+            }).then(result => {
                 if (result.isConfirmed) {
-                    // Realizar la solicitud AJAX para eliminar la compra
                     $.ajax({
-                        url: '/Compras/EliminarCompra',
+                        url: '/Ventas/EliminarVenta',
                         type: 'POST',
-                        data: { id: idCompra },
+                        data: { folioVenta },
                         success: function (response) {
                             if (response.success) {
-                                // Eliminar la fila de la tabla en el DOM
-                                document.getElementById(`producto-${idCompra}`).remove();
-
-                                Swal.fire(
-                                    'Eliminada',
-                                    response.message || 'La compra ha sido eliminada.',
-                                    'success'
-                                );
+                                document.getElementById(`venta-${folioVenta}`).remove();
+                                Swal.fire("Eliminada", "La venta ha sido eliminada con éxito.", "success");
                             } else {
-                                Swal.fire(
-                                    'Error',
-                                    response.message || 'No se pudo eliminar la compra.',
-                                    'error'
-                                );
+                                Swal.fire("Error", response.message, "error");
                             }
-                        },
-                        error: function () {
-                            Swal.fire(
-                                'Error',
-                                'Hubo un problema al intentar eliminar la compra.',
-                                'error'
-                            );
                         }
                     });
                 }
@@ -190,88 +190,49 @@
         }
 
 
-        // Obtiene la información de la compra para desplegarla en un SweetAlert
-        function informacionCompra(idCompra) {
+
+        // Función para cargar datos de ventas
+        function cargarVentas() {
             $.ajax({
-                url: '/Compras/ObtenerCompra',
+                url: '/Ventas/ObtenerVentas',
                 type: 'GET',
-                data: { id: idCompra },
                 success: function (response) {
                     if (response.success) {
-                        const compra = response.compra || {};
+                        const tbody = document.getElementById("ventas-tbody");
+                        tbody.innerHTML = "";
 
-                        Swal.fire({
-                            title: "Información de la Compra",
-                            html: `
-                                <p><strong>ID Compra:</strong> ${compra.idCompra || 'No disponible'}</p>
-                                <p><strong>Producto:</strong> ${compra.producto || 'No disponible'}</p>
-                                <p><strong>Proveedor:</strong> ${compra.proveedor || 'No disponible'}</p>
-                                <p><strong>Cantidad de Unidades:</strong> ${compra.cantidadUnidades || 'No especificada'}</p>
-                                <p><strong>Costo Total:</strong> $${compra.costoTotal ? compra.costoTotal.toFixed(2) : 'No especificado'}</p>
-                                <p><strong>Fecha de Vencimiento:</strong> ${compra.fechaVencimiento || 'No aplica'}</p>
-                                <p><strong>Es Material:</strong> ${compra.esMaterial ? 'Sí' : 'No'}</p>
-                                <p><strong>Margen de Ganancia:</strong> ${compra.porcentajeMargenGanancia || 'No especificado'}%</p>
-                                <p><strong>Fecha de Compra:</strong> ${compra.fechaCompra || 'No disponible'}</p>
-                            `,
-                            icon: "info",
-                            confirmButtonText: "Cerrar",
-                            customClass: {
-                                popup: 'animated fadeInDown',
-                                htmlContainer: 'swal-small-text' // Aplica la clase personalizada
-                            }
+                        response.data.forEach(venta => {
+                            const fila = `
+                                        <tr id="venta-${venta.folioVenta}">
+                                            <td>${venta.clienteNombre}</td>
+                                            <td>${venta.nombreProducto}</td>
+                                            <td>${venta.cantidadVendida}</td>
+                                            <td>$${venta.ingresoTotal.toFixed(2)}</td>
+                                            <td>${venta.fechaRealizada.split('T')[0]}</td>
+                                            <td>
+                                                <div class="d-flex">
+                                                    <a href="javascript:void(0)" class="btn btn-info shadow btn-xs sharp me-1" onclick="informacionVenta(${venta.folioVenta})"><i class="fa fa-eye"></i></a>
+                                                    <a href="javascript:void(0)" class="btn btn-danger shadow btn-xs sharp" onclick="eliminarVenta(${venta.folioVenta})"><i class="fa fa-trash"></i></a>
+                                                </div>
+                                            </td>
+                                        </tr>`;
+                            tbody.innerHTML += fila;
                         });
+
+                        $('#ventasTable').DataTable(); // Inicializa la tabla con DataTables
                     } else {
-                        Swal.fire("Error", response.message || "No se pudo obtener la información de la compra.", "error");
+                        console.error("Error al cargar ventas:", response.message);
                     }
                 },
                 error: function () {
-                    Swal.fire("Error", "Hubo un problema al obtener la información de la compra.", "error");
+                    console.error("Error al conectar con el servidor.");
                 }
             });
         }
 
-
-        // Función para cargar datos de productos
-        function cargarProductos() {
-            $.ajax({
-                url: '/Compras/ObtenerCompras',
-                type: 'GET',
-                success: function (response) {
-                    if (response.success) {
-                        const tbody = document.getElementById("productos-tbody");
-                        tbody.innerHTML = ""; // Limpiar el contenido actual
-
-                        response.data.forEach(producto => {
-                            const fila = `
-                                    <tr id="producto-${producto.idCompraLote}">
-                                        <td>${producto.nombreProducto}</td>
-                                        <td>${producto.cantidadUnidades}</td>
-                                        <td>$${producto.costoTotal.toFixed(2)}</td>
-                                        <td>${producto.fechaVencimiento ? producto.fechaVencimiento.split('T')[0] : 'Sin vencimiento'}</td>
-                                        <td>${producto.esMaterial ? 'Sí' : 'No'}</td>
-                                        <td>
-                                            <div class="d-flex">
-                                                        <a href="javascript:void(0)" class="btn btn-info shadow btn-xs sharp me-1" onclick="informacionCompra(${producto.idCompraLote})"><i class="fa fa-eye"></i></a>
-                                                                <a href="javascript:void(0)" class="btn btn-warning shadow btn-xs sharp me-1" data-bs-toggle="modal" data-bs-target="#agregarCompra" onclick="modificarCompra(${producto.idCompraLote})"><i class="fas fa-pencil-alt"></i></a>
-                                                <a href="javascript:void(0)" class="btn btn-danger shadow btn-xs sharp" onclick="eliminarCompra(${producto.idCompraLote})"><i class="fa fa-trash"></i></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                `;
-                            tbody.innerHTML += fila;
-                        });
-                    } else {
-                        console.error("Error al obtener los productos:", response.message);
-                    }
-                },
-                error: function (error) {
-                    console.error("Error en la solicitud:", error);
-                }
-            });
-        }
 
         // Llamar a la función al cargar la página
-        document.addEventListener("DOMContentLoaded", cargarProductos);
+        document.addEventListener("DOMContentLoaded", cargarVentas);
     </script>
 
 
