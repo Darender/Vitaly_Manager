@@ -76,7 +76,7 @@ namespace Vitaly_Manager.Data
         /// <summary>
         /// Agrega una nueva venta al sistema y al caché.
         /// </summary>
-        public static bool AgregarVenta(Venta nuevaVenta, out string mensaje)
+        public static bool AgregarVenta(Venta nuevaVenta, out string mensaje, out int idVentaGenerada)
         {
             try
             {
@@ -96,6 +96,7 @@ namespace Vitaly_Manager.Data
 
                         // Obtener el folio generado
                         nuevaVenta.FolioVenta = (int)comando.ExecuteScalar();
+                        idVentaGenerada = nuevaVenta.FolioVenta;
                     }
 
                     conexion.Close();
@@ -109,11 +110,13 @@ namespace Vitaly_Manager.Data
             }
             catch (SqlException ex)
             {
+                idVentaGenerada = 0;
                 mensaje = $"Error en la base de datos: {ex.Message}";
                 return false;
             }
             catch (Exception ex)
             {
+                idVentaGenerada = 0;
                 mensaje = $"Error inesperado: {ex.Message}";
                 return false;
             }

@@ -9,6 +9,40 @@ namespace Vitaly_Manager.Data
         private static DateTime _ultimoCache = DateTime.MinValue;
         private static readonly TimeSpan TiempoCache = TimeSpan.FromMinutes(1);
 
+        public static Proveedor? ObtenerPorId(int idProveedor, out string mensaje)
+        {
+            try
+            {
+                // Obtener la lista de proveedores en memoria
+                bool exito;
+                var listaProveedores = ListaProveedores(out mensaje, out exito);
+
+                if (!exito)
+                {
+                    mensaje = $"Error al obtener la lista de proveedores: {mensaje}";
+                    return null;
+                }
+
+                // Buscar el proveedor específico por ID
+                var proveedor = listaProveedores.FirstOrDefault(p => p.IdProveedor == idProveedor);
+
+                if (proveedor != null)
+                {
+                    mensaje = "Proveedor encontrado exitosamente.";
+                    return proveedor;
+                }
+
+                // Si no encuentra el proveedor
+                mensaje = "Proveedor no encontrado en la lista.";
+                return null;
+            }
+            catch (Exception ex)
+            {
+                mensaje = $"Error al buscar el proveedor por ID: {ex.Message}";
+                return null;
+            }
+        }
+
         /// <summary>
         /// Obtiene la lista de proveedores desde el caché o la base de datos si el caché está desactualizado.
         /// </summary>

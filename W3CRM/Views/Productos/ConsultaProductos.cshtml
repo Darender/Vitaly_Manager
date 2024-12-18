@@ -39,17 +39,18 @@
                 <div class="card-body pt-0">
 		            <div class="table-responsive">
 						<table id="example3" class="display table" style="min-width: 845px">
-				            <thead>
-					            <tr>
-						            <th>Nombre</th>
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
                                     <th>Tipo de Producto</th>
                                     <th>Proveedor</th>
-						            <th>Cantidad Unidades</th>
+                                    <th>Cantidad Unidades</th>
                                     <th>Tipo Unidad</th>
-						            <th>Accion</th>
-					            </tr>
-				            </thead>
-				            <tbody>
+                                    <th>¿Es Material?</th> <!-- Nueva Columna -->
+                                    <th>Accion</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                                 @foreach (CatalogoProducto producto in Model.ListaProductos)
                                 {
                                     <tr id="@producto.IdCatalogoProducto">
@@ -58,16 +59,18 @@
                                         <td>@Model.ObtenerProveedor(producto.IdProveedor)</td>
                                         <td>@producto.CantidadPorUnidad</td>
                                         <td>@Model.ObtenerTipoUnidad(producto.IdTipoUnidad)</td>
+                                        <td>@(producto.EsMaterial ? "Sí" : "No")</td> <!-- Mostrar si es material -->
                                         <td>
                                             <div class="d-flex">
-                                                <a href="#javascript:void(0)" class="btn btn-info shadow btn-xs sharp me-1" onclick="informacionProducto('@producto.IdCatalogoProducto')"><i class="fa fa-exclamation"></i></a>
-                                                <a href="#javascript:void(0)" class="btn btn-warning shadow btn-xs sharp me-1" data-bs-toggle="modal" data-bs-target="#modificarProducto" onclick="modificarProducto('@producto.IdCatalogoProducto')"><i class="fas fa-pencil-alt"></i></a>
+                                                <a href="javascript:void(0)" class="btn btn-info shadow btn-xs sharp me-1" onclick="informacionProducto('@producto.IdCatalogoProducto')"><i class="fa fa-eye"></i></a>
+                                                <a href="javascript:void(0)" class="btn btn-warning shadow btn-xs sharp me-1" data-bs-toggle="modal" data-bs-target="#modificarProducto" onclick="modificarProducto('@producto.IdCatalogoProducto')"><i class="fas fa-pencil-alt"></i></a>
                                                 <a href="#" class="btn btn-danger shadow btn-xs sharp" onclick="confirmarEliminacionProducto('@producto.IdCatalogoProducto')"><i class="fa fa-trash"></i></a>
                                             </div>
                                         </td>
                                     </tr>
                                 }
-				            </tbody>
+                            </tbody>
+
 			            </table>
 		            </div>
                 </div>
@@ -177,6 +180,7 @@
                                 <p><strong>Descripción:</strong> ${producto.descripcion || 'No disponible'}</p>
                                 <p><strong>Tipo de Unidad:</strong> ${producto.tipoUnidad || 'No disponible'}</p>
                                 <p><strong>Cantidad por Unidad:</strong> ${producto.cantidadPorUnidad || 'No especificada'}</p>
+                                        <p><strong>¿Es Material?:</strong> ${producto.esMaterial ? "Sí" : "No"}</p>
                             `,
                             icon: "info",
                             confirmButtonText: "Cerrar",
@@ -214,6 +218,8 @@
                         document.getElementById('descripcionModificar').value = producto.descripcion || ''; // Nueva propiedad
                         document.getElementById('cantidadPorUnidadModificar').value = producto.cantidadPorUnidad || 0; // Nueva propiedad
                         document.getElementById('tipounidadModificar').value = producto.idTipoUnidad;
+                        document.getElementById('esMaterialModificar').checked = producto.esMaterial; // Checkbox
+
                     } else {
                         console.error('Error al obtener los datos del producto:', response.message);
                     }
@@ -268,8 +274,11 @@
                                 paginaProducto: paginaProducto.value,
                                 descripcion: descripcion.value,
                                 cantidadPorUnidad: cantidadPorUnidad.value,
-                                tipoUnidad: tipoUnidad.value
+                                tipoUnidad: tipoUnidad.value,
+                                esMaterial: document.getElementById("esMaterialModificar").checked // Nuevo campo
                             },
+
+
                             success: function (response) {
                                 if (response.success) {
                                     Swal.fire({
@@ -334,17 +343,19 @@
                                 <td>${producto.proveedor}</td>
                                 <td>${producto.cantidadPorUnidad}</td>
                                 <td>${producto.tipoUnidad}</td>
+                                <td>${producto.esMaterial ? "Sí" : "No"}</td>
                                 <td>
                                     <div class="d-flex">
-                                        <a href="javascript:void(0)" class="btn btn-info shadow btn-xs sharp me-1" onclick="informacionProducto('${producto.idCatalogoProducto}')"><i class="fa fa-exclamation"></i></a>
+                                        <a href="javascript:void(0)" class="btn btn-info shadow btn-xs sharp me-1" onclick="informacionProducto('${producto.idCatalogoProducto}')"><i class="fa fa-eye"></i></a>
                                         <a href="javascript:void(0)" class="btn btn-warning shadow btn-xs sharp me-1" data-bs-toggle="modal" data-bs-target="#modificarProducto" onclick="modificarProducto('${producto.idCatalogoProducto}')"><i class="fas fa-pencil-alt"></i></a>
-                                                <a href="javascript:void(0)" class="btn btn-danger shadow btn-xs sharp" onclick="confirmarEliminacionProducto('${producto.idCatalogoProducto}')"><i class="fa fa-trash"></i></a>
+                                        <a href="javascript:void(0)" class="btn btn-danger shadow btn-xs sharp" onclick="confirmarEliminacionProducto('${producto.idCatalogoProducto}')"><i class="fa fa-trash"></i></a>
                                     </div>
                                 </td>
                             </tr>
                             `;
                             tabla.append(fila);
                         });
+
                     } else {
                         console.error("Error al obtener los productos actualizados.");
                     }

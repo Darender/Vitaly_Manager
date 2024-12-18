@@ -16,8 +16,39 @@ namespace Vitaly_Manager.Controladores
             return View(this);
         }
 
+        [HttpGet]
+        public IActionResult ObtenerProducto(int id)
+        {
+            var producto = ListaProductos.FirstOrDefault(c => c.IdCatalogoProducto == id);
+
+            if (producto == null)
+            {
+                return Json(new { success = false, message = "Producto no encontrado." });
+            }
+
+            var productoInfo = new
+            {
+                success = true,
+                producto = new
+                {
+                    producto.IdCatalogoProducto,
+                    producto.NombreProducto,
+                    TipoProducto = ObtenerTipoProducto(producto.IdTipoProducto),
+                    Proveedor = ObtenerProveedor(producto.IdProveedor),
+                    producto.PaginaWebProducto,
+                    producto.Descripcion,
+                    TipoUnidad = ObtenerTipoUnidad(producto.IdTipoUnidad),
+                    producto.CantidadPorUnidad,
+                    producto.EsMaterial // Nuevo campo agregado
+                }
+            };
+
+            return Json(productoInfo);
+        }
+
+
         [HttpPost]
-        public JsonResult AgregarNuevoProducto(string nombre, int tipoProducto, int proveedor, string? paginaProducto, string? descripcion, string cantidadPorUnidad, int tipoUnidad)
+        public JsonResult AgregarNuevoProducto(string nombre, int tipoProducto, int proveedor, string? paginaProducto, string? descripcion, string cantidadPorUnidad, int tipoUnidad, bool esMaterial)
         {
             bool resultado = false;
             string mensaje = "Hubo un problema al agregar el producto.";
@@ -58,7 +89,8 @@ namespace Vitaly_Manager.Controladores
                         PaginaWebProducto = paginaProducto,
                         Descripcion = descripcion,
                         CantidadPorUnidad = cantidadNumerica,
-                        IdTipoUnidad = tipoUnidad
+                        IdTipoUnidad = tipoUnidad,
+                        EsMaterial = esMaterial // Nuevo campo
                     };
 
                     resultado = DataCatalogoProducto.Agregar(nuevo, out mensaje);
@@ -73,87 +105,8 @@ namespace Vitaly_Manager.Controladores
             return Json(new { success = resultado, message = mensaje, errores = fallidos });
         }
 
-        [HttpDelete]
-        public IActionResult EliminarProducto(int id)
-        {
-            bool success = false;
-            string mensaje = "Error al eliminar el producto";
-
-            foreach (CompraLote lote in DataCompraLote.ListaCompraLotes(out _, out _))
-            {
-                if (lote.IdCompraLote == id)
-                {
-                    return Json(new { success = false, message = "Error: el producto ya es utilizado en un lote de producto" });
-                }
-            }
-
-            success = DataCatalogoProducto.Eliminar(id, out mensaje);
-            return Json(new { success, message = mensaje });
-        }
-
-        public string ObtenerTipoProducto(int idTipoProducto)
-        {
-            foreach (TipoProducto item in ListasTipoProductos)
-            {
-                if (item.IdTipoProducto == idTipoProducto)
-                    return item.NombreTipoProducto;
-            }
-            return "ERROR NO ENCONTRADO";
-        }
-
-        public string ObtenerProveedor(int idProveedor)
-        {
-            foreach (Proveedor item in ListaProveedores)
-            {
-                if (item.IdProveedor == idProveedor)
-                    return item.Nombre;
-            }
-            return "ERROR NO ENCONTRADO";
-        }
-
-        public string ObtenerTipoUnidad(int idTipoUnidad)
-        {
-            foreach (TipoUnidad item in ListaTipoUnidades)
-            {
-                if (item.IdTipoUnidad == idTipoUnidad)
-                    return item.NombreTipoUnidad;
-            }
-            return "ERROR NO ENCONTRADO";
-        }
-
-        [HttpGet]
-        public JsonResult ObtenerProductosActualizados()
-        {
-            var productosActualizados = ListaProductos.Select(producto => new
-            {
-                producto.IdCatalogoProducto,
-                producto.NombreProducto,
-                TipoProducto = ObtenerTipoProducto(producto.IdTipoProducto),
-                Proveedor = ObtenerProveedor(producto.IdProveedor),
-                producto.CantidadPorUnidad,
-                TipoUnidad = ObtenerTipoUnidad(producto.IdTipoUnidad),
-                producto.PaginaWebProducto,
-                producto.Descripcion
-            }).ToList();
-
-            return Json(new { success = true, data = productosActualizados });
-        }
-
-        [HttpGet]
-        public IActionResult SeleccionarProductoModificar(int id)
-        {
-            var producto = ListaProductos.FirstOrDefault(p => p.IdCatalogoProducto == id);
-
-            if (producto == null)
-            {
-                return Json(new { success = false, message = "Producto no encontrado." });
-            }
-
-            return Json(new { success = true, producto });
-        }
-
         [HttpPost]
-        public JsonResult ModificarProducto(int idSeleccionado, string nombre, int tipoProducto, int proveedor, string? paginaProducto, string? descripcion, string cantidadPorUnidad, int tipoUnidad)
+        public JsonResult ModificarProducto(int idSeleccionado, string nombre, int tipoProducto, int proveedor, string? paginaProducto, string? descripcion, string cantidadPorUnidad, int tipoUnidad, bool esMaterial)
         {
             bool resultado = false;
             string mensaje = "Hubo un problema al modificar el producto.";
@@ -195,7 +148,8 @@ namespace Vitaly_Manager.Controladores
                         PaginaWebProducto = paginaProducto,
                         Descripcion = descripcion,
                         CantidadPorUnidad = cantidadNumerica,
-                        IdTipoUnidad = tipoUnidad
+                        IdTipoUnidad = tipoUnidad,
+                        EsMaterial = esMaterial // Nuevo campo
                     };
 
                     resultado = DataCatalogoProducto.Modificar(modificado, out mensaje);
@@ -211,56 +165,80 @@ namespace Vitaly_Manager.Controladores
         }
 
         [HttpGet]
-        public JsonResult ObtenerProveedores()
+        public JsonResult ObtenerProductosActualizados()
         {
-            var proveedores = DataProveedores.ListaProveedores(out _, out _);
-            return Json(proveedores);
+            var productosActualizados = ListaProductos.Select(producto => new
+            {
+                producto.IdCatalogoProducto,
+                producto.NombreProducto,
+                TipoProducto = ObtenerTipoProducto(producto.IdTipoProducto),
+                Proveedor = ObtenerProveedor(producto.IdProveedor),
+                producto.CantidadPorUnidad,
+                TipoUnidad = ObtenerTipoUnidad(producto.IdTipoUnidad),
+                producto.PaginaWebProducto,
+                producto.Descripcion,
+                producto.EsMaterial // Nuevo campo
+            }).ToList();
+
+            return Json(new { success = true, data = productosActualizados });
         }
 
         [HttpGet]
-        public JsonResult ObtenerTiposProductos()
+        public IActionResult SeleccionarProductoModificar(int id)
         {
-            var tiposProductos = DataTipoProducto.ListaTiposProductos(out _, out _);
-            return Json(tiposProductos);
-        }
-
-        [HttpGet]
-        public JsonResult ObtenerTiposUnidades()
-        {
-            var tiposUnidades = DataTipoUnidad.ListaTiposUnidades(out _, out _);
-            return Json(tiposUnidades);
-        }
-
-
-        [HttpGet]
-        public IActionResult ObtenerProducto(int id)
-        {
-            CatalogoProducto? producto = ListaProductos.FirstOrDefault(c => c.IdCatalogoProducto == id);
+            var producto = ListaProductos.FirstOrDefault(p => p.IdCatalogoProducto == id);
 
             if (producto == null)
             {
                 return Json(new { success = false, message = "Producto no encontrado." });
             }
 
-            var clienteInfo = new
+            return Json(new
             {
                 success = true,
                 producto = new
                 {
                     producto.IdCatalogoProducto,
                     producto.NombreProducto,
-                    TipoProducto = ObtenerTipoProducto(producto.IdTipoProducto),
-                    Proveedor = ObtenerProveedor(producto.IdProveedor),        
+                    producto.IdTipoProducto,
+                    producto.IdProveedor,
                     producto.PaginaWebProducto,
                     producto.Descripcion,
-                    TipoUnidad = ObtenerTipoUnidad(producto.IdTipoUnidad),      
-                    producto.CantidadPorUnidad
+                    producto.CantidadPorUnidad,
+                    producto.IdTipoUnidad,
+                    producto.EsMaterial // Nuevo campo
                 }
-            };
-
-            return Json(clienteInfo);
+            });
         }
 
-    }
+        [HttpDelete]
+        public IActionResult EliminarProducto(int id)
+        {
+            bool success = false;
+            string mensaje = "Error al eliminar el producto";
 
+            foreach (CompraLote lote in DataCompraLote.ListaCompraLotes(out _, out _))
+            {
+                if (lote.IdCatalogoProducto == id)
+                {
+                    return Json(new { success = false, message = "Error: el producto ya es utilizado en un lote de producto" });
+                }
+            }
+
+            success = DataCatalogoProducto.Eliminar(id, out mensaje);
+            return Json(new { success, message = mensaje });
+        }
+
+        // Métodos auxiliares
+        public string ObtenerTipoProducto(int idTipoProducto) => ListasTipoProductos.FirstOrDefault(t => t.IdTipoProducto == idTipoProducto)?.NombreTipoProducto ?? "ERROR NO ENCONTRADO";
+        public string ObtenerProveedor(int idProveedor) => ListaProveedores.FirstOrDefault(p => p.IdProveedor == idProveedor)?.Nombre ?? "ERROR NO ENCONTRADO";
+        public string ObtenerTipoUnidad(int idTipoUnidad) => ListaTipoUnidades.FirstOrDefault(u => u.IdTipoUnidad == idTipoUnidad)?.NombreTipoUnidad ?? "ERROR NO ENCONTRADO";
+
+        [HttpGet]
+        public JsonResult ObtenerProveedores() => Json(DataProveedores.ListaProveedores(out _, out _));
+        [HttpGet]
+        public JsonResult ObtenerTiposProductos() => Json(DataTipoProducto.ListaTiposProductos(out _, out _));
+        [HttpGet]
+        public JsonResult ObtenerTiposUnidades() => Json(DataTipoUnidad.ListaTiposUnidades(out _, out _));
+    }
 }

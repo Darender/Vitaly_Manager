@@ -62,7 +62,7 @@ namespace Vitaly_Manager.Data
         public static bool Agregar(Gasto nuevo, out string mensaje, out int id)
         {
             id = 0; // Inicializa el ID como 0 para manejar errores si no se asigna
-            mensaje = string.Empty; // Mensaje de error inicializado
+          mensaje = string.Empty; // Mensaje de error inicializado
 
             try
             {
@@ -93,8 +93,6 @@ namespace Vitaly_Manager.Data
                     mensaje = "La fecha de realización no puede ser una fecha futura.";
                     return false;
                 }
-
-                // Si todas las validaciones son correctas continuamos
                 using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
                 {
                     conexion.Open();
@@ -127,7 +125,6 @@ namespace Vitaly_Manager.Data
                 return false;
             }
         }
-
         public static bool Eliminar(int id, out string mensaje)
         {
             try

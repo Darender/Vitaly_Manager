@@ -107,6 +107,18 @@
                                         </div>
                                     </div>
 
+                                    <div class="mb-3 row">
+                                        <label class="col-lg-3 col-form-label" for="esMaterial">
+                                            ¿Es Material?
+                                        </label>
+                                        <div class="col-lg-9 d-flex align-items-center">
+                                            <input type="checkbox" class="form-check-input" id="esMaterial" name="esMaterial">
+                                            <label class="form-check-label ms-2" for="esMaterial">
+                                                Marque si el producto es un material
+                                            </label>
+                                        </div>
+                                    </div>
+
                                     <div class="mb-12 row">
                                         <div class="col-lg-12">
                                             <button type="submit" class="btn btn-primary py-2 w-100" id="boton_agregar">Agregar Producto</button>
@@ -151,7 +163,6 @@
                 if (!form.checkValidity()) {
                     event.stopPropagation();
                 } else {
-                    // Realizar la solicitud AJAX
                     $.ajax({
                         url: '/Productos/AgregarNuevoProducto',
                         type: 'POST',
@@ -162,7 +173,8 @@
                             paginaProducto: paginaProducto.value,
                             descripcion: descripcion.value,
                             cantidadPorUnidad: cantidadPorUnidad.value,
-                            tipounidad: tipounidad.value
+                            tipounidad: tipounidad.value,
+                            esMaterial: document.getElementById("esMaterial").checked // Capturar el valor del checkbox
                         },
                         success: function (response) {
                             if (response.success) {

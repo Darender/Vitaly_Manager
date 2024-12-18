@@ -101,7 +101,7 @@ namespace Vitaly_Manager.Data
                 // Agregar el nuevo cliente al caché
                 _cacheClientes.Add(nuevo);
 
-                mensaje = $"El cliente {nuevo.Nombre} ha sido agregado exitosamente con el ID {nuevo.IdCliente}.";
+                mensaje = $"El cliente {nuevo.Nombre} ha sido agregado exitosamente.";
                 return true;
             }
             catch (SqlException ex)

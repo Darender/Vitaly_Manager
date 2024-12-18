@@ -1,0 +1,295 @@
+﻿@using System.Globalization
+@using Vitaly_Manager.Entidades
+@using W3CRM.Controllers
+@{
+    ViewData["Title"] = "Consulta de Ventas";
+}
+
+<div class="content-body">
+    <div class="page-titles">
+        <ol class="breadcrumb">
+            <li><h5 class="bc-title">Ventas</h5></li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Index", "w3crm")">
+                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2.125 6.375L8.5 1.41667L14.875 6.375V14.1667C14.875 14.5424 14.7257 14.9027 14.4601 15.1684C14.1944 15.4341 13.8341 15.5833 13.4583 15.5833H3.54167C3.16594 15.5833 2.80561 15.4341 2.53993 15.1684C2.27426 14.9027 2.125 14.5424 2.125 14.1667V6.375Z" stroke="#2C2C2C" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M6.375 15.5833V8.5H10.625V15.5833" stroke="#2C2C2C" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Inicio
+                </a>
+            </li>
+            <li class="breadcrumb-item active"><a href="javascript:void(0)">Consulta de Ventas</a></li>
+        </ol>
+    </div>
+
+    <div class="container-fluid">
+        <div class="d-flex justify-content-center">
+            <a href="javascript:void(0)"
+               class="btn btn-primary shadow w-40 py-1"
+               data-bs-toggle="modal"
+               data-bs-target="#agregarVenta">
+                <i class="fas fa-plus me-2"></i> Agregar Nueva Venta
+            </a>
+        </div>
+        <div class="card-body pt-0">
+            <div class="table-responsive">
+                <table id="ventasTable" class="display table" style="min-width: 845px">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Producto</th>
+                            <th>Cantidad Vendida</th>
+                            <th>Ingreso Total</th>
+                            <th>Fecha Realizada</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ventas-tbody">
+                        <!-- Datos dinámicos -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--**********************************
+	Content body end
+***********************************-->
+@section w3crm_style
+	{
+    <link href="~/w3crm/vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+	<link href="~/w3crm/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+
+        <!-- Daterange picker -->
+    <link href="~/w3crm/vendor/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+
+    <!-- Pick date -->
+    <link rel="stylesheet" href="~/w3crm/vendor/pickadate/themes/default.css">
+    <link rel="stylesheet" href="~/w3crm/vendor/pickadate/themes/default.date.css">
+}
+
+@section w3crm_script
+	{
+	<!--**********************************
+		Scripts
+	***********************************-->
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/w3crm/js/plugins-init/sweetalert.init.js"></script>
+    <script src="~/w3crm/js/styleSwitcher.js"></script>
+
+    <!-- Required vendors -->
+    <script src="~/w3crm/vendor/global/global.min.js"></script>
+	<script src="~/w3crm/vendor/chart.js/Chart.bundle.min.js"></script>
+	<script src="~/w3crm/vendor/tagify/dist/tagify.min.js"></script>
+
+	<!-- Apex Chart -->
+	<script src="~/w3crm/vendor/apexchart/apexchart.js"></script>
+
+	<!-- Datatable -->
+	<script src="~/w3crm/vendor/datatables/js/jquery.dataTables.min.js"></script>
+	<script src="~/w3crm/js/plugins-init/datatables.init.js"></script>
+	<script src="~/w3crm/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+
+     <!-- code-highlight -->
+    <script src="~/w3crm/js/highlight.min.js"></script>
+
+    <!-- momment js is must -->
+    <script src="~/w3crm/vendor/moment/moment.min.js"></script>
+    <script src="~/w3crm/vendor/bootstrap-daterangepicker/daterangepicker.js"></script>
+
+    <!-- pickdate -->
+    <script src="~/w3crm/vendor/pickadate/picker.js"></script>
+    <script src="~/w3crm/vendor/pickadate/picker.time.js"></script>
+    <script src="~/w3crm/vendor/pickadate/picker.date.js"></script>
+
+     <!-- Pickdate -->
+    <script src="~/w3crm/js/plugins-init/pickadate-init.js"></script>
+    <script src="~/w3crm/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+    <script src="~/w3crm/js/custom.js"></script>
+    <script src="~/w3crm/js/deznav-init.js"></script>
+    <script src="~/w3crm/js/demo.js"></script>
+    <script src="~/w3crm/js/styleSwitcher.js"></script>
+
+    <script src="~/w3crm/js/custom.js"></script>
+    <script src="~/w3crm/js/deznav-init.js"></script>
+    <script src="~/w3crm/js/demo.js"></script>
+
+
+    <script>
+        hljs.highlightAll();
+        hljs.configure({ ignoreUnescapedHTML: true })
+
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('pre code').forEach((el) => {
+                hljs.highlightElement(el);
+            });
+        });
+    </script>
+
+    <script>
+        // Mostrar información de una venta
+        function informacionVenta(folioVenta) {
+            $.ajax({
+                url: '/Ventas/ObtenerVentaUnica',
+                type: 'GET',
+                data: { folioVenta },
+                success: function (response) {
+                    if (response.success) {
+                        const venta = response.data;
+
+                        Swal.fire({
+                            title: "Detalles de la Venta",
+                            html: `
+                                        <p><strong>Cliente:</strong> ${venta.clienteNombre}</p>
+                                        <p><strong>Producto:</strong> ${venta.nombreProducto}</p>
+                                        <p><strong>Cantidad Vendida:</strong> ${venta.cantidadVendida}</p>
+                                        <p><strong>Ingreso Total:</strong> $${venta.ingresoTotal.toFixed(2)}</p>
+                                        <p><strong>Fecha Realizada:</strong> ${venta.fechaRealizada.split('T')[0]}</p>
+                                    `,
+                            icon: "info",
+                            confirmButtonText: "Cerrar"
+                        });
+                    } else {
+                        Swal.fire("Error", "No se pudo obtener la información de la venta.", "error");
+                    }
+                }
+            });
+        }
+
+        // Eliminar una venta
+        function eliminarVenta(folioVenta) {
+            Swal.fire({
+                title: "¿Estás seguro?",
+                text: "Esta acción eliminará permanentemente la venta.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Sí, eliminar",
+                cancelButtonText: "Cancelar"
+            }).then(result => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: "Eliminando...",
+                        text: "Por favor, espera mientras se elimina la venta.",
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    // Petición AJAX para eliminar la venta
+                    $.ajax({
+                        url: '/Ventas/EliminarVenta',
+                        type: 'POST',
+                        data: { folioVenta },
+                        success: function (response) {
+                            if (response.success) {
+                                // Eliminar el elemento del DOM
+                                document.getElementById(`venta-${folioVenta}`).remove();
+                                cargarVentas();
+                                // Mostrar mensaje de éxito
+                                Swal.fire({
+                                    title: "¡Eliminada!",
+                                    text: "La venta ha sido eliminada con éxito.",
+                                    icon: "success",
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                            } else {
+                                // Mostrar mensaje de error
+                                Swal.fire({
+                                    title: "Error",
+                                    text: response.message || "No se pudo eliminar la venta.",
+                                    icon: "error"
+                                });
+                            }
+                        },
+                        error: function () {
+                            // Mostrar mensaje de error en caso de fallo en AJAX
+                            Swal.fire({
+                                title: "Error",
+                                text: "Ocurrió un problema al intentar eliminar la venta.",
+                                icon: "error"
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+
+
+
+        // Función para cargar datos de ventas
+        function cargarVentas() {
+            $.ajax({
+                url: '/Ventas/ObtenerVentas',
+                type: 'GET',
+                success: function (response) {
+                    if (response.success) {
+                        const tbody = document.getElementById("ventas-tbody");
+                        tbody.innerHTML = "";
+
+                        response.data.forEach(venta => {
+                            const fila = `
+                                        <tr id="venta-${venta.folioVenta}">
+                                            <td>${venta.clienteNombre}</td>
+                                            <td>${venta.nombreProducto}</td>
+                                            <td>${venta.cantidadVendida}</td>
+                                            <td>$${venta.ingresoTotal.toFixed(2)}</td>
+                                            <td>${venta.fechaRealizada.split('T')[0]}</td>
+                                            <td>
+                                                <div class="d-flex">
+                                                    <a href="javascript:void(0)" class="btn btn-info shadow btn-xs sharp me-1" onclick="informacionVenta(${venta.folioVenta})"><i class="fa fa-eye"></i></a>
+                                                    <a href="javascript:void(0)" class="btn btn-danger shadow btn-xs sharp" onclick="eliminarVenta(${venta.folioVenta})"><i class="fa fa-trash"></i></a>
+                                                </div>
+                                            </td>
+                                        </tr>`;
+                            tbody.innerHTML += fila;
+                        });
+
+                        $('#ventasTable').DataTable(); // Inicializa la tabla con DataTables
+                    } else {
+                        console.error("Error al cargar ventas:", response.message);
+                    }
+                },
+                error: function () {
+                    console.error("Error al conectar con el servidor.");
+                }
+            });
+        }
+
+
+        // Llamar a la función al cargar la página
+        document.addEventListener("DOMContentLoaded", cargarVentas);
+    </script>
+
+
+    <script>
+        (function () {
+          'use strict'
+
+          // Fetch all the forms we want to apply custom Bootstrap validation styles to
+          var forms = document.querySelectorAll('.needs-validation')
+
+          // Loop over them and prevent submission
+          Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+              form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                  event.preventDefault()
+                  event.stopPropagation()
+                }
+
+                form.classList.add('was-validated')
+              }, false)
+            })
+        })()
+    </script>
+}
