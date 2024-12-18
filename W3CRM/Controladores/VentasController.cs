@@ -338,6 +338,68 @@ public JsonResult ObtenerVentas()
             // Devolver respuesta JSON
             return Json(new { success = resultado, message = mensaje, data = ventaDetalle });
         }
+
+        [HttpPost]
+        public JsonResult EliminarVenta(int folioVenta)
+        {
+            bool resultado = false;
+            string mensaje = "No se pudo eliminar la venta.";
+
+            try
+            {
+                // Obtener listas existentes
+                List<Venta> ventas = DataVenta.ListaVentas(out _, out _);
+                List<VentaProducto> ventaProductos = DataVentaProducto.ListaVentasProductos(out _, out _);
+                List<CompraLote> compraLotes = DataCompraLote.ListaCompraLotes(out _, out _);
+
+                // Buscar la venta original
+                var venta = ventas.FirstOrDefault(v => v.FolioVenta == folioVenta);
+
+                if (venta != null)
+                {
+                    // Filtrar todos los VentaProducto relacionados con el folioVenta
+                    var productosRelacionados = ventaProductos.Where(vp => vp.FolioVenta == folioVenta).ToList();
+
+                    foreach (var vp in productosRelacionados)
+                    {
+                        // Buscar el CompraLote relacionado y actualizar su cantidad disponible
+                        var compraLote = compraLotes.FirstOrDefault(cl => cl.IdCompraLote == vp.IdCompraLote);
+
+                        if (compraLote != null)
+                        {
+                            // Devolver la cantidad vendida al CompraLote
+                            compraLote.CantidadUnidadesDisponibles += vp.CantidadVendida;
+
+                            // Actualizar el CompraLote individualmente
+                            DataCompraLote.Modificar(compraLote, out _);
+                        }
+
+                        // Eliminar el registro de VentaProducto individualmente
+                        DataVentaProducto.Eliminar(vp.IdCompraLote, vp.FolioVenta, out _);
+                    }
+
+                    // Eliminar la venta original de la lista de ventas
+                    DataVenta.EliminarVenta(venta.FolioVenta, out _);
+
+                    resultado = true;
+                    mensaje = "Venta eliminada y cantidades actualizadas correctamente.";
+                }
+                else
+                {
+                    mensaje = "La venta no fue encontrada.";
+                }
+            }
+            catch (Exception ex)
+            {
+                mensaje = $"Ocurrió un error: {ex.Message}";
+            }
+
+            // Devolver respuesta JSON
+            return Json(new { success = resultado, message = mensaje });
+        }
+
+
+
     }
 
 }

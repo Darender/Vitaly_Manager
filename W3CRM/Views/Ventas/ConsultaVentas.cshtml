@@ -168,26 +168,61 @@
                 text: "Esta acción eliminará permanentemente la venta.",
                 icon: "warning",
                 showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
                 confirmButtonText: "Sí, eliminar",
                 cancelButtonText: "Cancelar"
             }).then(result => {
                 if (result.isConfirmed) {
+                    Swal.fire({
+                        title: "Eliminando...",
+                        text: "Por favor, espera mientras se elimina la venta.",
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    // Petición AJAX para eliminar la venta
                     $.ajax({
                         url: '/Ventas/EliminarVenta',
                         type: 'POST',
                         data: { folioVenta },
                         success: function (response) {
                             if (response.success) {
+                                // Eliminar el elemento del DOM
                                 document.getElementById(`venta-${folioVenta}`).remove();
-                                Swal.fire("Eliminada", "La venta ha sido eliminada con éxito.", "success");
+                                cargarVentas();
+                                // Mostrar mensaje de éxito
+                                Swal.fire({
+                                    title: "¡Eliminada!",
+                                    text: "La venta ha sido eliminada con éxito.",
+                                    icon: "success",
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
                             } else {
-                                Swal.fire("Error", response.message, "error");
+                                // Mostrar mensaje de error
+                                Swal.fire({
+                                    title: "Error",
+                                    text: response.message || "No se pudo eliminar la venta.",
+                                    icon: "error"
+                                });
                             }
+                        },
+                        error: function () {
+                            // Mostrar mensaje de error en caso de fallo en AJAX
+                            Swal.fire({
+                                title: "Error",
+                                text: "Ocurrió un problema al intentar eliminar la venta.",
+                                icon: "error"
+                            });
                         }
                     });
                 }
             });
         }
+
 
 
 
