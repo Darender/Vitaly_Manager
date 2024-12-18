@@ -39,7 +39,7 @@
                     </div>
                     <div class="card-body">
                         <div class="form-validation">
-                            <form class="needs-validation w-100" action="/GastosController/RegistrarGasto" method="post" novalidate id="formulario">
+                            <form class="needs-validation w-100" action="/GastosController/Agregar" method="post" novalidate id="formulario">
                                 <div class="row mb-3">
                                     <label class="col-md-2 col-form-label" for="formulario_concepto">Concepto</label>
                                     <div class="col-md-10">
@@ -69,11 +69,11 @@
                                     <div class="col-md-10">
                                         <select class="wide form-control" id="formulario_categoria" name="Categoria" required>
                                             <option selected disabled value="">Por favor seleccione</option>
-                                            <option value="Transporte">Transporte</option>
-                                            <option value="Alimentación">Alimentación</option>
-                                            <option value="Servicio">Servicios</option>
-                                            <option value="Materiales">Materiales</option>
-                                            <option value="Otros">Otros</option>
+                                            <option value="2">Transporte</option>
+                                            <option value="3">Alimentación</option>
+                                            <option value="4">Servicios</option>
+                                            <option value="5">Materiales</option>
+                                            <option value="6">Otros</option>
                                         </select>
                                     </div>
                                 </div>
@@ -186,24 +186,63 @@
             const categoria = document.getElementById("formulario_categoria").value;
 
             if (!concepto || !monto || !fecha || !categoria) {
-                alert("Por favor, complete todos los campos antes de enviar.");
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campos incompletos',
+                    text: 'Por favor, complete todos los campos antes de enviar.',
+                    confirmButtonText: 'Aceptar'
+                });
                 return;
             }
 
-            const url = `/GastosController/RegistrarGastos?Concepto=${encodeURIComponent(concepto)}&Monto=${encodeURIComponent(monto)}&Fecha=${encodeURIComponent(fecha)}&Categoria=${encodeURIComponent(categoria)}`;
-
-            fetch(url, {
-                method: 'POST'
-            })
-                .then(response => response.json())
-                .then(data => { console.log(data); resetFormulario(); })
-                .catch(error => console.error('Error:', error));
+            $.ajax({
+                url: '/Gastos/Agregar',
+                type: 'POST',
+                data: {
+                    descripcion: concepto,
+                    monto: monto,
+                    idTipoGasto: categoria,
+                    fechaRealizado: fecha
+                },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Gasto agregado!',
+                            text: response.message,
+                            confirmButtonText: 'Aceptar'
+                        }).then((result) => {
+                            resetFormulario();
+                        });
+                    } else {
+                        // Manejo de errores en el formulario
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message,
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
+                },
+                error: function (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Hubo un error al comunicarse con el servidor.',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            });
         }
 
         function resetFormulario() {
             document.getElementById("formulario").reset();
+            const inputs = document.querySelectorAll('.is-invalid');
+            inputs.forEach(input => input.classList.remove('is-invalid')); // Limpia las clases de error si se usaron
         }
+
     </script>
+
     <script>
          (function () {
              'use strict'

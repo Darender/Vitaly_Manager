@@ -7,6 +7,7 @@ namespace Vitaly_Manager.Controladores
     public class GastosController : Controller
     {
 
+
         public IActionResult RegistrarGastos() 
         {
             return View(this);
@@ -48,26 +49,7 @@ namespace Vitaly_Manager.Controladores
             return Json(new { success = resultado, message = mensaje, id });
         }
 
-        //Funcionamiento para modificar el gasto, obtener una lista.
-        [HttpPost]
-        public JsonResult Modificar(int idGasto, decimal monto, string descripcion, int idTipoGasto, DateTime fechaRealizado)
-        {
-            string mensaje;
-
-            Gasto gastoModificado = new Gasto
-            {
-                IdGasto = idGasto,
-                Monto = monto,
-                Descripcion = descripcion,
-                IdTipoGasto = idTipoGasto,
-                FechaRealizado = fechaRealizado
-            };
-
-            bool resultado = DataGasto.Modificar(gastoModificado, out mensaje);
-
-            return Json(new { success = resultado, message = mensaje });
-        }
-
+        //Funcionamiento para eliminar el gasto
         [HttpPost]
         public JsonResult Eliminar(int idGasto)
         {
@@ -77,5 +59,25 @@ namespace Vitaly_Manager.Controladores
 
             return Json(new { success = resultado, message = mensaje });
         }
+
+        // Método para obtener la lista actualizada de gastos
+        [HttpGet]
+        public JsonResult ActualizarTabla()
+        {
+            string mensaje;
+            bool exito;
+
+            // Obtenemos la lista de gastos actualizada
+            List<Gasto> gastos = DataGasto.ListaGastos(out mensaje, out exito);
+
+            if (!exito)
+            {
+                return Json(new { success = false, message = mensaje });
+            }
+
+            // Devolvemos la lista en formato JSON
+            return Json(new { success = true, data = gastos });
+        }
     }
 }
+
