@@ -1,0 +1,268 @@
+﻿@using System.Globalization
+@using Vitaly_Manager.Entidades
+@using W3CRM.Controllers
+@{
+    ViewData["Title"] = "RegistrarGastos";
+}
+<!--**********************************
+    Content body start
+***********************************-->
+
+<style>
+    .small-margin-bottom {
+        margin-bottom: -30px; /* Ajusta el valor según sea necesario */
+    }
+</style>
+
+<div class="content-body">
+    <div class="page-titles">
+        <ol class="breadcrumb">
+            <li><h5 class="bc-title">Gastos</h5></li>
+            <li class="breadcrumb-item">
+                <a href="@Url.Action("Index", "w3crm")">
+                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2.125 6.375L8.5 1.41667L14.875 6.375V14.1667C14.875 14.5424 14.7257 14.9027 14.4601 15.1684C14.1944 15.4341 13.8341 15.5833 13.4583 15.5833H3.54167C3.16594 15.5833 2.80561 15.4341 2.53993 15.1684C2.27426 14.9027 2.125 14.5424 2.125 14.1667V6.375Z" stroke="#2C2C2C" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M6.375 15.5833V8.5H10.625V15.5833" stroke="#2C2C2C" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Inicio
+                </a>
+            </li>
+            <li class="breadcrumb-item active"><a href="javascript:void(0)">Registrar Gasto</a></li>
+        </ol>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Nuevo Gasto</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-validation">
+                            <form class="needs-validation w-100" action="/GastosController/Agregar" method="post" novalidate id="formulario">
+                                <div class="row mb-3">
+                                    <label class="col-md-2 col-form-label" for="formulario_concepto">Concepto</label>
+                                    <div class="col-md-10">
+                                        <input type="text" class="form-control" id="formulario_concepto" name="Concepto" placeholder="Descripción del gasto" required>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label class="col-md-2 col-form-label" for="formulario_monto">Monto</label>
+                                    <div class="col-md-10">
+                                        <div class="input-group">
+                                            <div class="input-group-text">$</div>
+                                            <input type="number" step="any" class="form-control" id="formulario_monto" name="Monto" placeholder="0.00" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label class="col-md-2 col-form-label" for="formulario_fecha">Fecha</label>
+                                    <div class="col-md-10">
+                                        <input type="date" class="form-control" id="formulario_fecha" name="Fecha" required>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-3">
+                                    <label class="col-md-2 col-form-label" for="formulario_categoria">Categoría</label>
+                                    <div class="col-md-10">
+                                        <select class="wide form-control" id="formulario_categoria" name="Categoria" required>
+                                            <option selected disabled value="">Por favor seleccione</option>
+                                            <option value="2">Transporte</option>
+                                            <option value="3">Alimentación</option>
+                                            <option value="4">Servicios</option>
+                                            <option value="5">Materiales</option>
+                                            <option value="6">Otros</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Botón de "Registrar"  -->
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-primary py-2 w-100" id="boton_registrar">Registrar Gasto</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--**********************************
+    Content body end
+***********************************-->
+
+<!-- Sección de estilos personalizados. -->
+    @section w3crm_style
+{
+        <link href="~/w3crm/vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
+        <link href="~/w3crm/vendor/datatables/css/jquery.dataTables.min.css" rel="stylesheet">
+
+    <!-- Selector de intervalo de fechas -->
+        <link href="~/w3crm/vendor/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+
+    <!-- Fecha de elección -->
+        <link rel="stylesheet" href="~/w3crm/vendor/pickadate/themes/default.css">
+        <link rel="stylesheet" href="~/w3crm/vendor/pickadate/themes/default.date.css">
+
+    }
+
+
+@section w3crm_script
+{
+    <!--**********************************
+         Scripts
+     ***********************************-->
+
+     <script src="~/w3crm/vendor/sweetalert2/dist/sweetalert2.min.js"></script>
+     <script src="~/w3crm/js/plugins-init/sweetalert.init.js"></script>
+     <script src="~/w3crm/js/styleSwitcher.js"></script>
+
+    <!-- Proveedores requeridos -->
+     <script src="~/w3crm/vendor/global/global.min.js"></script>
+     <script src="~/w3crm/vendor/chart.js/Chart.bundle.min.js"></script>
+     <script src="~/w3crm/vendor/tagify/dist/tagify.min.js"></script>
+
+    <!-- Gráfico de vértice -->
+     <script src="~/w3crm/vendor/apexchart/apexchart.js"></script>
+
+    <!-- Tabla de datos -->
+     <script src="~/w3crm/vendor/datatables/js/jquery.dataTables.min.js"></script>
+     <script src="~/w3crm/js/plugins-init/datatables.init.js"></script>
+     <script src="~/w3crm/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+
+    <!-- código -luz alta -->
+     <script src="~/w3crm/js/highlight.min.js"></script>
+
+    <!-- momento js es imprescindible -->
+     <script src="~/w3crm/vendor/moment/moment.min.js"></script>
+     <script src="~/w3crm/vendor/bootstrap-daterangepicker/daterangepicker.js"></script>
+
+    <!-- Fecha de elección -->
+     <script src="~/w3crm/vendor/pickadate/picker.js"></script>
+     <script src="~/w3crm/vendor/pickadate/picker.time.js"></script>
+     <script src="~/w3crm/vendor/pickadate/picker.date.js"></script>
+
+    <!-- Fecha de elección -->
+     <script src="~/w3crm/js/plugins-init/pickadate-init.js"></script>
+     <script src="~/w3crm/vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+     <script src="~/w3crm/js/custom.js"></script>
+     <script src="~/w3crm/js/deznav-init.js"></script>
+     <script src="~/w3crm/js/demo.js"></script>
+     <script src="~/w3crm/js/styleSwitcher.js"></script>
+
+     <script src="~/w3crm/js/custom.js"></script>
+     <script src="~/w3crm/js/deznav-init.js"></script>
+     <script src="~/w3crm/js/demo.js"></script>
+
+     <script>
+         hljs.highlightAll();
+         hljs.configure({ ignoreUnescapedHTML: true })
+
+     </script>
+
+     <script>
+         document.addEventListener('DOMContentLoaded', (event) => {
+             document.querySelectorAll('pre code').forEach((el) => {
+                hljs.highlightElement(el);
+            });
+          });
+     </script>
+
+    <script>
+        document.getElementById("formulario").addEventListener("submit", function(event) {
+            event.preventDefault();
+            enviarDatos();
+        });
+
+        function enviarDatos() {
+            const concepto = document.getElementById("formulario_concepto").value;
+            const monto = document.getElementById("formulario_monto").value;
+            const fecha = document.getElementById("formulario_fecha").value;
+            const categoria = document.getElementById("formulario_categoria").value;
+
+            if (!concepto || !monto || !fecha || !categoria) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campos incompletos',
+                    text: 'Por favor, complete todos los campos antes de enviar.',
+                    confirmButtonText: 'Aceptar'
+                });
+                return;
+            }
+
+            $.ajax({
+                url: '/Gastos/Agregar',
+                type: 'POST',
+                data: {
+                    descripcion: concepto,
+                    monto: monto,
+                    idTipoGasto: categoria,
+                    fechaRealizado: fecha
+                },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Gasto agregado!',
+                            text: response.message,
+                            confirmButtonText: 'Aceptar'
+                        }).then((result) => {
+                            resetFormulario();
+                        });
+                    } else {
+                        // Manejo de errores en el formulario
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message,
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
+                },
+                error: function (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Hubo un error al comunicarse con el servidor.',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            });
+        }
+
+        function resetFormulario() {
+            document.getElementById("formulario").reset();
+            const inputs = document.querySelectorAll('.is-invalid');
+            inputs.forEach(input => input.classList.remove('is-invalid')); // Limpia las clases de error si se usaron
+        }
+
+    </script>
+
+    <script>
+         (function () {
+             'use strict'
+
+           // Obtener todos los formularios a los que queremos aplicar estilos de validación de Bootstrap personalizados
+            var forms = document.querySelectorAll('.needs-validation')
+
+           //Bucle sobre ellos y evitar la sumisión
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+     </script>
+}
+

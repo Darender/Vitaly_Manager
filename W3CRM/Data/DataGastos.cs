@@ -62,8 +62,37 @@ namespace Vitaly_Manager.Data
         public static bool Agregar(Gasto nuevo, out string mensaje, out int id)
         {
             id = 0; // Inicializa el ID como 0 para manejar errores si no se asigna
+          mensaje = string.Empty; // Mensaje de error inicializado
+
             try
             {
+                // Validación: El monto debe ser un número positivo
+                if (nuevo.Monto <= 0)
+                {
+                    mensaje = "El monto debe ser un valor positivo.";
+                    return false;
+                }
+
+                // Validación: La descripción no puede ser nula ni vacía
+                if (string.IsNullOrWhiteSpace(nuevo.Descripcion))
+                {
+                    mensaje = "La descripción no puede estar vacía.";
+                    return false;
+                }
+
+                // Validación: El IdTipoGasto debe ser un número positivo
+                if (nuevo.IdTipoGasto <= 0)
+                {
+                    mensaje = "El tipo de gasto no es válido.";
+                    return false;
+                }
+
+                // Validación: La fecha de realización no puede ser una fecha futura
+                if (nuevo.FechaRealizado > DateTime.Now)
+                {
+                    mensaje = "La fecha de realización no puede ser una fecha futura.";
+                    return false;
+                }
                 using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
                 {
                     conexion.Open();
@@ -96,46 +125,6 @@ namespace Vitaly_Manager.Data
                 return false;
             }
         }
-
-
-        public static bool Modificar(Gasto modificado, out string mensaje)
-        {
-            try
-            {
-                using (SqlConnection conexion = new SqlConnection(MainServidor.Servidor))
-                {
-                    conexion.Open();
-                    string query = @"UPDATE Gasto
-                                     SET monto = @Monto, descripcion = @Descripcion, idTipoGasto = @IdTipoGasto, fechaRealizado = @FechaRealizado
-                                     WHERE idGasto = @IdGasto";
-
-                    using (SqlCommand comando = new SqlCommand(query, conexion))
-                    {
-                        comando.Parameters.AddWithValue("@IdGasto", modificado.IdGasto);
-                        comando.Parameters.AddWithValue("@Monto", modificado.Monto);
-                        comando.Parameters.AddWithValue("@Descripcion", (object)modificado.Descripcion ?? DBNull.Value);
-                        comando.Parameters.AddWithValue("@IdTipoGasto", modificado.IdTipoGasto);
-                        comando.Parameters.AddWithValue("@FechaRealizado", modificado.FechaRealizado);
-
-                        comando.ExecuteNonQuery();
-                    }
-                }
-                var gastoEnCache = _cacheGastos.Find(g => g.IdGasto == modificado.IdGasto);
-                if (gastoEnCache != null)
-                {
-                    _cacheGastos.Remove(gastoEnCache);
-                    _cacheGastos.Add(modificado);
-                }
-                mensaje = "Gasto modificado exitosamente.";
-                return true;
-            }
-            catch (Exception ex)
-            {
-                mensaje = "Error: " + ex.Message;
-                return false;
-            }
-        }
-
         public static bool Eliminar(int id, out string mensaje)
         {
             try
